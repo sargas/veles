@@ -47,13 +47,13 @@ public class QSODetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.qso_detail, container, false);
+        return inflater.inflate(R.layout.qso_detail, container, false);
 
         // Show the dummy content as text in a TextView.
         /*if (mItem != null) {
             ((TextView) rootView.findViewById(R.id.qso_detail)).setText(mItem.details);
-        }*/
+        }
 
-        return rootView;
+        return rootView; */
     }
 }

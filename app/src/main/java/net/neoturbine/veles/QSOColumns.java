@@ -3,7 +3,7 @@ package net.neoturbine.veles;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class QSOColumns implements BaseColumns {
+class QSOColumns implements BaseColumns {
     private QSOColumns() {
     }
 
