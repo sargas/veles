@@ -29,10 +29,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.neoturbine.veles.QSOListActivity" />
         </activity>
+        <activity
+            android:name=".QSOEditActivity"
+            android:label="@string/title_qso_edit"
+            android:parentActivityName=".QSOListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.neoturbine.veles.QSOListActivity" />
+        </activity>
 
         <provider
             android:name=".VelesProvider"
-            android:authorities="net.neoturbine.veles.provider.qso"
+            android:authorities="net.neoturbine.veles.provider"
             android:enabled="true"
             android:exported="false" />
     </application>

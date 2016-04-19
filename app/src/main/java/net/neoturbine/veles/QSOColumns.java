@@ -10,7 +10,7 @@ class QSOColumns implements BaseColumns {
     static final String TABLE_NAME = "QSO";
     static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.neoturbine.veles.qso";
     static final Uri CONTENT_URI = Uri.parse("content://"
-            + VelesProvider.AUTHORITY + "/ " + TABLE_NAME);
+            + VelesProvider.AUTHORITY + "/" + TABLE_NAME);
 
     public static final String START_TIME = "start_time";
     public static final String END_TIME = "end_time";

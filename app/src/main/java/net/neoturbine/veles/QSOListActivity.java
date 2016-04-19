@@ -2,13 +2,14 @@ package net.neoturbine.veles;
 
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -52,8 +53,9 @@ public class QSOListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Context context = view.getContext();
+                Intent intent = new Intent(context, QSOEditActivity.class);
+                context.startActivity(intent);
             }
         });
 
@@ -115,30 +117,25 @@ public class QSOListActivity extends AppCompatActivity {
                 holder.mIdView.setText(mCursor.getInt(mCursor.getColumnIndexOrThrow(QSOColumns._ID)));
                 holder.mContentView.setText(mCursor.getInt(mCursor.getColumnIndexOrThrow(QSOColumns.COMMENT)));
             }
-            /*holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(QSODetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                        QSODetailFragment fragment = new QSODetailFragment();
-                        fragment.setArguments(arguments);
+                        QSODetailFragment fragment = QSODetailFragment.newInstance(getItemId(holder.getAdapterPosition()));
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.qso_detail_container, fragment)
                                 .commit();
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, QSODetailActivity.class);
-                        intent.putExtra(QSODetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        intent.putExtra(QSODetailActivity.ARG_QSO_ID, getItemId(holder.getAdapterPosition()));
 
                         context.startActivity(intent);
                     }
                 }
-            });*/
+
+            });
         }
 
         @Override
@@ -181,9 +178,11 @@ public class QSOListActivity extends AppCompatActivity {
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final TextView mIdView;
             public final TextView mContentView;
+            public final View mView;
 
             public ViewHolder(View view) {
                 super(view);
+                mView = view;
                 mIdView = (TextView) view.findViewById(R.id.id);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }

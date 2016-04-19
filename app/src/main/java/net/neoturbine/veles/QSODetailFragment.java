@@ -17,7 +17,7 @@ public class QSODetailFragment extends Fragment {
      * The fragment argument representing the item ID that this fragment
      * represents.
      */
-    public static final String ARG_ITEM_ID = "item_id";
+    private static final String ARG_QSO_ID = "qso_id";
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -30,7 +30,7 @@ public class QSODetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
+        if (getArguments().containsKey(ARG_QSO_ID)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
@@ -55,5 +55,20 @@ public class QSODetailFragment extends Fragment {
         }
 
         return rootView; */
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param qso_id Parameter 1.
+     * @return A new instance of fragment QSOEditFragment.
+     */
+    public static QSODetailFragment newInstance(long qso_id) {
+        QSODetailFragment fragment = new QSODetailFragment();
+        Bundle args = new Bundle();
+        args.putLong(ARG_QSO_ID, qso_id);
+        fragment.setArguments(args);
+        return fragment;
     }
 }
