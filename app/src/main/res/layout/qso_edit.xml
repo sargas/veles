@@ -10,7 +10,7 @@
     <TextView
         android:layout_column="0"
         android:layout_gravity="end"
-        android:labelFor="@id/qso_start_time"
+        android:labelFor="@+id/qso_start_time"
         android:text="@string/qso_edit_start_time" />
 
     <EditText
@@ -21,7 +21,7 @@
     <TextView
         android:layout_column="0"
         android:layout_gravity="end"
-        android:labelFor="@id/qso_end_time"
+        android:labelFor="@+id/qso_end_time"
         android:text="@string/qso_edit_end_time" />
 
     <EditText
@@ -32,7 +32,7 @@
     <TextView
         android:layout_column="0"
         android:layout_gravity="end"
-        android:labelFor="@id/qso_station"
+        android:labelFor="@+id/qso_station"
         android:text="@string/qso_edit_station" />
 
     <EditText
