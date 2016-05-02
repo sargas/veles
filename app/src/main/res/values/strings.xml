@@ -10,6 +10,7 @@
     <string name="qso_edit_comment">Comment:</string>
 
     <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
 
     <string-array name="qso_modes">
         <item>FM</item>

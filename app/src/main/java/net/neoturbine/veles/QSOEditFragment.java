@@ -171,11 +171,29 @@ public class QSOEditFragment extends Fragment {
                     mNewValues.put(tableColumns.next(), tv.getText().toString());
                 }
 
-                getActivity().getContentResolver().insert(
-                        QSOColumns.CONTENT_URI,
-                        mNewValues
-                );
+                if (mQSOid == -1) {
+                    getActivity().getContentResolver().insert(
+                            QSOColumns.CONTENT_URI,
+                            mNewValues
+                    );
+                } else {
+                    getActivity().getContentResolver().update(
+                            QSOColumns.CONTENT_URI,
+                            mNewValues,
+                            QSOColumns._ID + " = ?",
+                            new String[] {Long.toString(mQSOid)}
+                    );
+                }
                 //TODO Show SnackBar
+                mCallback.onFinishEdit();
+                return true;
+            case R.id.action_delete:
+                getActivity().getContentResolver().delete(
+                        QSOColumns.CONTENT_URI,
+                        QSOColumns._ID + " = ?",
+                        new String[] {Long.toString(mQSOid)}
+                );
+                //TODO Show SnackBar + undo action
                 mCallback.onFinishEdit();
                 return true;
             default:
