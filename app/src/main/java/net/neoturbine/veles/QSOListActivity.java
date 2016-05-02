@@ -114,8 +114,8 @@ public class QSOListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             if (mValidData && mCursor.moveToPosition(position)) {
-                holder.mIdView.setText(mCursor.getInt(mCursor.getColumnIndexOrThrow(QSOColumns._ID)));
-                holder.mContentView.setText(mCursor.getInt(mCursor.getColumnIndexOrThrow(QSOColumns.COMMENT)));
+                holder.mIdView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns._ID)));
+                holder.mContentView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.COMMENT)));
             }
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
