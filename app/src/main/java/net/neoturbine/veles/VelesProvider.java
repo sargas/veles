@@ -60,7 +60,8 @@ public class VelesProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        if (getContext() != null)
+            getContext().getContentResolver().notifyChange(uri, null);
 
         return ContentUris.withAppendedId(uri, id);
     }
@@ -87,7 +88,9 @@ public class VelesProvider extends ContentProvider {
         final Cursor c = queryBuilder.query(db, projection, selection, selectionArgs, null,
                 null, sortOrder);
 
-        c.setNotificationUri(getContext().getContentResolver(), uri);
+        if (getContext() != null)
+            c.setNotificationUri(getContext().getContentResolver(), uri);
+
         return c;
     }
 

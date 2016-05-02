@@ -1,10 +1,18 @@
 package net.neoturbine.veles;
 
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * A fragment representing a single QSO detail screen.
@@ -19,6 +27,11 @@ public class QSODetailFragment extends Fragment {
      */
     private static final String ARG_QSO_ID = "qso_id";
 
+    private long mQSOid = -1;
+    private String mQSOInfo;
+
+    private static final int QSO_LOADER = 0;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -31,30 +44,61 @@ public class QSODetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_QSO_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            /*mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            mQSOid = getArguments().getLong(ARG_QSO_ID);
 
-            Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
-            }*/
+            getLoaderManager().initLoader(QSO_LOADER, null, new LoaderManager.LoaderCallbacks<Cursor>() {
+                @Override
+                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                    switch (id) {
+                        case QSO_LOADER:
+                            return new CursorLoader(
+                                    getContext(),
+                                    QSOColumns.CONTENT_URI,
+                                    null,
+                                    QSOColumns._ID + "=?",
+                                    new String[] {Long.toString(mQSOid)},
+                                    null);
+                        default:
+                            throw new IllegalArgumentException("Unknown type of loader: " + id);
+                    }
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                    if (data.getCount() == 0) {
+                        return;
+                    }
+                    data.moveToFirst();
+                    mQSOInfo = DatabaseUtils.dumpCursorToString(data);
+                    Log.d("QSO", mQSOInfo);
+
+                    View rootView = getActivity().findViewById(R.id.qso_detail);
+
+                    ((TextView) rootView.findViewById(R.id.qso_detail)).setText(mQSOInfo);
+
+                    CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity().findViewById(R.id.toolbar_layout);
+                    if (appBarLayout != null) {
+                        appBarLayout.setTitle(data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)));
+                    }
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Cursor> loader) {
+                }
+            });
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.qso_detail, container, false);
+        View rootView = inflater.inflate(R.layout.qso_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
-        /*if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.qso_detail)).setText(mItem.details);
+        if (mQSOid != -1) {
+            ((TextView) rootView.findViewById(R.id.qso_detail)).setText(mQSOInfo);
         }
 
-        return rootView; */
+        return rootView;
     }
 
     /**
