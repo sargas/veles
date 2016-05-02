@@ -7,7 +7,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -98,7 +97,6 @@ public class QSOListActivity extends AppCompatActivity {
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private Cursor mCursor = null;
-        private DataSetObserver mDataSetObserver = new SimpleDataSetObserver();
         private boolean mValidData = false;
 
         public SimpleItemRecyclerViewAdapter() {
@@ -190,22 +188,6 @@ public class QSOListActivity extends AppCompatActivity {
             @Override
             public String toString() {
                 return super.toString() + " '" + mContentView.getText() + "'";
-            }
-        }
-
-        private class SimpleDataSetObserver extends DataSetObserver {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                mValidData = true;
-                notifyDataSetChanged();
-            }
-
-            @Override
-            public void onInvalidated() {
-                super.onInvalidated();
-                mValidData = false;
-                notifyDataSetChanged();
             }
         }
     }

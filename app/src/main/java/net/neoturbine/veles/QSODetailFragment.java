@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +55,7 @@ public class QSODetailFragment extends Fragment {
                                     QSOColumns.CONTENT_URI,
                                     null,
                                     QSOColumns._ID + "=?",
-                                    new String[] {Long.toString(mQSOid)},
+                                    new String[]{Long.toString(mQSOid)},
                                     null);
                         default:
                             throw new IllegalArgumentException("Unknown type of loader: " + id);
@@ -70,7 +69,6 @@ public class QSODetailFragment extends Fragment {
                     }
                     data.moveToFirst();
                     mQSOInfo = DatabaseUtils.dumpCursorToString(data);
-                    Log.d("QSO", mQSOInfo);
 
                     View rootView = getActivity().findViewById(R.id.qso_detail);
 

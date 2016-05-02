@@ -1,16 +1,24 @@
 package net.neoturbine.veles;
 
 import android.content.ContentValues;
-import android.net.Uri;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
+
+import java.util.Arrays;
+import java.util.Iterator;
 
 
 /**
@@ -21,7 +29,8 @@ import android.widget.TextView;
 public class QSOEditFragment extends Fragment {
     private static final String ARG_QSO_ID = "qso_id";
 
-    private long mQSOid;
+    private long mQSOid = -1;
+    private static final int QSO_LOADER = 0;
 
     public QSOEditFragment() {
         // Required empty public constructor
@@ -59,7 +68,62 @@ public class QSOEditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.qso_edit, container, false);
+        View rootView = inflater.inflate(R.layout.qso_edit, container, false);
+
+        AutoCompleteTextView modeView = (AutoCompleteTextView) rootView.findViewById(R.id.qso_mode);
+        modeView.setAdapter(new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.qso_modes)));
+
+        if (mQSOid != -1) {
+            getLoaderManager().initLoader(QSO_LOADER, null, new LoaderManager.LoaderCallbacks<Cursor>() {
+                @Override
+                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                    switch (id) {
+                        case QSO_LOADER:
+                            return new CursorLoader(
+                                    getContext(),
+                                    QSOColumns.CONTENT_URI,
+                                    null,
+                                    QSOColumns._ID + "=?",
+                                    new String[]{Long.toString(mQSOid)},
+                                    null);
+                        default:
+                            throw new IllegalArgumentException("Unknown type of loader: " + id);
+                    }
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                    if (data.getCount() == 0) {
+                        return;
+                    }
+                    data.moveToFirst();
+
+                    Iterator<Integer> editBoxIDs = Arrays.asList(new Integer[]{
+                            R.id.qso_start_time, R.id.qso_end_time,
+                            R.id.qso_station, R.id.qso_mode
+                    }).iterator();
+                    Iterator<String> tableColumns = Arrays.asList(new String[]{
+                            QSOColumns.START_TIME, QSOColumns.END_TIME,
+                            QSOColumns.OTHER_STATION, QSOColumns.MODE
+                    }).iterator();
+
+                    while (editBoxIDs.hasNext() && tableColumns.hasNext()) {
+                        @SuppressWarnings("ConstantConditions") TextView tv =
+                                (TextView) getView().findViewById(editBoxIDs.next());
+                        tv.setText(data.getString(data.getColumnIndexOrThrow(tableColumns.next())));
+                    }
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Cursor> loader) {
+                }
+            });
+        }
+
+        return rootView;
     }
 
     @Override
@@ -82,6 +146,9 @@ public class QSOEditFragment extends Fragment {
 
                 TextView station = (TextView) getView().findViewById(R.id.qso_station);
                 mNewValues.put(QSOColumns.OTHER_STATION, station.getText().toString());
+
+                TextView mode = (TextView) getView().findViewById(R.id.qso_mode);
+                mNewValues.put(QSOColumns.MODE, mode.getText().toString());
 
                 getActivity().getContentResolver().insert(
                         QSOColumns.CONTENT_URI,

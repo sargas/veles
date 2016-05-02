@@ -6,6 +6,13 @@
     <string name="qso_edit_start_time">Start Time:</string>
     <string name="qso_edit_end_time">End Time:</string>
     <string name="qso_edit_station">Station:</string>
+    <string name="qso_edit_mode">Mode:</string>
 
     <string name="action_save">Save</string>
+
+    <string-array name="qso_modes">
+        <item>FM</item>
+        <item>SSB</item>
+        <item>CW</item>
+    </string-array>
 </resources>

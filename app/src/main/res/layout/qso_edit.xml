@@ -40,4 +40,16 @@
         android:inputType="text"
         android:layout_columnWeight="1" />
 
+    <TextView
+        android:layout_column="0"
+        android:layout_gravity="end"
+        android:labelFor="@+id/qso_mode"
+        android:text="@string/qso_edit_mode" />
+
+    <AutoCompleteTextView
+        android:id="@+id/qso_mode"
+        android:inputType="text"
+        android:completionThreshold="1"
+        android:layout_columnWeight="1" />
+
 </GridLayout>

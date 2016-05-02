@@ -1,9 +1,9 @@
 package net.neoturbine.veles;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +18,7 @@ import android.view.View;
  */
 public class QSODetailActivity extends AppCompatActivity {
     public static final String ARG_QSO_ID = "qso_id";
+    private long mQSOid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +32,11 @@ public class QSODetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Context context = view.getContext();
+                Intent intent = new Intent(context, QSOEditActivity.class);
+                intent.putExtra(QSOEditActivity.ARG_QSO_ID, mQSOid);
+
+                context.startActivity(intent);
             }
         });
 
@@ -41,6 +45,8 @@ public class QSODetailActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        mQSOid = getIntent().getLongExtra(ARG_QSO_ID, -1);
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
