@@ -13,7 +13,8 @@ import android.view.MenuItem;
  * item details are presented side-by-side with a list of items
  * in a {@link QSOListActivity}.
  */
-public class QSOEditActivity extends AppCompatActivity {
+public class QSOEditActivity extends AppCompatActivity
+        implements QSOEditFragment.OnFinishEditListener {
     public static final String ARG_QSO_ID = "qso_id";
 
     @Override
@@ -69,5 +70,10 @@ public class QSOEditActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFinishEdit() {
+        finish();
     }
 }

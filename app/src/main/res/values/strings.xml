@@ -7,6 +7,7 @@
     <string name="qso_edit_end_time">End Time:</string>
     <string name="qso_edit_station">Station:</string>
     <string name="qso_edit_mode">Mode:</string>
+    <string name="qso_edit_comment">Comment:</string>
 
     <string name="action_save">Save</string>
 

@@ -1,6 +1,7 @@
 package net.neoturbine.veles;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -30,10 +32,27 @@ public class QSOEditFragment extends Fragment {
     private static final String ARG_QSO_ID = "qso_id";
 
     private long mQSOid = -1;
+    private OnFinishEditListener mCallback;
+
     private static final int QSO_LOADER = 0;
+
+    private static final List<Integer> mTextBoxIDs = Arrays.asList(
+            R.id.qso_start_time, R.id.qso_end_time,
+            R.id.qso_station, R.id.qso_mode,
+            R.id.qso_comment
+    );
+    private static final List<String> mTextBoxColumns = Arrays.asList(
+            QSOColumns.START_TIME, QSOColumns.END_TIME,
+            QSOColumns.OTHER_STATION, QSOColumns.MODE,
+            QSOColumns.COMMENT
+    );
 
     public QSOEditFragment() {
         // Required empty public constructor
+    }
+
+    public interface OnFinishEditListener {
+        void onFinishEdit();
     }
 
     /**
@@ -62,6 +81,18 @@ public class QSOEditFragment extends Fragment {
             mQSOid = getArguments().getLong(ARG_QSO_ID);
         }
         this.setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mCallback = (OnFinishEditListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() +
+                    " must implement OnFinishEditListener");
+        }
     }
 
     @Override
@@ -94,6 +125,7 @@ public class QSOEditFragment extends Fragment {
                     }
                 }
 
+                @SuppressWarnings("ConstantConditions")
                 @Override
                 public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
                     if (data.getCount() == 0) {
@@ -101,18 +133,11 @@ public class QSOEditFragment extends Fragment {
                     }
                     data.moveToFirst();
 
-                    Iterator<Integer> editBoxIDs = Arrays.asList(new Integer[]{
-                            R.id.qso_start_time, R.id.qso_end_time,
-                            R.id.qso_station, R.id.qso_mode
-                    }).iterator();
-                    Iterator<String> tableColumns = Arrays.asList(new String[]{
-                            QSOColumns.START_TIME, QSOColumns.END_TIME,
-                            QSOColumns.OTHER_STATION, QSOColumns.MODE
-                    }).iterator();
+                    Iterator<Integer> editBoxIDs = mTextBoxIDs.iterator();
+                    Iterator<String> tableColumns = mTextBoxColumns.iterator();
 
                     while (editBoxIDs.hasNext() && tableColumns.hasNext()) {
-                        @SuppressWarnings("ConstantConditions") TextView tv =
-                                (TextView) getView().findViewById(editBoxIDs.next());
+                        TextView tv = (TextView) getView().findViewById(editBoxIDs.next());
                         tv.setText(data.getString(data.getColumnIndexOrThrow(tableColumns.next())));
                     }
                 }
@@ -138,22 +163,20 @@ public class QSOEditFragment extends Fragment {
             case R.id.action_save:
                 final ContentValues mNewValues = new ContentValues();
 
-                TextView start_time = (TextView) getView().findViewById(R.id.qso_start_time);
-                mNewValues.put(QSOColumns.START_TIME, start_time.getText().toString());
+                Iterator<Integer> editBoxIDs = mTextBoxIDs.iterator();
+                Iterator<String> tableColumns = mTextBoxColumns.iterator();
 
-                TextView end_time = (TextView) getView().findViewById(R.id.qso_end_time);
-                mNewValues.put(QSOColumns.END_TIME, end_time.getText().toString());
-
-                TextView station = (TextView) getView().findViewById(R.id.qso_station);
-                mNewValues.put(QSOColumns.OTHER_STATION, station.getText().toString());
-
-                TextView mode = (TextView) getView().findViewById(R.id.qso_mode);
-                mNewValues.put(QSOColumns.MODE, mode.getText().toString());
+                while (editBoxIDs.hasNext() && tableColumns.hasNext()) {
+                    TextView tv = (TextView) getView().findViewById(editBoxIDs.next());
+                    mNewValues.put(tableColumns.next(), tv.getText().toString());
+                }
 
                 getActivity().getContentResolver().insert(
                         QSOColumns.CONTENT_URI,
                         mNewValues
                 );
+                //TODO Show SnackBar
+                mCallback.onFinishEdit();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
