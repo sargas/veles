@@ -1,5 +1,6 @@
 package net.neoturbine.veles;
 
+import android.content.ContentUris;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.os.Bundle;
@@ -52,11 +53,8 @@ public class QSODetailFragment extends Fragment {
                         case QSO_LOADER:
                             return new CursorLoader(
                                     getContext(),
-                                    QSOColumns.CONTENT_URI,
-                                    null,
-                                    QSOColumns._ID + "=?",
-                                    new String[]{Long.toString(mQSOid)},
-                                    null);
+                                    ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
+                                    null, null, null, null);
                         default:
                             throw new IllegalArgumentException("Unknown type of loader: " + id);
                     }

@@ -12,15 +12,21 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class VelesProvider extends ContentProvider {
     static final String AUTHORITY = "net.neoturbine.veles.provider";
 
     private static final UriMatcher sUriMatcher;
     private static final int URI_QSO = 0;
+    private static final int URI_QSO_ID = 1;
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sUriMatcher.addURI(AUTHORITY, QSOColumns.TABLE_NAME, URI_QSO);
+        sUriMatcher.addURI(AUTHORITY, QSOColumns.TABLE_NAME + "/#", URI_QSO_ID);
     }
 
     private SQLiteOpenHelper mDatabaseHelper;
@@ -32,6 +38,19 @@ public class VelesProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case URI_QSO:
                 return db.delete(QSOColumns.TABLE_NAME, selection, selectionArgs);
+            case URI_QSO_ID:
+                long id = ContentUris.parseId(uri);
+                if (selection == null) {
+                    selection = QSOColumns._ID + " = ?";
+                    selectionArgs = new String[]{Long.toString(id)};
+                } else {
+                    selection += " " + QSOColumns._ID + " = ?";
+                    List<String> selectionArgsList = new ArrayList<>(Arrays.asList(selectionArgs));
+                    selectionArgsList.add(Long.toString(id));
+                    selectionArgs = selectionArgsList.toArray(new String[1]);
+                }
+
+                return db.delete(QSOColumns.TABLE_NAME, selection, selectionArgs);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -42,6 +61,8 @@ public class VelesProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case URI_QSO:
                 return QSOColumns.CONTENT_TYPE;
+            case URI_QSO_ID:
+                return QSOColumns.SINGLE_CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -81,6 +102,11 @@ public class VelesProvider extends ContentProvider {
             case URI_QSO:
                 queryBuilder.setTables(QSOColumns.TABLE_NAME);
                 break;
+            case URI_QSO_ID:
+                queryBuilder.setTables(QSOColumns.TABLE_NAME);
+                queryBuilder.appendWhere(
+                        QSOColumns._ID + " = " + Long.toString(ContentUris.parseId(uri)));
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -101,6 +127,18 @@ public class VelesProvider extends ContentProvider {
 
         switch (sUriMatcher.match(uri)) {
             case URI_QSO:
+                return db.update(QSOColumns.TABLE_NAME, values, selection, selectionArgs);
+            case URI_QSO_ID:
+                long id = ContentUris.parseId(uri);
+                if (selection == null) {
+                    selection = QSOColumns._ID + " = ?";
+                    selectionArgs = new String[]{Long.toString(id)};
+                } else {
+                    selection += " " + QSOColumns._ID + " = ?";
+                    List<String> selectionArgsList = new ArrayList<>(Arrays.asList(selectionArgs));
+                    selectionArgsList.add(Long.toString(id));
+                    selectionArgs = selectionArgsList.toArray(new String[1]);
+                }
                 return db.update(QSOColumns.TABLE_NAME, values, selection, selectionArgs);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);

@@ -1,5 +1,6 @@
 package net.neoturbine.veles;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -47,6 +48,7 @@ public class QSOEditFragment extends Fragment {
             QSOColumns.COMMENT
     );
 
+    @SuppressWarnings("WeakerAccess")
     public QSOEditFragment() {
         // Required empty public constructor
     }
@@ -115,11 +117,8 @@ public class QSOEditFragment extends Fragment {
                         case QSO_LOADER:
                             return new CursorLoader(
                                     getContext(),
-                                    QSOColumns.CONTENT_URI,
-                                    null,
-                                    QSOColumns._ID + "=?",
-                                    new String[]{Long.toString(mQSOid)},
-                                    null);
+                                    ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
+                                    null, null, null, null);
                         default:
                             throw new IllegalArgumentException("Unknown type of loader: " + id);
                     }
@@ -178,10 +177,8 @@ public class QSOEditFragment extends Fragment {
                     );
                 } else {
                     getActivity().getContentResolver().update(
-                            QSOColumns.CONTENT_URI,
-                            mNewValues,
-                            QSOColumns._ID + " = ?",
-                            new String[] {Long.toString(mQSOid)}
+                            ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
+                            mNewValues, null, null
                     );
                 }
                 //TODO Show SnackBar
@@ -189,9 +186,8 @@ public class QSOEditFragment extends Fragment {
                 return true;
             case R.id.action_delete:
                 getActivity().getContentResolver().delete(
-                        QSOColumns.CONTENT_URI,
-                        QSOColumns._ID + " = ?",
-                        new String[] {Long.toString(mQSOid)}
+                        ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
+                        null, null
                 );
                 //TODO Show SnackBar + undo action
                 mCallback.onFinishEdit();
