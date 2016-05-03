@@ -1,67 +1,74 @@
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:alignmentMode="alignBounds"
-    android:columnCount="4"
-    android:useDefaultMargins="true"
+    android:orientation="vertical"
     tools:context="net.neoturbine.veles.QSOEditFragment">
 
-    <TextView
-        android:layout_column="0"
-        android:layout_gravity="end"
-        android:labelFor="@+id/qso_start_time"
-        android:text="@string/qso_edit_start_time" />
+    <android.support.design.widget.TextInputLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
 
-    <EditText
-        android:id="@+id/qso_start_time"
-        android:inputType="datetime"
-        android:layout_columnWeight="1" />
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/qso_station"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/qso_edit_station"
+            android:inputType="textNoSuggestions|textCapCharacters" />
 
-    <TextView
-        android:layout_column="0"
-        android:layout_gravity="end"
-        android:labelFor="@+id/qso_end_time"
-        android:text="@string/qso_edit_end_time" />
+    </android.support.design.widget.TextInputLayout>
 
-    <EditText
-        android:id="@+id/qso_end_time"
-        android:inputType="datetime"
-        android:layout_columnWeight="1" />
+    <android.support.design.widget.TextInputLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
 
-    <TextView
-        android:layout_column="0"
-        android:layout_gravity="end"
-        android:labelFor="@+id/qso_station"
-        android:text="@string/qso_edit_station" />
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/qso_start_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/qso_edit_start_time"
+            android:inputType="datetime" />
 
-    <EditText
-        android:id="@+id/qso_station"
-        android:inputType="text"
-        android:layout_columnWeight="1" />
+    </android.support.design.widget.TextInputLayout>
 
-    <TextView
-        android:layout_column="0"
-        android:layout_gravity="end"
-        android:labelFor="@+id/qso_mode"
-        android:text="@string/qso_edit_mode" />
+    <android.support.design.widget.TextInputLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
 
-    <AutoCompleteTextView
-        android:id="@+id/qso_mode"
-        android:inputType="text"
-        android:completionThreshold="1"
-        android:layout_columnWeight="1" />
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/qso_end_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/qso_edit_end_time"
+            android:inputType="datetime" />
 
-    <TextView
-        android:layout_column="0"
-        android:layout_gravity="end"
-        android:labelFor="@+id/qso_comment"
-        android:text="@string/qso_edit_comment" />
+    </android.support.design.widget.TextInputLayout>
 
-    <EditText
-        android:id="@+id/qso_comment"
-        android:inputType="text"
-        android:minLines="3"
-        android:layout_columnWeight="1" />
+    <android.support.design.widget.TextInputLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
 
-</GridLayout>
+        <AutoCompleteTextView
+            android:id="@+id/qso_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/qso_edit_mode"
+            android:inputType="text" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/qso_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/qso_edit_comment"
+            android:lines="3"
+            android:inputType="textMultiLine" />
+
+    </android.support.design.widget.TextInputLayout>
+
+</LinearLayout>

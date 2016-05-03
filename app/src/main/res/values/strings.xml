@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">Veles</string>
     <string name="title_qso_detail">QSO Detail</string>
-    <string name="title_qso_edit">QSO Edit</string>
+    <string name="title_qso_edit">Edit QSO</string>
+    <string name="title_qso_new">Add QSO</string>
 
     <string name="qso_edit_start_time">Start Time:</string>
     <string name="qso_edit_end_time">End Time:</string>
-    <string name="qso_edit_station">Station:</string>
+    <string name="qso_edit_station">Other Station or Net:</string>
     <string name="qso_edit_mode">Mode:</string>
     <string name="qso_edit_comment">Comment:</string>
 

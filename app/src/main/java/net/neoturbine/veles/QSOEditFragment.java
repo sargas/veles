@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -145,6 +146,12 @@ public class QSOEditFragment extends Fragment {
                 public void onLoaderReset(Loader<Cursor> loader) {
                 }
             });
+        } else {
+            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity()
+                    .findViewById(R.id.toolbar_layout);
+            if (appBarLayout != null) {
+                appBarLayout.setTitle(getResources().getString(R.string.title_qso_new));
+            }
         }
 
         return rootView;
@@ -153,6 +160,7 @@ public class QSOEditFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.qso_edit_menu, menu);
+        menu.findItem(R.id.action_delete).setVisible(mQSOid != -1);
     }
 
     @SuppressWarnings("ConstantConditions")
