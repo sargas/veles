@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,8 +113,9 @@ public class QSOListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             if (mValidData && mCursor.moveToPosition(position)) {
-                holder.mIdView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns._ID)));
-                holder.mContentView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.COMMENT)));
+                holder.mIdView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)));
+                holder.mContentView.setText(
+                        DateUtils.getRelativeTimeSpanString(mCursor.getLong(mCursor.getColumnIndexOrThrow(QSOColumns.START_TIME))));
             }
 
             holder.mView.setOnClickListener(new View.OnClickListener() {

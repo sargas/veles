@@ -126,6 +126,8 @@ public class QSOEditFragment extends Fragment {
         mStartTimeButton = (Button) rootView.findViewById(R.id.qso_pick_start_time);
         mEndDateButton = (Button) rootView.findViewById(R.id.qso_pick_end_date);
         mEndTimeButton = (Button) rootView.findViewById(R.id.qso_pick_end_time);
+        mStartTime = Calendar.getInstance();
+        mEndTime = Calendar.getInstance();
 
         if (mQSOid != -1) {
             getLoaderManager().initLoader(QSO_LOADER, null, new LoaderManager.LoaderCallbacks<Cursor>() {
@@ -157,10 +159,9 @@ public class QSOEditFragment extends Fragment {
                         TextView tv = (TextView) getView().findViewById(editBoxIDs.next());
                         tv.setText(data.getString(data.getColumnIndexOrThrow(tableColumns.next())));
                     }
-                    mStartTime = Calendar.getInstance();
+
                     mStartTime.setTimeInMillis(
                             data.getLong(data.getColumnIndexOrThrow(QSOColumns.START_TIME)));
-                    mEndTime = Calendar.getInstance();
                     mEndTime.setTimeInMillis(
                             data.getLong(data.getColumnIndexOrThrow(QSOColumns.END_TIME)));
 
@@ -177,9 +178,6 @@ public class QSOEditFragment extends Fragment {
             if (appBarLayout != null) {
                 appBarLayout.setTitle(getResources().getString(R.string.title_qso_new));
             }
-
-            mStartTime = Calendar.getInstance();
-            mEndTime = Calendar.getInstance();
             updateTimes();
         }
 
