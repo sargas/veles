@@ -18,31 +18,65 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:text="@string/qso_edit_start_time" />
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/qso_start_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/qso_edit_start_time"
-            android:inputType="datetime" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    </android.support.design.widget.TextInputLayout>
+        <Button
+            android:id="@+id/qso_pick_start_date"
+            style="@android:style/Widget.DeviceDefault.Light.Spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    <android.support.design.widget.TextInputLayout
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/qso_pick_start_time"
+            style="@android:style/Widget.DeviceDefault.Light.Spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:text="@string/qso_edit_end_time" />
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/qso_end_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/qso_edit_end_time"
-            android:inputType="datetime" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    </android.support.design.widget.TextInputLayout>
+        <Button
+            android:id="@+id/qso_pick_end_date"
+            style="@android:style/Widget.DeviceDefault.Light.Spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/qso_pick_end_time"
+            style="@android:style/Widget.DeviceDefault.Light.Spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_height="wrap_content"
