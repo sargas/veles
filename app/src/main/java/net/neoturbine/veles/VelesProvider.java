@@ -44,7 +44,11 @@ public class VelesProvider extends ContentProvider {
                     selection = QSOColumns._ID + " = ?";
                     selectionArgs = new String[]{Long.toString(id)};
                 } else {
-                    selection += " " + QSOColumns._ID + " = ?";
+                    selection += " and " + QSOColumns._ID + " = ?";
+
+                    if (selectionArgs == null) {
+                        selectionArgs = new String[]{};
+                    }
                     List<String> selectionArgsList = new ArrayList<>(Arrays.asList(selectionArgs));
                     selectionArgsList.add(Long.toString(id));
                     selectionArgs = selectionArgsList.toArray(new String[1]);
@@ -81,8 +85,8 @@ public class VelesProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
-        if (getContext() != null)
-            getContext().getContentResolver().notifyChange(uri, null);
+        //noinspection ConstantConditions
+        getContext().getContentResolver().notifyChange(uri, null);
 
         return ContentUris.withAppendedId(uri, id);
     }
@@ -114,8 +118,8 @@ public class VelesProvider extends ContentProvider {
         final Cursor c = queryBuilder.query(db, projection, selection, selectionArgs, null,
                 null, sortOrder);
 
-        if (getContext() != null)
-            c.setNotificationUri(getContext().getContentResolver(), uri);
+        //noinspection ConstantConditions
+        c.setNotificationUri(getContext().getContentResolver(), uri);
 
         return c;
     }
@@ -134,8 +138,13 @@ public class VelesProvider extends ContentProvider {
                     selection = QSOColumns._ID + " = ?";
                     selectionArgs = new String[]{Long.toString(id)};
                 } else {
-                    selection += " " + QSOColumns._ID + " = ?";
+                    selection += " and " + QSOColumns._ID + " = ?";
+
+                    if (selectionArgs == null) {
+                        selectionArgs = new String[]{};
+                    }
                     List<String> selectionArgsList = new ArrayList<>(Arrays.asList(selectionArgs));
+
                     selectionArgsList.add(Long.toString(id));
                     selectionArgs = selectionArgsList.toArray(new String[1]);
                 }
@@ -147,7 +156,7 @@ public class VelesProvider extends ContentProvider {
 
     private class VelesSQLHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "qso.db";
-        private static final int DATABASE_VERSION = 1;
+        private static final int DATABASE_VERSION = 2;
 
         public VelesSQLHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -174,9 +183,6 @@ public class VelesProvider extends ContentProvider {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            if (oldVersion > DATABASE_VERSION) {
-                throw new RuntimeException("Downgraded program?");
-            }
             // Not needed yet
         }
     }
