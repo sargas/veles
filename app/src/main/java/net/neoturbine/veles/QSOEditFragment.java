@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -187,6 +188,7 @@ public class QSOEditFragment extends Fragment {
         return rootView;
     }
 
+    @UiThread
     private void bindTimeChangeButtons(final View date_button, final View time_button,
                                        final Calendar calendar) {
         date_button.setOnClickListener(new View.OnClickListener() {
@@ -229,6 +231,7 @@ public class QSOEditFragment extends Fragment {
         });
     }
 
+    @UiThread
     private void updateTimes() {
         if (mStartTime != null) {
             mStartDateButton.setText(

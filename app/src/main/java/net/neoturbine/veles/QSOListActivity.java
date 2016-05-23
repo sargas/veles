@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
+
 /**
  * An activity representing a list of QSOs. This activity
  * has different presentations for handset and tablet-size devices. On
@@ -59,9 +61,11 @@ public class QSOListActivity extends AppCompatActivity {
             }
         });
 
-        View recyclerView = findViewById(R.id.qso_list);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.qso_list);
         assert recyclerView != null;
-        ((RecyclerView) recyclerView).setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this)
+                .showLastDivider().positionInsideItem(true).build());
 
         if (findViewById(R.id.qso_detail_container) != null) {
             // The detail container view will be present only in the
@@ -76,7 +80,7 @@ public class QSOListActivity extends AppCompatActivity {
                 switch (id) {
                     case QSO_LOADER:
                         return new CursorLoader(getApplicationContext(), QSOColumns.CONTENT_URI, null,
-                                null, null, QSOColumns.START_TIME);
+                                null, null, QSOColumns.START_TIME + " DESC");
                     default:
                         throw new IllegalArgumentException("Unknown type of loader: " + id);
                 }
@@ -113,9 +117,11 @@ public class QSOListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             if (mValidData && mCursor.moveToPosition(position)) {
-                holder.mIdView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)));
-                holder.mContentView.setText(
+                holder.mStationView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)));
+                holder.mDateView.setText(
                         DateUtils.getRelativeTimeSpanString(mCursor.getLong(mCursor.getColumnIndexOrThrow(QSOColumns.START_TIME))));
+                holder.mModeView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.MODE)));
+                holder.mFrequencyView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.COMMENT)));
             }
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -130,6 +136,7 @@ public class QSOListActivity extends AppCompatActivity {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, QSODetailActivity.class);
                         intent.putExtra(QSODetailActivity.ARG_QSO_ID, getItemId(holder.getAdapterPosition()));
+                        android.util.Log.v("QSO", "Eck");
 
                         context.startActivity(intent);
                     }
@@ -176,20 +183,24 @@ public class QSOListActivity extends AppCompatActivity {
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            public final TextView mIdView;
-            public final TextView mContentView;
+            public final TextView mStationView;
+            public final TextView mDateView;
+            public final TextView mFrequencyView;
+            public final TextView mModeView;
             public final View mView;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
-                mContentView = (TextView) view.findViewById(R.id.content);
+                mStationView = (TextView) view.findViewById(R.id.station_name);
+                mDateView = (TextView) view.findViewById(R.id.date);
+                mModeView = (TextView) view.findViewById(R.id.mode);
+                mFrequencyView = (TextView) view.findViewById(R.id.frequency);
             }
 
             @Override
             public String toString() {
-                return super.toString() + " '" + mContentView.getText() + "'";
+                return super.toString() + " '" + mDateView.getText() + "'";
             }
         }
     }

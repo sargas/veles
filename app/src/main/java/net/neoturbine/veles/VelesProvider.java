@@ -128,10 +128,11 @@ public class VelesProvider extends ContentProvider {
     public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         final SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
-
+        int number_updated;
         switch (sUriMatcher.match(uri)) {
             case URI_QSO:
-                return db.update(QSOColumns.TABLE_NAME, values, selection, selectionArgs);
+                number_updated = db.update(QSOColumns.TABLE_NAME, values, selection, selectionArgs);
+                break;
             case URI_QSO_ID:
                 long id = ContentUris.parseId(uri);
                 if (selection == null) {
@@ -148,10 +149,16 @@ public class VelesProvider extends ContentProvider {
                     selectionArgsList.add(Long.toString(id));
                     selectionArgs = selectionArgsList.toArray(new String[1]);
                 }
-                return db.update(QSOColumns.TABLE_NAME, values, selection, selectionArgs);
+                number_updated = db.update(QSOColumns.TABLE_NAME, values, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
+
+        //noinspection ConstantConditions
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return number_updated;
     }
 
     private class VelesSQLHelper extends SQLiteOpenHelper {
