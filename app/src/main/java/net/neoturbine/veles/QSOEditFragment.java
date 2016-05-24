@@ -55,10 +55,12 @@ public class QSOEditFragment extends Fragment {
 
     private static final List<Integer> mTextBoxIDs = Arrays.asList(
             R.id.qso_station, R.id.qso_mode,
+            R.id.qso_tx_freq, R.id.qso_rx_freq,
             R.id.qso_comment
     );
     private static final List<String> mTextBoxColumns = Arrays.asList(
             QSOColumns.OTHER_STATION, QSOColumns.MODE,
+            QSOColumns.TRANSMISSION_FREQUENCY, QSOColumns.RECEIVE_FREQUENCY,
             QSOColumns.COMMENT
     );
 

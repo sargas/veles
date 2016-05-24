@@ -117,11 +117,14 @@ public class QSOListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             if (mValidData && mCursor.moveToPosition(position)) {
-                holder.mStationView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)));
+                holder.mStationView.setText(
+                        mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)));
                 holder.mDateView.setText(
-                        DateUtils.getRelativeTimeSpanString(mCursor.getLong(mCursor.getColumnIndexOrThrow(QSOColumns.START_TIME))));
+                        DateUtils.getRelativeTimeSpanString(
+                                mCursor.getLong(mCursor.getColumnIndexOrThrow(QSOColumns.START_TIME))));
                 holder.mModeView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.MODE)));
-                holder.mFrequencyView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.COMMENT)));
+                holder.mFrequencyView.setText(
+                        mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.TRANSMISSION_FREQUENCY)));
             }
 
             holder.mView.setOnClickListener(new View.OnClickListener() {

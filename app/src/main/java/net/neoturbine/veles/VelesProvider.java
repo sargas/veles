@@ -171,21 +171,7 @@ public class VelesProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            final String CREATE_QSO_TABLE = "CREATE  TABLE \"QSO\" (" +
-                    "\"_id\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , " +
-                    "\"start_time\" DATETIME, \"end_time\" DATETIME, " +
-                    "\"other_station\" TEXT, " +
-                    "\"mode\" TEXT, " +
-                    "\"tx_freq\" TEXT, " +
-                    "\"rx_freq\" TEXT, " +
-                    "\"power\" TEXT, " +
-                    "\"my_qth\" TEXT, " +
-                    "\"my_locator\" TEXT, " +
-                    "\"other_qth\" TEXT, " +
-                    "\"other_locator\" TEXT, " +
-                    "\"comment\" TEXT )";
-
-            db.execSQL(CREATE_QSO_TABLE);
+            db.execSQL(QSOColumns.CREATE_TABLE_SQL);
         }
 
         @Override
