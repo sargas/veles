@@ -1,9 +1,91 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/qso_detail"
-    style="?android:attr/textAppearanceLarge"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    android:textIsSelectable="true"
-    tools:context="net.neoturbine.veles.QSODetailFragment" />
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="qso"
+            type="net.neoturbine.veles.QSO" />
+
+        <variable
+            name="startTime"
+            type="String" />
+
+        <variable
+            name="endTime"
+            type="String" />
+    </data>
+
+    <LinearLayout
+        style="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context="net.neoturbine.veles.QSODetailFragment">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:hint="@string/qso_edit_start_time"
+                android:inputType="none"
+                android:text="@{startTime}"
+                android:textIsSelectable="true"
+                tools:ignore="Deprecated"
+                tools:text="Start Time" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:hint="@string/qso_edit_end_time"
+                android:inputType="none"
+                android:text="@{endTime}"
+                android:textIsSelectable="true"
+                tools:ignore="Deprecated"
+                tools:text="End Time" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:hint="@string/qso_edit_mode"
+                android:inputType="none"
+                android:text="@{qso.getMode()}"
+                android:textIsSelectable="true"
+                tools:ignore="Deprecated"
+                tools:text="Mode" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:hint="@string/qso_edit_comment"
+                android:inputType="none"
+                android:text="@{qso.getComment()}"
+                android:textIsSelectable="true"
+                tools:ignore="Deprecated"
+                tools:text="Some Comments Here" />
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+</layout>

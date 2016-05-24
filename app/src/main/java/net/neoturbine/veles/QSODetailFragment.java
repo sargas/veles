@@ -2,17 +2,19 @@ package net.neoturbine.veles;
 
 import android.content.ContentUris;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import net.neoturbine.veles.databinding.QsoDetailBinding;
 
 /**
  * A fragment representing a single QSO detail screen.
@@ -28,7 +30,6 @@ public class QSODetailFragment extends Fragment {
     private static final String ARG_QSO_ID = "qso_id";
 
     private long mQSOid = -1;
-    private String mQSOInfo;
 
     private static final int QSO_LOADER = 0;
 
@@ -40,8 +41,10 @@ public class QSODetailFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = DataBindingUtil.inflate(inflater, R.layout.qso_detail, container, false)
+                .getRoot();
 
         if (getArguments().containsKey(ARG_QSO_ID)) {
             mQSOid = getArguments().getLong(ARG_QSO_ID);
@@ -62,15 +65,19 @@ public class QSODetailFragment extends Fragment {
 
                 @Override
                 public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                    if (data.getCount() == 0) {
-                        return;
-                    }
                     data.moveToFirst();
-                    mQSOInfo = DatabaseUtils.dumpCursorToString(data);
 
-                    View rootView = getActivity().findViewById(R.id.qso_detail);
-
-                    ((TextView) rootView.findViewById(R.id.qso_detail)).setText(mQSOInfo);
+                    QsoDetailBinding binding = DataBindingUtil.getBinding(getView());
+                    assert binding != null;
+                    binding.setQso(new QSO(data));
+                    binding.setStartTime(DateUtils.formatDateTime(
+                            getContext(),
+                            data.getLong(data.getColumnIndexOrThrow(QSOColumns.START_TIME)),
+                            DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR));
+                    binding.setEndTime(DateUtils.formatDateTime(
+                            getContext(),
+                            data.getLong(data.getColumnIndexOrThrow(QSOColumns.END_TIME)),
+                            DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR));
 
                     CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity().findViewById(R.id.toolbar_layout);
                     if (appBarLayout != null) {
@@ -82,16 +89,6 @@ public class QSODetailFragment extends Fragment {
                 public void onLoaderReset(Loader<Cursor> loader) {
                 }
             });
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.qso_detail, container, false);
-
-        if (mQSOid != -1) {
-            ((TextView) rootView.findViewById(R.id.qso_detail)).setText(mQSOInfo);
         }
 
         return rootView;
