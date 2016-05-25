@@ -16,7 +16,7 @@ import android.view.View;
  * in a {@link QSOListActivity}.
  */
 public class QSODetailActivity extends AppCompatActivity {
-    public static final String ARG_QSO_ID = "qso_id";
+    static final String ARG_QSO_ID = "qso_id";
 
     private static final int REQUEST_EDIT = 1;
     private long mQSOid;

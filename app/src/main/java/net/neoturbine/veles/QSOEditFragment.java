@@ -70,7 +70,7 @@ public class QSOEditFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public interface OnFinishEditListener {
+    interface OnFinishEditListener {
         void onFinishEdit();
 
         void onFinishDelete();
@@ -83,7 +83,7 @@ public class QSOEditFragment extends Fragment {
      * @param qso_id Parameter 1.
      * @return A new instance of fragment QSOEditFragment.
      */
-    public static QSOEditFragment newInstance(long qso_id) {
+    static QSOEditFragment newInstance(long qso_id) {
         QSOEditFragment fragment = new QSOEditFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_QSO_ID, qso_id);
@@ -91,7 +91,7 @@ public class QSOEditFragment extends Fragment {
         return fragment;
     }
 
-    public static QSOEditFragment newInstance() {
+    static QSOEditFragment newInstance() {
         return new QSOEditFragment();
     }
 

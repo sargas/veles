@@ -98,13 +98,13 @@ public class QSOListActivity extends AppCompatActivity {
         });
     }
 
-    public class SimpleItemRecyclerViewAdapter
+    class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private Cursor mCursor = null;
         private boolean mValidData = false;
 
-        public SimpleItemRecyclerViewAdapter() {
+        SimpleItemRecyclerViewAdapter() {
         }
 
         @Override
@@ -163,7 +163,7 @@ public class QSOListActivity extends AppCompatActivity {
             return -1;
         }
 
-        public void changeCursor(Cursor newCursor) {
+        void changeCursor(Cursor newCursor) {
             if (newCursor == mCursor) {
                 return;
             }
@@ -184,14 +184,14 @@ public class QSOListActivity extends AppCompatActivity {
             }
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final TextView mStationView;
-            public final TextView mDateView;
-            public final TextView mFrequencyView;
-            public final TextView mModeView;
-            public final View mView;
+        class ViewHolder extends RecyclerView.ViewHolder {
+            final TextView mStationView;
+            final TextView mDateView;
+            final TextView mFrequencyView;
+            final TextView mModeView;
+            final View mView;
 
-            public ViewHolder(View view) {
+            ViewHolder(View view) {
                 super(view);
                 mView = view;
                 mStationView = (TextView) view.findViewById(R.id.station_name);

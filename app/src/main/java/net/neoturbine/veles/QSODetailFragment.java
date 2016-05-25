@@ -100,7 +100,7 @@ public class QSODetailFragment extends Fragment {
      * @param qso_id Parameter 1.
      * @return A new instance of fragment QSODetailFragment.
      */
-    public static QSODetailFragment newInstance(long qso_id) {
+    static QSODetailFragment newInstance(long qso_id) {
         QSODetailFragment fragment = new QSODetailFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_QSO_ID, qso_id);

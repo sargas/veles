@@ -31,7 +31,7 @@ public final class QSO {
         this.mComment = comment;
     }
 
-    public QSO(Cursor data) {
+    QSO(Cursor data) {
         this(
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)),
                 data.getLong(data.getColumnIndexOrThrow(QSOColumns.START_TIME)),
