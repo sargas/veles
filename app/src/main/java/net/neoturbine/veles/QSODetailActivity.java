@@ -1,6 +1,5 @@
 package net.neoturbine.veles;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +17,8 @@ import android.view.View;
  */
 public class QSODetailActivity extends AppCompatActivity {
     public static final String ARG_QSO_ID = "qso_id";
+
+    private static final int REQUEST_EDIT = 1;
     private long mQSOid;
 
     @Override
@@ -32,11 +33,10 @@ public class QSODetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Context context = view.getContext();
-                Intent intent = new Intent(context, QSOEditActivity.class);
+                Intent intent = new Intent(QSODetailActivity.this, QSOEditActivity.class);
                 intent.putExtra(QSOEditActivity.ARG_QSO_ID, mQSOid);
 
-                context.startActivity(intent);
+                startActivityForResult(intent, REQUEST_EDIT);
             }
         });
 
@@ -83,5 +83,16 @@ public class QSODetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_EDIT:
+                if (resultCode == QSOEditActivity.RESULT_DELETED) {
+                    finish();
+                }
+                break;
+        }
     }
 }

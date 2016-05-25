@@ -66,7 +66,6 @@ public class QSODetailFragment extends Fragment {
                 @Override
                 public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
                     data.moveToFirst();
-
                     QsoDetailBinding binding = DataBindingUtil.getBinding(getView());
                     assert binding != null;
                     binding.setQso(new QSO(data));
@@ -99,7 +98,7 @@ public class QSODetailFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param qso_id Parameter 1.
-     * @return A new instance of fragment QSOEditFragment.
+     * @return A new instance of fragment QSODetailFragment.
      */
     public static QSODetailFragment newInstance(long qso_id) {
         QSODetailFragment fragment = new QSODetailFragment();

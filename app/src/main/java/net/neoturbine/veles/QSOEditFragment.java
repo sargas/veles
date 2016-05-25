@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -71,6 +72,8 @@ public class QSOEditFragment extends Fragment {
 
     public interface OnFinishEditListener {
         void onFinishEdit();
+
+        void onFinishDelete();
     }
 
     /**
@@ -150,9 +153,6 @@ public class QSOEditFragment extends Fragment {
                 @SuppressWarnings("ConstantConditions")
                 @Override
                 public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                    if (data.getCount() == 0) {
-                        return;
-                    }
                     data.moveToFirst();
 
                     Iterator<Integer> editBoxIDs = mTextBoxIDs.iterator();
@@ -284,7 +284,6 @@ public class QSOEditFragment extends Fragment {
                             mNewValues, null, null
                     );
                 }
-                //TODO Show SnackBar
                 mCallback.onFinishEdit();
                 return true;
             case R.id.action_delete:
@@ -292,8 +291,8 @@ public class QSOEditFragment extends Fragment {
                         ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
                         null, null
                 );
-                //TODO Show SnackBar + undo action
-                mCallback.onFinishEdit();
+                Toast.makeText(getContext(), R.string.toast_deleted, Toast.LENGTH_LONG).show();
+                mCallback.onFinishDelete();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

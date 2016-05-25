@@ -139,7 +139,6 @@ public class QSOListActivity extends AppCompatActivity {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, QSODetailActivity.class);
                         intent.putExtra(QSODetailActivity.ARG_QSO_ID, getItemId(holder.getAdapterPosition()));
-                        android.util.Log.v("QSO", "Eck");
 
                         context.startActivity(intent);
                     }
