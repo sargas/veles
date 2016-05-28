@@ -153,7 +153,9 @@ public class QSOEditFragment extends Fragment {
                 @SuppressWarnings("ConstantConditions")
                 @Override
                 public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                    data.moveToFirst();
+                    if (!data.moveToFirst()) {
+                        return;
+                    }
 
                     Iterator<Integer> editBoxIDs = mTextBoxIDs.iterator();
                     Iterator<String> tableColumns = mTextBoxColumns.iterator();

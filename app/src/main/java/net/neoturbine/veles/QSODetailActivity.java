@@ -2,12 +2,10 @@ package net.neoturbine.veles;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 
 /**
  * An activity representing a single QSO detail screen. This
@@ -15,11 +13,9 @@ import android.view.View;
  * item details are presented side-by-side with a list of items
  * in a {@link QSOListActivity}.
  */
-public class QSODetailActivity extends AppCompatActivity {
+public class QSODetailActivity extends AppCompatActivity
+        implements QSODetailFragment.onFinishListener {
     static final String ARG_QSO_ID = "qso_id";
-
-    private static final int REQUEST_EDIT = 1;
-    private long mQSOid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,25 +24,11 @@ public class QSODetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        assert fab != null;
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(QSODetailActivity.this, QSOEditActivity.class);
-                intent.putExtra(QSOEditActivity.ARG_QSO_ID, mQSOid);
-
-                startActivityForResult(intent, REQUEST_EDIT);
-            }
-        });
-
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        mQSOid = getIntent().getLongExtra(ARG_QSO_ID, -1);
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -86,13 +68,9 @@ public class QSODetailActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_EDIT:
-                if (resultCode == QSOEditActivity.RESULT_DELETED) {
-                    finish();
-                }
-                break;
-        }
+    public void onFinishDelete() {
+        finish();
     }
+
+
 }

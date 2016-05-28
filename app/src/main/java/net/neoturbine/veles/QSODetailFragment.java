@@ -1,6 +1,8 @@
 package net.neoturbine.veles;
 
 import android.content.ContentUris;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -11,8 +13,12 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import net.neoturbine.veles.databinding.QsoDetailBinding;
 
@@ -33,6 +39,10 @@ public class QSODetailFragment extends Fragment {
 
     private static final int QSO_LOADER = 0;
 
+    private static final int REQUEST_EDIT = 1;
+
+    private onFinishListener mCallback;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -40,9 +50,26 @@ public class QSODetailFragment extends Fragment {
     public QSODetailFragment() {
     }
 
+    interface onFinishListener {
+        void onFinishDelete();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mCallback = (onFinishListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() +
+                    " must implement OnFinishEditListener");
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         View rootView = DataBindingUtil.inflate(inflater, R.layout.qso_detail, container, false)
                 .getRoot();
 
@@ -65,9 +92,12 @@ public class QSODetailFragment extends Fragment {
 
                 @Override
                 public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                    data.moveToFirst();
+                    if (!data.moveToFirst()) {
+                        return;
+                    }
                     QsoDetailBinding binding = DataBindingUtil.getBinding(getView());
                     assert binding != null;
+
                     binding.setQso(new QSO(data));
                     binding.setStartTime(DateUtils.formatDateTime(
                             getContext(),
@@ -106,5 +136,42 @@ public class QSODetailFragment extends Fragment {
         args.putLong(ARG_QSO_ID, qso_id);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.qso_detail_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                Intent intent = new Intent(getContext(), QSOEditActivity.class);
+                intent.putExtra(QSOEditActivity.ARG_QSO_ID, mQSOid);
+
+                startActivityForResult(intent, REQUEST_EDIT);
+                return true;
+            case R.id.action_delete:
+                getActivity().getContentResolver().delete(
+                        ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
+                        null, null
+                );
+                Toast.makeText(getContext(), R.string.toast_deleted, Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_EDIT:
+                if (resultCode == QSOEditActivity.RESULT_DELETED) {
+                    mCallback.onFinishDelete();
+                }
+                break;
+        }
     }
 }

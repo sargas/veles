@@ -34,10 +34,12 @@ public class VelesProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
+        int number_deleted;
 
         switch (sUriMatcher.match(uri)) {
             case URI_QSO:
-                return db.delete(QSOColumns.TABLE_NAME, selection, selectionArgs);
+                number_deleted = db.delete(QSOColumns.TABLE_NAME, selection, selectionArgs);
+                break;
             case URI_QSO_ID:
                 long id = ContentUris.parseId(uri);
                 if (selection == null) {
@@ -54,10 +56,15 @@ public class VelesProvider extends ContentProvider {
                     selectionArgs = selectionArgsList.toArray(new String[1]);
                 }
 
-                return db.delete(QSOColumns.TABLE_NAME, selection, selectionArgs);
+                number_deleted = db.delete(QSOColumns.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
+        //noinspection ConstantConditions
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return number_deleted;
     }
 
     @Override
