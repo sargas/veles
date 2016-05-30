@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -46,10 +45,10 @@ public class QSOEditFragment extends Fragment {
     private Calendar mStartTime;
     private Calendar mEndTime;
 
-    private Button mStartTimeButton;
-    private Button mStartDateButton;
-    private Button mEndTimeButton;
-    private Button mEndDateButton;
+    private TextView mStartTimeButton;
+    private TextView mStartDateButton;
+    private TextView mEndTimeButton;
+    private TextView mEndDateButton;
     private OnFinishEditListener mCallback;
 
     private static final int QSO_LOADER = 0;
@@ -132,10 +131,10 @@ public class QSOEditFragment extends Fragment {
                 android.R.layout.simple_list_item_1,
                 getResources().getStringArray(R.array.qso_modes)));
 
-        mStartDateButton = (Button) rootView.findViewById(R.id.qso_pick_start_date);
-        mStartTimeButton = (Button) rootView.findViewById(R.id.qso_pick_start_time);
-        mEndDateButton = (Button) rootView.findViewById(R.id.qso_pick_end_date);
-        mEndTimeButton = (Button) rootView.findViewById(R.id.qso_pick_end_time);
+        mStartDateButton = (TextView) rootView.findViewById(R.id.qso_pick_start_date);
+        mStartTimeButton = (TextView) rootView.findViewById(R.id.qso_pick_start_time);
+        mEndDateButton = (TextView) rootView.findViewById(R.id.qso_pick_end_date);
+        mEndTimeButton = (TextView) rootView.findViewById(R.id.qso_pick_end_time);
         mStartTime = Calendar.getInstance();
         mEndTime = Calendar.getInstance();
 

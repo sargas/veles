@@ -20,21 +20,27 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <TextView
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/qso_edit_start_time"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/qso_pick_start_date"
-            style="@android:style/Widget.DeviceDefault.Light.Spinner"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/qso_pick_start_date"
+                style="@android:style/Widget.DeviceDefault.Light.Spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:editable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:hint="@string/qso_edit_start_time"
+                android:inputType="none"
+                tools:ignore="Deprecated,TextFields"/>
+        </android.support.design.widget.TextInputLayout>
 
         <Space
             android:layout_width="0dp"
@@ -48,21 +54,27 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-    <TextView
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/qso_edit_end_time"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/qso_pick_end_date"
-            style="@android:style/Widget.DeviceDefault.Light.Spinner"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/qso_pick_end_date"
+                style="@android:style/Widget.DeviceDefault.Light.Spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:editable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:hint="@string/qso_edit_end_time"
+                android:inputType="none"
+                tools:ignore="Deprecated,TextFields"/>
+        </android.support.design.widget.TextInputLayout>
 
         <Space
             android:layout_width="0dp"
@@ -111,7 +123,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/qso_edit_comment"
             android:inputType="textMultiLine"
-            android:lines="3"/>
+            android:minLines="3"/>
 
     </android.support.design.widget.TextInputLayout>
 
