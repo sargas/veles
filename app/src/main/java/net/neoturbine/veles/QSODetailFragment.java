@@ -158,6 +158,7 @@ public class QSODetailFragment extends Fragment {
                         null, null
                 );
                 Toast.makeText(getContext(), R.string.toast_deleted, Toast.LENGTH_LONG).show();
+                mCallback.onFinishDelete();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
