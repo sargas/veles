@@ -56,13 +56,17 @@ public class QSOEditFragment extends Fragment {
 
     private static final List<Integer> mTextBoxIDs = Arrays.asList(
             R.id.qso_station, R.id.qso_mode,
-            R.id.qso_tx_freq, R.id.qso_rx_freq,
             R.id.qso_comment
     );
     private static final List<String> mTextBoxColumns = Arrays.asList(
             QSOColumns.OTHER_STATION, QSOColumns.MODE,
-            QSOColumns.TRANSMISSION_FREQUENCY, QSOColumns.RECEIVE_FREQUENCY,
             QSOColumns.COMMENT
+    );
+    private static final List<Integer> mFrequencyViewIDs = Arrays.asList(
+            R.id.qso_tx_freq, R.id.qso_rx_freq
+    );
+    private static final List<String> mFrequencyViewColumns = Arrays.asList(
+            QSOColumns.TRANSMISSION_FREQUENCY, QSOColumns.RECEIVE_FREQUENCY
     );
 
     @SuppressWarnings("WeakerAccess")
@@ -163,6 +167,16 @@ public class QSOEditFragment extends Fragment {
                     while (editBoxIDs.hasNext() && tableColumns.hasNext()) {
                         TextView tv = (TextView) getView().findViewById(editBoxIDs.next());
                         tv.setText(data.getString(data.getColumnIndexOrThrow(tableColumns.next())));
+                    }
+
+                    Iterator<Integer> frequencySelectorIDs = mFrequencyViewIDs.iterator();
+                    Iterator<String> freqTableColumns = mFrequencyViewColumns.iterator();
+
+                    while (frequencySelectorIDs.hasNext() && freqTableColumns.hasNext()) {
+                        FrequencySelectorView fsv = (FrequencySelectorView) getView()
+                                .findViewById(frequencySelectorIDs.next());
+                        fsv.setFrequency(
+                                data.getString(data.getColumnIndexOrThrow(freqTableColumns.next())));
                     }
 
                     mStartTime.setTimeInMillis(
@@ -270,6 +284,15 @@ public class QSOEditFragment extends Fragment {
                 while (editBoxIDs.hasNext() && tableColumns.hasNext()) {
                     TextView tv = (TextView) getView().findViewById(editBoxIDs.next());
                     mNewValues.put(tableColumns.next(), tv.getText().toString());
+                }
+
+                Iterator<Integer> frequencySelectorIDs = mFrequencyViewIDs.iterator();
+                Iterator<String> freqTableColumns = mFrequencyViewColumns.iterator();
+
+                while (frequencySelectorIDs.hasNext() && freqTableColumns.hasNext()) {
+                    FrequencySelectorView fsv = (FrequencySelectorView) getView()
+                            .findViewById(frequencySelectorIDs.next());
+                    mNewValues.put(freqTableColumns.next(), fsv.getFrequencyAsString());
                 }
 
                 mNewValues.put(QSOColumns.START_TIME, mStartTime.getTimeInMillis());

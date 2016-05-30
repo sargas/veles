@@ -23,4 +23,11 @@
         <item>SSB</item>
         <item>CW</item>
     </string-array>
+
+    <string-array name="frequency_units">
+        <item/>
+        <item>GHz</item>
+        <item>MHz</item>
+        <item>KHz</item>
+    </string-array>
 </resources>
