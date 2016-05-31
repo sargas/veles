@@ -28,6 +28,9 @@ android {
     }
     productFlavors {
     }
+    aaptOptions {
+        ignoreAssetsPattern 'TaskList.txt'
+    }
 }
 
 repositories {

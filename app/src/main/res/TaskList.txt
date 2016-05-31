@@ -1,0 +1,8 @@
+TODO Add location information
+TODO Make receiving frequency (when adding new QSO) default to transmitting one, maybe with a checkbox
+TODO Make nice view in ListActivity when there are no QSOs to display
+TODO Change color scheme to bright color
+TODO Make clicking a QSO (or the Edit button, or the FAB) show the activity poping over
+TODO Test everything on tablet screens
+TODO Make QSO list have bigger items, more stylized
+TODO Fix unevenness of EditFragment's time fields with the other fields
