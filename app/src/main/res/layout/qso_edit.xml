@@ -101,16 +101,29 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <net.neoturbine.veles.FrequencySelectorView
+    <net.neoturbine.veles.EditTextWithUnitsView
+        android:id="@+id/qso_power"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:units="@array/power_units"
+        app:default_position="2"
+        app:hint="@string/qso_power"/>
+
+
+    <net.neoturbine.veles.EditTextWithUnitsView
         android:id="@+id/qso_tx_freq"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:units="@array/frequency_units"
+        app:default_position="2"
         app:hint="@string/qso_edit_tx_freq"/>
 
-    <net.neoturbine.veles.FrequencySelectorView
+    <net.neoturbine.veles.EditTextWithUnitsView
         android:id="@+id/qso_rx_freq"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:units="@array/frequency_units"
+        app:default_position="2"
         app:hint="@string/qso_edit_rx_freq"/>
 
     <android.support.design.widget.TextInputLayout

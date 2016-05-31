@@ -28,6 +28,7 @@ interface QSOColumns extends BaseColumns {
     String END_TIME = "end_time";
     String OTHER_STATION = "other_station";
     String MODE = "mode";
+    String POWER = "power";
     String TRANSMISSION_FREQUENCY = "tx_freq";
     String RECEIVE_FREQUENCY = "rx_freq";
     String COMMENT = "comment";

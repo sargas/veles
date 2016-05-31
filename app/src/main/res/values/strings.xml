@@ -8,9 +8,10 @@
     <string name="qso_edit_end_time">End Time</string>
     <string name="qso_edit_station">Other Station or Net</string>
     <string name="qso_edit_mode">Mode</string>
+    <string name="qso_power">Power</string>
     <string name="qso_edit_tx_freq">Transmission Frequency</string>
     <string name="qso_edit_rx_freq">Receiving Frequency</string>
-    <string name="qso_edit_comment">Comment</string>
+    <string name="qso_edit_comment">Comments</string>
 
     <string name="action_save">Save</string>
     <string name="action_edit">Edit</string>
@@ -29,5 +30,12 @@
         <item>GHz</item>
         <item>MHz</item>
         <item>KHz</item>
+    </string-array>
+
+    <string-array name="power_units">
+        <item/>
+        <item>mW</item>
+        <item>W</item>
+        <item>kW</item>
     </string-array>
 </resources>
