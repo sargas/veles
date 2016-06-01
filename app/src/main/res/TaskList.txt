@@ -4,4 +4,5 @@ TODO Make clicking a QSO (or the Edit button, or the FAB) show a smooth animatio
 TODO Setup everything for tablet screens
 TODO Make QSO list have bigger items, more stylized
 TODO Fix unevenness of EditFragment's time fields with the other fields
-TODO Add espresso tests
+TODO Add espresso tests for launching activities from ListActivity
+TODO Add espresso tests for other activities/fragments

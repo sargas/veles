@@ -9,6 +9,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
+import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +39,8 @@ public class QSOListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
 
-    private final SimpleItemRecyclerViewAdapter mAdapter = new SimpleItemRecyclerViewAdapter();
+    @VisibleForTesting
+    final SimpleItemRecyclerViewAdapter mAdapter = new SimpleItemRecyclerViewAdapter();
 
     private static final int QSO_LOADER = 0;
     private RecyclerView mRecyclerView;
