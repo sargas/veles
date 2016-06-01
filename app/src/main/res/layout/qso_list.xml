@@ -1,13 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/qso_list"
-    android:name="net.neoturbine.veles.QSOListFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context="net.neoturbine.veles.QSOListActivity"
-    tools:listitem="@layout/qso_list_content" />
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:name="net.neoturbine.veles.QSOListFragment"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             android:orientation="vertical"
+                                             tools:context="net.neoturbine.veles.QSOListActivity"
+                                             android:id="@+id/constraintLayout">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/qso_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/qso_list_content"
+        app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
+        android:layout_marginStart="@dimen/list_text_margin"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
+        android:layout_marginTop="@dimen/list_text_margin"
+        tools:layout_constraintTop_creator="1"
+        app:layout_constraintRight_toRightOf="@+id/constraintLayout"
+        android:layout_marginEnd="@dimen/list_text_margin"
+        tools:layout_constraintRight_creator="1"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+        android:layout_marginBottom="@dimen/list_text_margin"
+        tools:layout_constraintBottom_creator="1"/>
+
+    <TextView
+        android:id="@+id/empty_list_message"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/qso_empty_list_message"
+        app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
+        app:layout_constraintRight_toRightOf="@+id/constraintLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"/>
+
+    <TextView
+        android:id="@+id/empty_list_link"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/qso_empty_list_link"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
+        app:layout_constraintTop_toBottomOf="@+id/empty_list_message"
+        android:layout_marginTop="@dimen/text_margin"
+        app:layout_constraintRight_toRightOf="@+id/constraintLayout"/>
+
+</android.support.constraint.ConstraintLayout>

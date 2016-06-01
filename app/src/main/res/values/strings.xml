@@ -17,6 +17,9 @@
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
 
+    <string name="qso_empty_list_message">You don\'t have any QSOs recorded</string>
+    <string name="qso_empty_list_link">Add a QSO</string>
+
     <string name="toast_deleted">Deleted QSO</string>
 
     <string-array name="qso_modes">

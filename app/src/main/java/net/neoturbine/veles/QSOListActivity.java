@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +41,9 @@ public class QSOListActivity extends AppCompatActivity {
     private final SimpleItemRecyclerViewAdapter mAdapter = new SimpleItemRecyclerViewAdapter();
 
     private static final int QSO_LOADER = 0;
+    private RecyclerView mRecyclerView;
+    private TextView mEmptyListLink;
+    private TextView mEmptyListMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,22 +55,39 @@ public class QSOListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        assert fab != null;
-        fab.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener startAddActivity = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Context context = view.getContext();
                 Intent intent = new Intent(context, QSOEditActivity.class);
                 context.startActivity(intent);
             }
-        });
+        };
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.qso_list);
-        assert recyclerView != null;
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this)
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        assert fab != null;
+        fab.setOnClickListener(startAddActivity);
+
+        mEmptyListMessage = (TextView) findViewById(R.id.empty_list_message);
+        mEmptyListLink = (TextView) findViewById(R.id.empty_list_link);
+        assert mEmptyListLink != null;
+        mEmptyListLink.setOnClickListener(startAddActivity);
+        mEmptyListLink.setMovementMethod(LinkMovementMethod.getInstance());
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.qso_list);
+        assert mRecyclerView != null;
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this)
                 .showLastDivider().positionInsideItem(true).build());
+
+        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                displayOrHideEmptyView();
+            }
+        });
+        displayOrHideEmptyView();
 
         if (findViewById(R.id.qso_detail_container) != null) {
             // The detail container view will be present only in the
@@ -96,6 +118,19 @@ public class QSOListActivity extends AppCompatActivity {
                 mAdapter.changeCursor(null);
             }
         });
+    }
+
+    @UiThread
+    private void displayOrHideEmptyView() {
+        if (mAdapter.getItemCount() > 0) {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mEmptyListMessage.setVisibility(View.GONE);
+            mEmptyListLink.setVisibility(View.GONE);
+        } else {
+            mRecyclerView.setVisibility(View.GONE);
+            mEmptyListMessage.setVisibility(View.VISIBLE);
+            mEmptyListLink.setVisibility(View.VISIBLE);
+        }
     }
 
     class SimpleItemRecyclerViewAdapter
