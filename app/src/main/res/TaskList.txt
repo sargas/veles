@@ -6,3 +6,7 @@ TODO Make QSO list have bigger items, more stylized
 TODO Fix unevenness of EditFragment's time fields with the other fields
 TODO Add espresso tests for launching activities from ListActivity
 TODO Add espresso tests for other activities/fragments
+TODO Add RST values
+TODO Show map of previous contacts
+TODO Test orientation changes in all activities
+TODO Nice animation when clicking FAB or "add new QSO" link
