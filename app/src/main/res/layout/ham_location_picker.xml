@@ -11,7 +11,7 @@
 
         <variable
             name="currentTab"
-            type="net.neoturbine.veles.HamLocationEditView.CurrentTabHolder"/>
+            type="net.neoturbine.veles.HamLocationPicker.CurrentTabHolder"/>
     </data>
 
     <LinearLayout

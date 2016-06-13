@@ -70,7 +70,7 @@ public class QSOEditFragment extends Fragment {
             QSOColumns.TRANSMISSION_FREQUENCY, QSOColumns.RECEIVE_FREQUENCY,
             QSOColumns.POWER
     );
-    private HamLocationEditView mMyLocation;
+    private HamLocationPicker mMyLocation;
 
     @SuppressWarnings("WeakerAccess")
     public QSOEditFragment() {
@@ -140,7 +140,7 @@ public class QSOEditFragment extends Fragment {
         mEndDateButton = (TextView) rootView.findViewById(R.id.qso_pick_end_date);
         mEndTimeButton = (TextView) rootView.findViewById(R.id.qso_pick_end_time);
 
-        mMyLocation = (HamLocationEditView) getChildFragmentManager().findFragmentById(R.id.qso_my_location);
+        mMyLocation = (HamLocationPicker) getChildFragmentManager().findFragmentById(R.id.qso_my_location);
         mStartTime = Calendar.getInstance();
         mEndTime = Calendar.getInstance();
 
@@ -301,7 +301,7 @@ public class QSOEditFragment extends Fragment {
                 while (unitBoxIDs.hasNext() && unitBoxColumns.hasNext()) {
                     EditTextWithUnitsView etu = (EditTextWithUnitsView) getView()
                             .findViewById(unitBoxIDs.next());
-                    mNewValues.put(unitBoxColumns.next(), etu.getFrequencyAsString());
+                    mNewValues.put(unitBoxColumns.next(), etu.getValueAsString());
                 }
 
                 mNewValues.put(QSOColumns.START_TIME, mStartTime.getTimeInMillis());

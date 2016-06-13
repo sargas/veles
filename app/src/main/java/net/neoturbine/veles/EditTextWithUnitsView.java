@@ -119,7 +119,7 @@ public class EditTextWithUnitsView extends LinearLayout {
         mValue.valueNumber.set(value);
     }
 
-    String getFrequencyAsString() {
+    String getValueAsString() {
         if (TextUtils.isEmpty(mValue.valueNumber.get())) {
             return "";
         } else if (mValue.unitIdx.get() > 0) {

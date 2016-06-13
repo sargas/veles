@@ -26,7 +26,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
-import net.neoturbine.veles.databinding.HamLocationEditViewBinding;
+import net.neoturbine.veles.databinding.HamLocationPickerBinding;
 
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 import static net.neoturbine.veles.QTHConverter.LatLngToQTH;
 import static net.neoturbine.veles.QTHConverter.LocationToQTH;
 
-public final class HamLocationEditView extends Fragment
+public final class HamLocationPicker extends Fragment
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         ActivityCompat.OnRequestPermissionsResultCallback {
@@ -56,9 +56,9 @@ public final class HamLocationEditView extends Fragment
     private final Pattern mQTHRegexPattern = Pattern.compile("[A-R][A-R][0-9][0-9]([a-x][a-x]|[A-X][A-X])");
     private final CurrentTabHolder mCurrentTabHolder = new CurrentTabHolder();
     private GoogleApiClient mGoogleApiClient;
-    private HamLocationEditViewBinding mBinding;
+    private HamLocationPickerBinding mBinding;
 
-    public HamLocationEditView() {
+    public HamLocationPicker() {
     }
 
     @Override
@@ -90,7 +90,7 @@ public final class HamLocationEditView extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(
-                inflater, R.layout.ham_location_edit_view, container, true
+                inflater, R.layout.ham_location_picker, container, true
         );
         mBinding.setCurrentTab(mCurrentTabHolder);
 

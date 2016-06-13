@@ -2,11 +2,10 @@ TODO Make receiving frequency (when adding new QSO) default to transmitting one,
 TODO Make clicking a QSO (or the Edit button, or the FAB) show a smooth animation to the activity
 TODO Setup everything for tablet screens
 TODO Make QSO list have bigger items, more stylized
-TODO Fix unevenness of EditFragment's time fields and HamLocationEditView with the other fields
+TODO Fix unevenness of EditFragment's time fields and HamLocationPicker with the other fields
 TODO Add espresso tests for launching activities from ListActivity
 TODO Add espresso tests for other activities/fragments
 TODO Add RST values
 TODO Show map of previous contacts
 TODO Test orientation changes in all activities
 TODO display QTH for coordinates
-TODO Rename HamLocationEditView (It's not an EditView) and getFrequency() in EditTextWithUnitsView
