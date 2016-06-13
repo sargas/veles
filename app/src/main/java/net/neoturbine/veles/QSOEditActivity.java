@@ -50,7 +50,7 @@ public class QSOEditActivity extends AppCompatActivity
             } else {
                 fragment = QSOEditFragment.newInstance();
             }
-            getSupportFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .add(R.id.qso_edit_container, fragment)
                     .commit();
         }

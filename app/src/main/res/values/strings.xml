@@ -22,6 +22,23 @@
 
     <string name="toast_deleted">Deleted QSO</string>
 
+    <string name="location_current">Find Me</string>
+    <string name="location_search">Search</string>
+    <string name="location_qth">QTH</string>
+    <string name="location_coordinate">Coordinate</string>
+
+    <string name="location_qth_hint">6-digit QTH Locator</string>
+    <string name="location_qth_error">Invalid. Examples include FN31pr or BL11BH</string>
+
+    <string name="location_coordinate_latitude">Latitude</string>
+    <string name="location_coordinate_latitude_error">Must be between -90 and 90</string>
+    <string name="location_coordinate_longitude">Longitude</string>
+    <string name="location_coordinate_longitude_error">Must be between -180 and 180</string>
+
+    <string name="format_qth">QTH: %1$s</string>
+
+    <string name="qso_edit_my_location">My Location</string>
+
     <string-array name="qso_modes">
         <item>FM</item>
         <item>SSB</item>
@@ -30,9 +47,9 @@
 
     <string-array name="frequency_units">
         <item/>
-        <item>GHz</item>
-        <item>MHz</item>
         <item>KHz</item>
+        <item>MHz</item>
+        <item>GHz</item>
     </string-array>
 
     <string-array name="power_units">

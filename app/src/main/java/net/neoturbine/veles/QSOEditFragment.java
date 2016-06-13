@@ -1,18 +1,18 @@
 package net.neoturbine.veles;
 
 import android.app.DatePickerDialog;
+import android.app.Fragment;
+import android.app.LoaderManager;
 import android.app.TimePickerDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +26,8 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -68,6 +70,7 @@ public class QSOEditFragment extends Fragment {
             QSOColumns.TRANSMISSION_FREQUENCY, QSOColumns.RECEIVE_FREQUENCY,
             QSOColumns.POWER
     );
+    private HamLocationEditView mMyLocation;
 
     @SuppressWarnings("WeakerAccess")
     public QSOEditFragment() {
@@ -128,7 +131,7 @@ public class QSOEditFragment extends Fragment {
 
         AutoCompleteTextView modeView = (AutoCompleteTextView) rootView.findViewById(R.id.qso_mode);
         modeView.setAdapter(new ArrayAdapter<>(
-                getContext(),
+                getActivity(),
                 android.R.layout.simple_list_item_1,
                 getResources().getStringArray(R.array.qso_modes)));
 
@@ -136,6 +139,8 @@ public class QSOEditFragment extends Fragment {
         mStartTimeButton = (TextView) rootView.findViewById(R.id.qso_pick_start_time);
         mEndDateButton = (TextView) rootView.findViewById(R.id.qso_pick_end_date);
         mEndTimeButton = (TextView) rootView.findViewById(R.id.qso_pick_end_time);
+
+        mMyLocation = (HamLocationEditView) getChildFragmentManager().findFragmentById(R.id.qso_my_location);
         mStartTime = Calendar.getInstance();
         mEndTime = Calendar.getInstance();
 
@@ -146,7 +151,7 @@ public class QSOEditFragment extends Fragment {
                     switch (id) {
                         case QSO_LOADER:
                             return new CursorLoader(
-                                    getContext(),
+                                    getActivity(),
                                     ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
                                     null, null, null, null);
                         default:
@@ -183,6 +188,10 @@ public class QSOEditFragment extends Fragment {
                             data.getLong(data.getColumnIndexOrThrow(QSOColumns.START_TIME)));
                     mEndTime.setTimeInMillis(
                             data.getLong(data.getColumnIndexOrThrow(QSOColumns.END_TIME)));
+
+
+                    mMyLocation.setLocation(SerializationUtils.<VelesLocation>deserialize(
+                            data.getBlob(data.getColumnIndexOrThrow(QSOColumns.MY_LOCATION))));
 
                     updateTimes();
                 }
@@ -243,7 +252,7 @@ public class QSOEditFragment extends Fragment {
                         },
                         calendar.get(Calendar.HOUR_OF_DAY),
                         calendar.get(Calendar.MINUTE),
-                        DateFormat.is24HourFormat(getContext())
+                        DateFormat.is24HourFormat(getActivity())
                 ).show();
             }
         });
@@ -253,15 +262,15 @@ public class QSOEditFragment extends Fragment {
     private void updateTimes() {
         if (mStartTime != null) {
             mStartDateButton.setText(
-                    DateFormat.getLongDateFormat(getContext()).format(mStartTime.getTime()));
+                    DateFormat.getLongDateFormat(getActivity()).format(mStartTime.getTime()));
             mStartTimeButton.setText(
-                    DateFormat.getTimeFormat(getContext()).format(mStartTime.getTime()));
+                    DateFormat.getTimeFormat(getActivity()).format(mStartTime.getTime()));
         }
         if (mEndTime != null) {
             mEndDateButton.setText(
-                    DateFormat.getLongDateFormat(getContext()).format(mEndTime.getTime()));
+                    DateFormat.getLongDateFormat(getActivity()).format(mEndTime.getTime()));
             mEndTimeButton.setText(
-                    DateFormat.getTimeFormat(getContext()).format(mEndTime.getTime()));
+                    DateFormat.getTimeFormat(getActivity()).format(mEndTime.getTime()));
         }
     }
 
@@ -298,6 +307,9 @@ public class QSOEditFragment extends Fragment {
                 mNewValues.put(QSOColumns.START_TIME, mStartTime.getTimeInMillis());
                 mNewValues.put(QSOColumns.END_TIME, mEndTime.getTimeInMillis());
 
+                mNewValues.put(QSOColumns.MY_LOCATION,
+                        SerializationUtils.serialize(mMyLocation.getLocation()));
+
                 if (mQSOid == -1) {
                     getActivity().getContentResolver().insert(
                             QSOColumns.CONTENT_URI,
@@ -316,7 +328,7 @@ public class QSOEditFragment extends Fragment {
                         ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
                         null, null
                 );
-                Toast.makeText(getContext(), R.string.toast_deleted, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.toast_deleted, Toast.LENGTH_LONG).show();
                 mCallback.onFinishDelete();
                 return true;
             default:
