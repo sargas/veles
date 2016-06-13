@@ -45,7 +45,7 @@ public class QSODetailActivity extends AppCompatActivity
             QSODetailFragment fragment = QSODetailFragment.newInstance(
                     getIntent().getLongExtra(ARG_QSO_ID, 0)
             );
-            getSupportFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .add(R.id.qso_detail_container, fragment)
                     .commit();
         }

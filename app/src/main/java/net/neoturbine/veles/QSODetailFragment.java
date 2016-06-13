@@ -1,16 +1,16 @@
 package net.neoturbine.veles;
 
+import android.app.Fragment;
+import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -82,7 +82,7 @@ public class QSODetailFragment extends Fragment {
                     switch (id) {
                         case QSO_LOADER:
                             return new CursorLoader(
-                                    getContext(),
+                                    getActivity(),
                                     ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
                                     null, null, null, null);
                         default:
@@ -100,11 +100,11 @@ public class QSODetailFragment extends Fragment {
 
                     binding.setQso(new QSO(data));
                     binding.setStartTime(DateUtils.formatDateTime(
-                            getContext(),
+                            getActivity(),
                             data.getLong(data.getColumnIndexOrThrow(QSOColumns.START_TIME)),
                             DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR));
                     binding.setEndTime(DateUtils.formatDateTime(
-                            getContext(),
+                            getActivity(),
                             data.getLong(data.getColumnIndexOrThrow(QSOColumns.END_TIME)),
                             DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR));
 
@@ -147,7 +147,7 @@ public class QSODetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit:
-                Intent intent = new Intent(getContext(), QSOEditActivity.class);
+                Intent intent = new Intent(getActivity(), QSOEditActivity.class);
                 intent.putExtra(QSOEditActivity.ARG_QSO_ID, mQSOid);
 
                 startActivityForResult(intent, REQUEST_EDIT);
@@ -157,7 +157,7 @@ public class QSODetailFragment extends Fragment {
                         ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
                         null, null
                 );
-                Toast.makeText(getContext(), R.string.toast_deleted, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.toast_deleted, Toast.LENGTH_LONG).show();
                 mCallback.onFinishDelete();
                 return true;
             default:

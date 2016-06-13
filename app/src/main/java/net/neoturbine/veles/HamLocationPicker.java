@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 
 import static net.neoturbine.veles.QTHConverter.LatLngToQTH;
 import static net.neoturbine.veles.QTHConverter.LocationToQTH;
+import static net.neoturbine.veles.QTHConverter.toQTH;
 
 public final class HamLocationPicker extends Fragment
         implements GoogleApiClient.ConnectionCallbacks,
@@ -197,11 +198,11 @@ public final class HamLocationPicker extends Fragment
                 }
 
                 if (isValid) {
+                    mBinding.locationCoordinateQth.setText(
+                            getString(R.string.format_qth, toQTH(longitude, latitude)));
                     mLastLocations.put(CurrentTab.COORDINATE, new VelesLocation(longitude, latitude));
-                } else if (TextUtils.isEmpty(mBinding.locationCoordinateLon.getText()) &&
-                        TextUtils.isEmpty(latitudeString)) {
-                    mLastLocations.remove(CurrentTab.COORDINATE);
                 } else {
+                    mBinding.locationCoordinateQth.setText("");
                     mLastLocations.remove(CurrentTab.COORDINATE);
                 }
             }

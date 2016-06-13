@@ -8,4 +8,3 @@ TODO Add espresso tests for other activities/fragments
 TODO Add RST values
 TODO Show map of previous contacts
 TODO Test orientation changes in all activities
-TODO display QTH for coordinates

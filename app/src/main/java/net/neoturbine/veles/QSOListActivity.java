@@ -169,7 +169,7 @@ public class QSOListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (mTwoPane) {
                         QSODetailFragment fragment = QSODetailFragment.newInstance(getItemId(holder.getAdapterPosition()));
-                        getSupportFragmentManager().beginTransaction()
+                        getFragmentManager().beginTransaction()
                                 .replace(R.id.qso_detail_container, fragment)
                                 .commit();
                     } else {
