@@ -11,6 +11,8 @@
     <string name="qso_power">Power</string>
     <string name="qso_edit_tx_freq">Transmission Frequency</string>
     <string name="qso_edit_rx_freq">Receiving Frequency</string>
+    <string name="qso_edit_my_location">My Location</string>
+    <string name="qso_edit_other_location">Other Station/Net\'s Location</string>
     <string name="qso_edit_comment">Comments</string>
 
     <string name="action_save">Save</string>
@@ -36,8 +38,6 @@
     <string name="location_coordinate_longitude_error">Must be between -180 and 180</string>
 
     <string name="format_qth">QTH: %1$s</string>
-
-    <string name="qso_edit_my_location">My Location</string>
 
     <string-array name="qso_modes">
         <item>FM</item>

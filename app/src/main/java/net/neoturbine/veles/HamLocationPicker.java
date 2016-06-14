@@ -2,7 +2,9 @@ package net.neoturbine.veles;
 
 import android.Manifest;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableField;
 import android.location.Location;
@@ -13,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +61,7 @@ public final class HamLocationPicker extends Fragment
     private final CurrentTabHolder mCurrentTabHolder = new CurrentTabHolder();
     private GoogleApiClient mGoogleApiClient;
     private HamLocationPickerBinding mBinding;
+    private CharSequence mTitleText;
 
     public HamLocationPicker() {
     }
@@ -94,6 +98,8 @@ public final class HamLocationPicker extends Fragment
                 inflater, R.layout.ham_location_picker, container, true
         );
         mBinding.setCurrentTab(mCurrentTabHolder);
+
+        mBinding.locationText.setText(mTitleText);
 
         final View.OnClickListener setTab = new View.OnClickListener() {
             @Override
@@ -213,6 +219,18 @@ public final class HamLocationPicker extends Fragment
 
         return mBinding.getRoot();
 
+    }
+
+    @Override
+    public void onInflate(
+            final Context context, final AttributeSet attrs, final Bundle savedInstanceState) {
+        super.onInflate(context, attrs, savedInstanceState);
+
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.HamLocationPicker);
+
+        mTitleText = a.getText(R.styleable.HamLocationPicker_text);
+
+        a.recycle();
     }
 
     @Override

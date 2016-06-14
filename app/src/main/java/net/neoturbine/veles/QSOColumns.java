@@ -13,10 +13,8 @@ interface QSOColumns extends BaseColumns {
             "\"tx_freq\" TEXT, " +
             "\"rx_freq\" TEXT, " +
             "\"power\" TEXT, " +
-            "\"my_qth\" TEXT, " +
             "\"my_location\" TEXT, " +
-            "\"other_qth\" TEXT, " +
-            "\"other_locator\" TEXT, " +
+            "\"other_location\" TEXT, " +
             "\"comment\" TEXT )";
 
     String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.neoturbine.veles.qso";
@@ -32,5 +30,6 @@ interface QSOColumns extends BaseColumns {
     String TRANSMISSION_FREQUENCY = "tx_freq";
     String RECEIVE_FREQUENCY = "rx_freq";
     String MY_LOCATION = "my_location";
+    String OTHER_LOCATION = "other_location";
     String COMMENT = "comment";
 }

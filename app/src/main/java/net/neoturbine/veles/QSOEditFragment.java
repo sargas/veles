@@ -31,6 +31,8 @@ import android.widget.Toast;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -63,7 +65,7 @@ public class QSOEditFragment extends Fragment {
         put(R.id.qso_rx_freq, QSOColumns.RECEIVE_FREQUENCY);
         put(R.id.qso_power, QSOColumns.POWER);
     }};
-    private HamLocationPicker mMyLocation;
+    private final Map<HamLocationPicker, String> mLocationPickers = new HashMap<>(2);
 
     @SuppressWarnings("WeakerAccess")
     public QSOEditFragment() {
@@ -133,7 +135,12 @@ public class QSOEditFragment extends Fragment {
         mEndDateButton = (TextView) rootView.findViewById(R.id.qso_pick_end_date);
         mEndTimeButton = (TextView) rootView.findViewById(R.id.qso_pick_end_time);
 
-        mMyLocation = (HamLocationPicker) getChildFragmentManager().findFragmentById(R.id.qso_my_location);
+        mLocationPickers.put(
+                (HamLocationPicker) getChildFragmentManager().findFragmentById(R.id.qso_my_location),
+                QSOColumns.MY_LOCATION);
+        mLocationPickers.put(
+                (HamLocationPicker) getChildFragmentManager().findFragmentById(R.id.qso_other_location),
+                QSOColumns.OTHER_LOCATION);
         mStartTime = Calendar.getInstance();
         mEndTime = Calendar.getInstance();
 
@@ -178,9 +185,10 @@ public class QSOEditFragment extends Fragment {
                     mEndTime.setTimeInMillis(
                             data.getLong(data.getColumnIndexOrThrow(QSOColumns.END_TIME)));
 
-
-                    mMyLocation.setLocation(SerializationUtils.<VelesLocation>deserialize(
-                            data.getBlob(data.getColumnIndexOrThrow(QSOColumns.MY_LOCATION))));
+                    for (Map.Entry<HamLocationPicker, String> entry : mLocationPickers.entrySet()) {
+                        entry.getKey().setLocation(SerializationUtils.<VelesLocation>deserialize(
+                                data.getBlob(data.getColumnIndexOrThrow(entry.getValue()))));
+                    }
 
                     updateTimes();
                 }
@@ -290,8 +298,10 @@ public class QSOEditFragment extends Fragment {
                 mNewValues.put(QSOColumns.START_TIME, mStartTime.getTimeInMillis());
                 mNewValues.put(QSOColumns.END_TIME, mEndTime.getTimeInMillis());
 
-                mNewValues.put(QSOColumns.MY_LOCATION,
-                        SerializationUtils.serialize(mMyLocation.getLocation()));
+                for (Map.Entry<HamLocationPicker, String> entry : mLocationPickers.entrySet()) {
+                    mNewValues.put(entry.getValue(),
+                            SerializationUtils.serialize(entry.getKey().getLocation()));
+                }
 
                 if (mQSOid == -1) {
                     getActivity().getContentResolver().insert(
