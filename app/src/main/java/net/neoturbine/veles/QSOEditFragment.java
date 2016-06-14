@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.text.format.DateFormat;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,10 +30,7 @@ import android.widget.Toast;
 
 import org.apache.commons.lang3.SerializationUtils;
 
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
 
 
 /**
@@ -55,21 +53,16 @@ public class QSOEditFragment extends Fragment {
 
     private static final int QSO_LOADER = 0;
 
-    private static final List<Integer> mTextBoxIDs = Arrays.asList(
-            R.id.qso_station, R.id.qso_mode,
-            R.id.qso_comment
-    );
-    private static final List<String> mTextBoxColumns = Arrays.asList(
-            QSOColumns.OTHER_STATION, QSOColumns.MODE,
-            QSOColumns.COMMENT
-    );
-    private static final List<Integer> mTextBoxUnitsIDs = Arrays.asList(
-            R.id.qso_tx_freq, R.id.qso_rx_freq, R.id.qso_power
-    );
-    private static final List<String> mTextBoxUnitsColumns = Arrays.asList(
-            QSOColumns.TRANSMISSION_FREQUENCY, QSOColumns.RECEIVE_FREQUENCY,
-            QSOColumns.POWER
-    );
+    private static final SparseArray<String> mTextBoxes = new SparseArray<String>(3) {{
+        put(R.id.qso_station, QSOColumns.OTHER_STATION);
+        put(R.id.qso_mode, QSOColumns.MODE);
+        put(R.id.qso_comment, QSOColumns.COMMENT);
+    }};
+    private static final SparseArray<String> mTextBoxWithUnits = new SparseArray<String>(3) {{
+        put(R.id.qso_tx_freq, QSOColumns.TRANSMISSION_FREQUENCY);
+        put(R.id.qso_rx_freq, QSOColumns.RECEIVE_FREQUENCY);
+        put(R.id.qso_power, QSOColumns.POWER);
+    }};
     private HamLocationPicker mMyLocation;
 
     @SuppressWarnings("WeakerAccess")
@@ -166,22 +159,18 @@ public class QSOEditFragment extends Fragment {
                         return;
                     }
 
-                    Iterator<Integer> editBoxIDs = mTextBoxIDs.iterator();
-                    Iterator<String> tableColumns = mTextBoxColumns.iterator();
-
-                    while (editBoxIDs.hasNext() && tableColumns.hasNext()) {
-                        TextView tv = (TextView) getView().findViewById(editBoxIDs.next());
-                        tv.setText(data.getString(data.getColumnIndexOrThrow(tableColumns.next())));
+                    for (int i = 0; i < mTextBoxes.size(); ++i) {
+                        TextView tv = (TextView) getView().findViewById(mTextBoxes.keyAt(i));
+                        tv.setText(data.getString(
+                                data.getColumnIndexOrThrow(mTextBoxes.valueAt(i))));
                     }
 
-                    Iterator<Integer> unitBoxIDs = mTextBoxUnitsIDs.iterator();
-                    Iterator<String> unitBoxColumns = mTextBoxUnitsColumns.iterator();
-
-                    while (unitBoxIDs.hasNext() && unitBoxColumns.hasNext()) {
+                    for (int i = 0; i < mTextBoxWithUnits.size(); ++i) {
                         EditTextWithUnitsView etu = (EditTextWithUnitsView) getView()
-                                .findViewById(unitBoxIDs.next());
+                                .findViewById(mTextBoxWithUnits.keyAt(i));
                         etu.setValue(
-                                data.getString(data.getColumnIndexOrThrow(unitBoxColumns.next())));
+                                data.getString(data.getColumnIndexOrThrow(
+                                        mTextBoxWithUnits.valueAt(i))));
                     }
 
                     mStartTime.setTimeInMillis(
@@ -287,21 +276,15 @@ public class QSOEditFragment extends Fragment {
             case R.id.action_save:
                 final ContentValues mNewValues = new ContentValues();
 
-                Iterator<Integer> editBoxIDs = mTextBoxIDs.iterator();
-                Iterator<String> tableColumns = mTextBoxColumns.iterator();
-
-                while (editBoxIDs.hasNext() && tableColumns.hasNext()) {
-                    TextView tv = (TextView) getView().findViewById(editBoxIDs.next());
-                    mNewValues.put(tableColumns.next(), tv.getText().toString());
+                for (int i = 0; i < mTextBoxes.size(); ++i) {
+                    TextView tv = (TextView) getView().findViewById(mTextBoxes.keyAt(i));
+                    mNewValues.put(mTextBoxes.valueAt(i), tv.getText().toString());
                 }
 
-                Iterator<Integer> unitBoxIDs = mTextBoxUnitsIDs.iterator();
-                Iterator<String> unitBoxColumns = mTextBoxUnitsColumns.iterator();
-
-                while (unitBoxIDs.hasNext() && unitBoxColumns.hasNext()) {
+                for (int i = 0; i < mTextBoxWithUnits.size(); ++i) {
                     EditTextWithUnitsView etu = (EditTextWithUnitsView) getView()
-                            .findViewById(unitBoxIDs.next());
-                    mNewValues.put(unitBoxColumns.next(), etu.getValueAsString());
+                            .findViewById(mTextBoxWithUnits.keyAt(i));
+                    mNewValues.put(mTextBoxWithUnits.valueAt(i), etu.getValueAsString());
                 }
 
                 mNewValues.put(QSOColumns.START_TIME, mStartTime.getTimeInMillis());
