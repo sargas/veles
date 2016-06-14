@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.text.format.DateFormat;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,16 +54,8 @@ public class QSOEditFragment extends Fragment {
 
     private static final int QSO_LOADER = 0;
 
-    private static final SparseArray<String> mTextBoxes = new SparseArray<String>(3) {{
-        put(R.id.qso_station, QSOColumns.OTHER_STATION);
-        put(R.id.qso_mode, QSOColumns.MODE);
-        put(R.id.qso_comment, QSOColumns.COMMENT);
-    }};
-    private static final SparseArray<String> mTextBoxWithUnits = new SparseArray<String>(3) {{
-        put(R.id.qso_tx_freq, QSOColumns.TRANSMISSION_FREQUENCY);
-        put(R.id.qso_rx_freq, QSOColumns.RECEIVE_FREQUENCY);
-        put(R.id.qso_power, QSOColumns.POWER);
-    }};
+    private final Map<TextView, String> mTextBoxes = new HashMap<>(3);
+    private final Map<EditTextWithUnitsView, String> mTextBoxWithUnits = new HashMap<>(3);
     private final Map<HamLocationPicker, String> mLocationPickers = new HashMap<>(2);
 
     @SuppressWarnings("WeakerAccess")
@@ -141,6 +132,18 @@ public class QSOEditFragment extends Fragment {
         mLocationPickers.put(
                 (HamLocationPicker) getChildFragmentManager().findFragmentById(R.id.qso_other_location),
                 QSOColumns.OTHER_LOCATION);
+
+        mTextBoxWithUnits.put((EditTextWithUnitsView) rootView.findViewById(R.id.qso_tx_freq),
+                QSOColumns.TRANSMISSION_FREQUENCY);
+        mTextBoxWithUnits.put((EditTextWithUnitsView) rootView.findViewById(R.id.qso_rx_freq),
+                QSOColumns.RECEIVE_FREQUENCY);
+        mTextBoxWithUnits.put((EditTextWithUnitsView) rootView.findViewById(R.id.qso_power),
+                QSOColumns.POWER);
+
+        mTextBoxes.put((TextView) rootView.findViewById(R.id.qso_station), QSOColumns.OTHER_STATION);
+        mTextBoxes.put((TextView) rootView.findViewById(R.id.qso_mode), QSOColumns.MODE);
+        mTextBoxes.put((TextView) rootView.findViewById(R.id.qso_comment), QSOColumns.COMMENT);
+
         mStartTime = Calendar.getInstance();
         mEndTime = Calendar.getInstance();
 
@@ -166,18 +169,14 @@ public class QSOEditFragment extends Fragment {
                         return;
                     }
 
-                    for (int i = 0; i < mTextBoxes.size(); ++i) {
-                        TextView tv = (TextView) getView().findViewById(mTextBoxes.keyAt(i));
-                        tv.setText(data.getString(
-                                data.getColumnIndexOrThrow(mTextBoxes.valueAt(i))));
+                    for(Map.Entry<TextView, String> entry : mTextBoxes.entrySet()) {
+                        entry.getKey().setText(data.getString(
+                                data.getColumnIndexOrThrow(entry.getValue())));
                     }
 
-                    for (int i = 0; i < mTextBoxWithUnits.size(); ++i) {
-                        EditTextWithUnitsView etu = (EditTextWithUnitsView) getView()
-                                .findViewById(mTextBoxWithUnits.keyAt(i));
-                        etu.setValue(
-                                data.getString(data.getColumnIndexOrThrow(
-                                        mTextBoxWithUnits.valueAt(i))));
+                    for (Map.Entry<EditTextWithUnitsView, String> entry : mTextBoxWithUnits.entrySet()) {
+                        entry.getKey().setValue(
+                                data.getString(data.getColumnIndexOrThrow(entry.getValue())));
                     }
 
                     mStartTime.setTimeInMillis(
@@ -284,15 +283,12 @@ public class QSOEditFragment extends Fragment {
             case R.id.action_save:
                 final ContentValues mNewValues = new ContentValues();
 
-                for (int i = 0; i < mTextBoxes.size(); ++i) {
-                    TextView tv = (TextView) getView().findViewById(mTextBoxes.keyAt(i));
-                    mNewValues.put(mTextBoxes.valueAt(i), tv.getText().toString());
+                for(Map.Entry<TextView, String> entry : mTextBoxes.entrySet()) {
+                    mNewValues.put(entry.getValue(), entry.getKey().getText().toString());
                 }
 
-                for (int i = 0; i < mTextBoxWithUnits.size(); ++i) {
-                    EditTextWithUnitsView etu = (EditTextWithUnitsView) getView()
-                            .findViewById(mTextBoxWithUnits.keyAt(i));
-                    mNewValues.put(mTextBoxWithUnits.valueAt(i), etu.getValueAsString());
+                for (Map.Entry<EditTextWithUnitsView, String> entry : mTextBoxWithUnits.entrySet()) {
+                    mNewValues.put(entry.getValue(), entry.getKey().getValueAsString());
                 }
 
                 mNewValues.put(QSOColumns.START_TIME, mStartTime.getTimeInMillis());
