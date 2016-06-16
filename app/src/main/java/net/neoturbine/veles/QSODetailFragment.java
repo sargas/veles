@@ -122,8 +122,7 @@ public class QSODetailFragment extends Fragment {
                         appBarLayout.setTitle(qso.getOtherStation());
                     }
 
-                    //TODO use actual station name
-                    setupMap(qso.getMyLocation(), R.id.qso_detail_my_location, qso.getOtherStation());
+                    setupMap(qso.getMyLocation(), R.id.qso_detail_my_location, qso.getMyStation());
                     setupMap(qso.getOtherLocation(), R.id.qso_detail_other_location, qso.getOtherStation());
                 }
 

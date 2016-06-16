@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
@@ -41,6 +42,7 @@ import java.util.Map;
  */
 public class QSOEditFragment extends Fragment {
     private static final String ARG_QSO_ID = "qso_id";
+    private static final String PREF_LAST_USED_STATION = "PREF_LAST_USED_STATION";
 
     private long mQSOid = -1;
     private Calendar mStartTime;
@@ -54,9 +56,11 @@ public class QSOEditFragment extends Fragment {
 
     private static final int QSO_LOADER = 0;
 
-    private final Map<TextView, String> mTextBoxes = new HashMap<>(3);
+    private final Map<TextView, String> mTextBoxes = new HashMap<>(4);
     private final Map<EditTextWithUnitsView, String> mTextBoxWithUnits = new HashMap<>(3);
     private final Map<HamLocationPicker, String> mLocationPickers = new HashMap<>(2);
+    private TextView mMyStation;
+    private SharedPreferences mPrefs;
 
     @SuppressWarnings("WeakerAccess")
     public QSOEditFragment() {
@@ -125,6 +129,7 @@ public class QSOEditFragment extends Fragment {
         mStartTimeButton = (TextView) rootView.findViewById(R.id.qso_pick_start_time);
         mEndDateButton = (TextView) rootView.findViewById(R.id.qso_pick_end_date);
         mEndTimeButton = (TextView) rootView.findViewById(R.id.qso_pick_end_time);
+        mMyStation = (TextView) rootView.findViewById(R.id.qso_my_station);
 
         mLocationPickers.put(
                 (HamLocationPicker) getChildFragmentManager().findFragmentById(R.id.qso_my_location),
@@ -141,11 +146,14 @@ public class QSOEditFragment extends Fragment {
                 QSOColumns.POWER);
 
         mTextBoxes.put((TextView) rootView.findViewById(R.id.qso_station), QSOColumns.OTHER_STATION);
+        mTextBoxes.put(mMyStation, QSOColumns.MY_STATION);
         mTextBoxes.put((TextView) rootView.findViewById(R.id.qso_mode), QSOColumns.MODE);
         mTextBoxes.put((TextView) rootView.findViewById(R.id.qso_comment), QSOColumns.COMMENT);
 
         mStartTime = Calendar.getInstance();
         mEndTime = Calendar.getInstance();
+
+        mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         if (mQSOid != -1) {
             getLoaderManager().initLoader(QSO_LOADER, null, new LoaderManager.LoaderCallbacks<Cursor>() {
@@ -203,6 +211,9 @@ public class QSOEditFragment extends Fragment {
                 appBarLayout.setTitle(getResources().getString(R.string.title_qso_new));
             }
             updateTimes();
+
+            mMyStation.setText(mPrefs.getString(PREF_LAST_USED_STATION, ""));
+
         }
 
         bindTimeChangeButtons(mStartDateButton, mStartTimeButton, mStartTime);
@@ -304,6 +315,10 @@ public class QSOEditFragment extends Fragment {
                             QSOColumns.CONTENT_URI,
                             mNewValues
                     );
+
+                    mPrefs.edit()
+                            .putString(PREF_LAST_USED_STATION, mMyStation.getText().toString())
+                            .apply();
                 } else {
                     getActivity().getContentResolver().update(
                             ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),

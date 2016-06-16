@@ -9,6 +9,8 @@ import org.apache.commons.lang3.SerializationUtils;
 @SuppressWarnings("unused")
 public final class QSO {
     @NonNull
+    private final String mMyStation;
+    @NonNull
     private final String mOtherStation;
     private final long mStartTime;
     private final long mEndTime;
@@ -27,11 +29,12 @@ public final class QSO {
     @NonNull
     private final String mComment;
 
-    private QSO(@NonNull String otherStation,
+    private QSO(@NonNull String myStation, @NonNull String otherStation,
                 long startTime, long endTime, @NonNull String mode, @NonNull String power,
                 @Nullable VelesLocation myLocation, @Nullable VelesLocation otherLocation,
                 @NonNull String txFrequency,
                 @NonNull String rxFrequency, @NonNull String comment) {
+        this.mMyStation = myStation;
         this.mOtherStation = otherStation;
         this.mStartTime = startTime;
         this.mEndTime = endTime;
@@ -46,6 +49,7 @@ public final class QSO {
 
     QSO(@NonNull Cursor data) {
         this(
+                data.getString(data.getColumnIndexOrThrow(QSOColumns.MY_STATION)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)),
                 data.getLong(data.getColumnIndexOrThrow(QSOColumns.START_TIME)),
                 data.getLong(data.getColumnIndexOrThrow(QSOColumns.END_TIME)),
@@ -107,5 +111,10 @@ public final class QSO {
     @NonNull
     public String getComment() {
         return mComment;
+    }
+
+    @NonNull
+    public String getMyStation() {
+        return mMyStation;
     }
 }

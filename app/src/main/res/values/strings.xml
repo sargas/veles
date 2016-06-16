@@ -6,12 +6,13 @@
 
     <string name="qso_edit_start_time">Start Time</string>
     <string name="qso_edit_end_time">End Time</string>
+    <string name="qso_edit_my_station">Your Callsign</string>
     <string name="qso_edit_station">Other Station or Net</string>
     <string name="qso_edit_mode">Mode</string>
     <string name="qso_power">Power</string>
     <string name="qso_edit_tx_freq">Transmission Frequency</string>
     <string name="qso_edit_rx_freq">Receiving Frequency</string>
-    <string name="qso_edit_my_location">My Location</string>
+    <string name="qso_edit_my_location">Your Location</string>
     <string name="qso_edit_other_location">Other Station/Net\'s Location</string>
     <string name="qso_edit_comment">Comments</string>
 

@@ -20,11 +20,23 @@
 
     </android.support.design.widget.TextInputLayout>
 
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/qso_my_station"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/qso_edit_my_station"
+            android:inputType="textNoSuggestions|textCapCharacters"/>
+    </android.support.design.widget.TextInputLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/list_text_margin"
-        android:paddingEnd="@dimen/list_text_margin">
+        android:paddingEnd="@dimen/list_text_margin"
+        android:paddingStart="@dimen/list_text_margin">
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="wrap_content"
@@ -59,8 +71,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/list_text_margin"
-        android:paddingEnd="@dimen/list_text_margin">
+        android:paddingEnd="@dimen/list_text_margin"
+        android:paddingStart="@dimen/list_text_margin">
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="wrap_content"
@@ -109,42 +121,42 @@
         android:id="@+id/qso_power"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:units="@array/power_units"
         app:default_position="2"
-        app:hint="@string/qso_power"/>
+        app:hint="@string/qso_power"
+        app:units="@array/power_units"/>
 
 
     <net.neoturbine.veles.EditTextWithUnitsView
         android:id="@+id/qso_tx_freq"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:units="@array/frequency_units"
         app:default_position="2"
-        app:hint="@string/qso_edit_tx_freq"/>
+        app:hint="@string/qso_edit_tx_freq"
+        app:units="@array/frequency_units"/>
 
     <net.neoturbine.veles.EditTextWithUnitsView
         android:id="@+id/qso_rx_freq"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:units="@array/frequency_units"
         app:default_position="2"
-        app:hint="@string/qso_edit_rx_freq"/>
+        app:hint="@string/qso_edit_rx_freq"
+        app:units="@array/frequency_units"/>
 
 
     <fragment
         android:id="@+id/qso_other_location"
-        app:text="@string/qso_edit_other_location"
+        android:name="net.neoturbine.veles.HamLocationPicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="net.neoturbine.veles.HamLocationPicker"
+        app:text="@string/qso_edit_other_location"
         tools:layout="@layout/ham_location_picker"/>
 
     <fragment
         android:id="@+id/qso_my_location"
-        app:text="@string/qso_edit_my_location"
+        android:name="net.neoturbine.veles.HamLocationPicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="net.neoturbine.veles.HamLocationPicker"
+        app:text="@string/qso_edit_my_location"
         tools:layout="@layout/ham_location_picker"/>
 
     <android.support.design.widget.TextInputLayout

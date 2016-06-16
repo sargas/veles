@@ -8,6 +8,7 @@ interface QSOColumns extends BaseColumns {
     String CREATE_TABLE_SQL = "CREATE  TABLE \"QSO\" (" +
             "\"_id\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , " +
             "\"start_time\" DATETIME, \"end_time\" DATETIME, " +
+            "\"my_station\" TEXT, " +
             "\"other_station\" TEXT, " +
             "\"mode\" TEXT, " +
             "\"tx_freq\" TEXT, " +
@@ -24,6 +25,7 @@ interface QSOColumns extends BaseColumns {
 
     String START_TIME = "start_time";
     String END_TIME = "end_time";
+    String MY_STATION = "my_station";
     String OTHER_STATION = "other_station";
     String MODE = "mode";
     String POWER = "power";
