@@ -1,56 +1,82 @@
 package net.neoturbine.veles;
 
 import android.database.Cursor;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import com.google.repacked.antlr.v4.runtime.misc.NotNull;
+import org.apache.commons.lang3.SerializationUtils;
 
 @SuppressWarnings("unused")
 public final class QSO {
-    @NotNull
+    @NonNull
     private final String mOtherStation;
     private final long mStartTime;
     private final long mEndTime;
-    @NotNull
+    @NonNull
     private final String mMode;
-    @NotNull
+    @NonNull
     private final String mPower;
-    @NotNull
+    @NonNull
     private final String mTxFrequency;
-    @NotNull
+    @NonNull
     private final String mRxFrequency;
-    @NotNull
+    @Nullable
+    private final VelesLocation mMyLocation;
+    @Nullable
+    private final VelesLocation mOtherLocation;
+    @NonNull
     private final String mComment;
-    private QSO(@NotNull String otherStation,
-                long startTime, long endTime, @NotNull String mode, @NotNull String power,
-                @NotNull String txFrequency,
-                @NotNull String rxFrequency, @NotNull String comment) {
+
+    private QSO(@NonNull String otherStation,
+                long startTime, long endTime, @NonNull String mode, @NonNull String power,
+                @Nullable VelesLocation myLocation, @Nullable VelesLocation otherLocation,
+                @NonNull String txFrequency,
+                @NonNull String rxFrequency, @NonNull String comment) {
         this.mOtherStation = otherStation;
         this.mStartTime = startTime;
         this.mEndTime = endTime;
         this.mMode = mode;
         this.mPower = power;
+        this.mMyLocation = myLocation;
+        this.mOtherLocation = otherLocation;
         this.mTxFrequency = txFrequency;
         this.mRxFrequency = rxFrequency;
         this.mComment = comment;
     }
 
-    QSO(Cursor data) {
+    QSO(@NonNull Cursor data) {
         this(
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)),
                 data.getLong(data.getColumnIndexOrThrow(QSOColumns.START_TIME)),
                 data.getLong(data.getColumnIndexOrThrow(QSOColumns.END_TIME)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.MODE)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.POWER)),
+                SerializationUtils.<VelesLocation>deserialize(
+                        data.getBlob(data.getColumnIndexOrThrow(QSOColumns.MY_LOCATION))),
+                SerializationUtils.<VelesLocation>deserialize(
+                        data.getBlob(data.getColumnIndexOrThrow(QSOColumns.OTHER_LOCATION))),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.TRANSMISSION_FREQUENCY)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.RECEIVE_FREQUENCY)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.COMMENT))
         );
     }
 
+    @Nullable
+    public VelesLocation getMyLocation() {
+        return mMyLocation;
+    }
+
+    @Nullable
+    public VelesLocation getOtherLocation() {
+        return mOtherLocation;
+    }
+
+    @NonNull
     public String getPower() {
         return mPower;
     }
 
+    @NonNull
     public String getOtherStation() {
         return mOtherStation;
     }
@@ -63,18 +89,22 @@ public final class QSO {
         return mEndTime;
     }
 
+    @NonNull
     public String getMode() {
         return mMode;
     }
 
+    @NonNull
     public String getTransmissionFrequency() {
         return mTxFrequency;
     }
 
+    @NonNull
     public String getReceivingFrequency() {
         return mRxFrequency;
     }
 
+    @NonNull
     public String getComment() {
         return mComment;
     }

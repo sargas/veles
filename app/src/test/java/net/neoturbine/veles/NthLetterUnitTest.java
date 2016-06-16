@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static net.neoturbine.veles.QTHConverter.nThLetter;
+import static net.neoturbine.veles.QTHConverter.toDigit;
 import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("unused")
@@ -38,5 +39,15 @@ public class NthLetterUnitTest {
     public void test_lowercase() {
         assertEquals(Character.toLowerCase(mCharacter),
                 nThLetter(mNumber, false));
+    }
+
+    @Test
+    public void test_backwards_uppercase() {
+        assertEquals(mNumber, toDigit(mCharacter));
+    }
+
+    @Test
+    public void test_backwards_lowercase() {
+        assertEquals(mNumber, toDigit(Character.toLowerCase(mCharacter)));
     }
 }

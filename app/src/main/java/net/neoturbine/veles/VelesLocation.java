@@ -4,15 +4,17 @@ import android.location.Location;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.io.Serializable;
 
+import static net.neoturbine.veles.QTHConverter.fromQTH;
 import static net.neoturbine.veles.QTHConverter.toQTH;
 
 class VelesLocation implements Serializable {
     private static final long serialVersionUID = 6587082321100439439L;
     private final double mLongitude;
-
     private final double mLatitude;
     @NonNull
     private final String mQTH;
@@ -27,7 +29,9 @@ class VelesLocation implements Serializable {
     }
 
     VelesLocation(@NonNull String qth) {
-        this.mLongitude = this.mLatitude = 0;
+        LatLng center = fromQTH(qth);
+        this.mLongitude = center.longitude;
+        this.mLatitude = center.latitude;
         this.mQTH = qth;
         this.mType = Type.QTH;
     }
@@ -72,5 +76,30 @@ class VelesLocation implements Serializable {
         LatitudeLongitude, QTH
     }
 
+    @NonNull
+    LatLng asLatLng() {
+        return new LatLng(getLatitude(), getLongitude());
+    }
 
+    @NonNull
+    private LatLngBounds asLatLngBounds() {
+        return new LatLngBounds(
+                new LatLng(Math.floor(getLatitude() * 24.0) / 24.0,
+                        Math.floor(getLongitude() * 12.0) / 12.0),
+                new LatLng(Math.ceil(getLatitude() * 24.0) / 24.0,
+                        Math.ceil(getLongitude() * 12.0) / 12.0)
+        );
+    }
+
+    @NonNull
+    PolygonOptions asPolygonOptions() {
+        LatLng ne = asLatLngBounds().northeast;
+        LatLng sw = asLatLngBounds().southwest;
+
+        return new PolygonOptions()
+                .add(ne)
+                .add(new LatLng(sw.latitude, ne.longitude))
+                .add(sw)
+                .add(new LatLng(ne.latitude, sw.longitude));
+    }
 }

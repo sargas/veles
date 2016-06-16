@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.apache.commons.lang3.CharUtils;
+
 final class QTHConverter {
     private QTHConverter() {
     }
@@ -19,6 +21,17 @@ final class QTHConverter {
 
     private static char toLetter(final double number) {
         return (char) ((int) (number % 10 + '0'));
+    }
+
+    static int toDigit(final char digit) {
+        if (CharUtils.isAsciiNumeric(digit)) {
+            return CharUtils.toIntValue(digit);
+        } else if (CharUtils.isAsciiAlphaLower(digit)) {
+            return (int) digit - 'a' + 1;
+        } else if (CharUtils.isAsciiAlphaUpper(digit)) {
+            return (int) digit - 'A' + 1;
+        }
+        throw new IllegalArgumentException("digit " + digit + " not recognized.");
     }
 
     static String LatLngToQTH(@NonNull final LatLng latlng) {
@@ -41,6 +54,17 @@ final class QTHConverter {
         output.setCharAt(5, nThLetter(latitude % 10 % 1 * 24 + 1, false));
 
         return output.toString();
+    }
+
+    static LatLng fromQTH(@NonNull String qth) {
+        if (qth.length() != 6)
+            throw new IllegalArgumentException("length of QTH locator must be 6");
+        double latitude = (toDigit(qth.charAt(1)) - 1.0) * 10.0 + toDigit(qth.charAt(3)) + (toDigit(qth.charAt(5)) - 1.0) / 24.0 + 1.0 / 48.0;
+        double longitude = (toDigit(qth.charAt(0)) - 1.0) * 20.0 + toDigit(qth.charAt(2)) * 2 + (toDigit(qth.charAt(4)) - 1.0) / 12.0 + 1.0 / 24.0;
+
+        latitude -= 90.0;
+        longitude -= 180.0;
+        return new LatLng(latitude, longitude);
     }
 
     static String LocationToQTH(@NonNull final Location location) {

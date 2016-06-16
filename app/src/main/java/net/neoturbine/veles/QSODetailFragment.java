@@ -9,7 +9,10 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.annotation.UiThread;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -19,6 +22,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import net.neoturbine.veles.databinding.QsoDetailBinding;
 
@@ -98,20 +107,24 @@ public class QSODetailFragment extends Fragment {
                     QsoDetailBinding binding = DataBindingUtil.getBinding(getView());
                     assert binding != null;
 
-                    binding.setQso(new QSO(data));
+                    final QSO qso = new QSO(data);
+
+                    binding.setQso(qso);
                     binding.setStartTime(DateUtils.formatDateTime(
-                            getActivity(),
-                            data.getLong(data.getColumnIndexOrThrow(QSOColumns.START_TIME)),
+                            getActivity(), qso.getStartTime(),
                             DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR));
                     binding.setEndTime(DateUtils.formatDateTime(
-                            getActivity(),
-                            data.getLong(data.getColumnIndexOrThrow(QSOColumns.END_TIME)),
+                            getActivity(), qso.getEndTime(),
                             DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR));
 
                     CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity().findViewById(R.id.toolbar_layout);
                     if (appBarLayout != null) {
-                        appBarLayout.setTitle(data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)));
+                        appBarLayout.setTitle(qso.getOtherStation());
                     }
+
+                    //TODO use actual station name
+                    setupMap(qso.getMyLocation(), R.id.qso_detail_my_location, qso.getOtherStation());
+                    setupMap(qso.getOtherLocation(), R.id.qso_detail_other_location, qso.getOtherStation());
                 }
 
                 @Override
@@ -121,6 +134,35 @@ public class QSODetailFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    @UiThread
+    private void setupMap(final VelesLocation location, @IdRes final int fragmentId, final String station) {
+        MapFragment mapFragment = (MapFragment) getChildFragmentManager()
+                .findFragmentById(fragmentId);
+        assert mapFragment != null;
+
+        // TODO if location == null, display something besides ocean
+        if (location != null) {
+            mapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(final GoogleMap googleMap) {
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location.asLatLng(), 10));
+
+                    switch (location.getType()) {
+                        case LatitudeLongitude:
+                            googleMap.addMarker(new MarkerOptions()
+                                    .title(station)
+                                    .position(location.asLatLng()));
+                            break;
+                        case QTH:
+                            googleMap.addPolygon(location.asPolygonOptions()
+                                    .strokeColor(Color.BLACK));
+                            break;
+                    }
+                }
+            });
+        }
     }
 
     /**

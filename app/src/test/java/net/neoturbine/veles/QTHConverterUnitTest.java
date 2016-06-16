@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static net.neoturbine.veles.QTHConverter.LatLngToQTH;
+import static net.neoturbine.veles.QTHConverter.fromQTH;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Enclosed.class)
@@ -39,6 +40,13 @@ public class QTHConverterUnitTest {
         @Test
         public void test_toQTHString() {
             assertEquals(mString, LatLngToQTH(mLatLng));
+        }
+
+        @Test
+        public void test_fromQTHString() {
+            LatLng actual = fromQTH(mString);
+            assertEquals(mLatLng.longitude, actual.longitude, 5.0 / 60.);
+            assertEquals(mLatLng.latitude, actual.latitude, 2.5 / 60.);
         }
     }
 }
