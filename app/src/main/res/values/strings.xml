@@ -30,6 +30,8 @@
     <string name="location_qth">QTH</string>
     <string name="location_coordinate">Coordinate</string>
 
+    <string name="location_current_no_location">Unknown Location</string>
+
     <string name="location_qth_hint">6-digit QTH Locator</string>
     <string name="location_qth_error">Invalid. Examples include FN31pr or BL11BH</string>
 

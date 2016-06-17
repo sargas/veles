@@ -11,7 +11,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
+import android.support.v13.app.FragmentCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -45,7 +46,7 @@ import static net.neoturbine.veles.QTHConverter.toQTH;
 public final class HamLocationPicker extends Fragment
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        ActivityCompat.OnRequestPermissionsResultCallback {
+        FragmentCompat.OnRequestPermissionsResultCallback {
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
     private static final SparseArray<CurrentTab> mIdsToTabs =
@@ -239,10 +240,10 @@ public final class HamLocationPicker extends Fragment
     }
 
     private void fillFusedLocation(boolean requestPermission) {
-        if (ActivityCompat.checkSelfPermission(getActivity(),
+        if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (requestPermission) {
-                ActivityCompat.requestPermissions(getActivity(),
+                FragmentCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
             }
@@ -251,7 +252,6 @@ public final class HamLocationPicker extends Fragment
 
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (lastLocation == null) {
-            // TODO Maybe show a warning/error if requestPermission = true?
             return;
         }
 
