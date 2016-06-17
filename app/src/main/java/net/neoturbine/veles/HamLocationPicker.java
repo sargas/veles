@@ -27,6 +27,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlacesStatusCodes;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
@@ -134,7 +135,9 @@ public final class HamLocationPicker extends Fragment
 
             @Override
             public void onError(final Status status) {
-                //TODO add onError
+                mBinding.locationSearchQth.setText(
+                        getString(R.string.format_error,
+                                PlacesStatusCodes.getStatusCodeString(status.getStatusCode())));
             }
         });
 
@@ -236,6 +239,7 @@ public final class HamLocationPicker extends Fragment
 
     @Override
     public void onConnected(@Nullable final Bundle bundle) {
+        setGoogleServicesAvailable(true);
         fillFusedLocation(false);
     }
 
@@ -262,12 +266,24 @@ public final class HamLocationPicker extends Fragment
 
     @Override
     public void onConnectionFailed(@NonNull final ConnectionResult connectionResult) {
-        // TODO Add onConnectionFailed
+        setGoogleServicesAvailable(false);
     }
 
     @Override
     public void onConnectionSuspended(final int i) {
-        // TODO Add onConnectionSuspended
+        setGoogleServicesAvailable(false);
+    }
+
+    private void setGoogleServicesAvailable(boolean isOutThere) {
+        int visibility = isOutThere ? View.VISIBLE : View.GONE;
+        mBinding.locationCurrentRadio.setVisibility(visibility);
+        mBinding.locationSearchRadio.setVisibility(visibility);
+        if (!isOutThere
+                && (mCurrentTabHolder.currentTab.get() == CurrentTab.FIND
+                || mCurrentTabHolder.currentTab.get() == CurrentTab.SEARCH)) {
+            mCurrentTabHolder.currentTab.set(null);
+            mBinding.locationRadioGroup.clearCheck();
+        }
     }
 
     @Override

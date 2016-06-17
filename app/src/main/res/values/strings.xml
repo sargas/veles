@@ -41,6 +41,7 @@
     <string name="location_coordinate_longitude_error">Must be between -180 and 180</string>
 
     <string name="format_qth">QTH: %1$s</string>
+    <string name="format_error">Error: %1$s</string>
 
     <string-array name="qso_modes">
         <item>FM</item>

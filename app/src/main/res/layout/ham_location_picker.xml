@@ -30,6 +30,7 @@
             android:paddingStart="@dimen/list_text_margin"/>
 
         <RadioGroup
+            android:id="@+id/location_radio_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
