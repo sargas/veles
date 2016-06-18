@@ -1,6 +1,7 @@
 package net.neoturbine.veles;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.Context;
@@ -122,8 +123,15 @@ public class QSODetailFragment extends Fragment {
                         appBarLayout.setTitle(qso.getOtherStation());
                     }
 
-                    setupMap(qso.getMyLocation(), R.id.qso_detail_my_location, qso.getMyStation());
-                    setupMap(qso.getOtherLocation(), R.id.qso_detail_other_location, qso.getOtherStation());
+                    setupMap(qso.getMyLocation(), R.id.qso_detail_my_location,
+                            qso.getMyStation(), binding.qsoDetailMyLocationText);
+                    setupMap(qso.getOtherLocation(), R.id.qso_detail_other_location,
+                            qso.getOtherStation(), binding.qsoDetailOtherLocationText);
+
+                    binding.qsoDetailsMaps.setVisibility(
+                            qso.getOtherLocation() == null && qso.getMyLocation() == null ?
+                                    View.GONE : View.VISIBLE
+                    );
                 }
 
                 @Override
@@ -136,13 +144,17 @@ public class QSODetailFragment extends Fragment {
     }
 
     @UiThread
-    private void setupMap(final VelesLocation location, @IdRes final int fragmentId, final String station) {
-        MapFragment mapFragment = (MapFragment) getChildFragmentManager()
-                .findFragmentById(fragmentId);
+    private void setupMap(final VelesLocation location, @IdRes final int fragmentId,
+                          final String station, final View textBox) {
+        FragmentManager fm = getChildFragmentManager();
+
+        MapFragment mapFragment = (MapFragment) fm.findFragmentById(fragmentId);
         assert mapFragment != null;
 
-        // TODO if location == null, display something besides ocean
         if (location != null) {
+            fm.beginTransaction().show(mapFragment).commit();
+            textBox.setVisibility(View.VISIBLE);
+
             mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(final GoogleMap googleMap) {
@@ -161,6 +173,9 @@ public class QSODetailFragment extends Fragment {
                     }
                 }
             });
+        } else {
+            fm.beginTransaction().hide(mapFragment).commit();
+            textBox.setVisibility(View.INVISIBLE);
         }
     }
 
