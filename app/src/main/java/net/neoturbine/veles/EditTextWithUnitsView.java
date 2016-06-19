@@ -10,6 +10,8 @@ import android.databinding.InverseBindingMethod;
 import android.databinding.InverseBindingMethods;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -21,6 +23,8 @@ import android.widget.Spinner;
 
 import net.neoturbine.veles.databinding.EditTextWithUnitsViewBinding;
 
+import java.io.Serializable;
+
 @InverseBindingMethods({
         @InverseBindingMethod(type = Spinner.class,
                 attribute = "selection",
@@ -28,12 +32,15 @@ import net.neoturbine.veles.databinding.EditTextWithUnitsViewBinding;
         )
 })
 public class EditTextWithUnitsView extends LinearLayout {
+    private final String STATE_SUPER = "SUPER_STATE";
+    private final String STATE_VALUE = "STATE_VALUE";
+
     @SuppressWarnings("WeakerAccess")
-    public static class Value extends BaseObservable {
+    public static class Value extends BaseObservable implements Serializable {
+        private static final long serialVersionUID = -5491155345942093530L;
         public final ObservableField<String> valueNumber = new ObservableField<>("");
         public final ObservableField<String> valueNumberHint = new ObservableField<>("");
         public final ObservableInt unitIdx = new ObservableInt();
-
     }
 
     private final Value mValue = new Value();
@@ -99,6 +106,29 @@ public class EditTextWithUnitsView extends LinearLayout {
                 mUnitList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.unit.setAdapter(adapter);
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle savedState = new Bundle();
+        savedState.putParcelable(STATE_SUPER, super.onSaveInstanceState());
+        savedState.putSerializable(STATE_VALUE, mValue);
+        return savedState;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle savedState = (Bundle) state;
+
+            Value oldValue = (Value) savedState.getSerializable(STATE_VALUE);
+            assert oldValue != null;
+            mValue.valueNumber.set(oldValue.valueNumber.get());
+            mValue.unitIdx.set(oldValue.unitIdx.get());
+
+            state = savedState.getParcelable(STATE_SUPER);
+        }
+        super.onRestoreInstanceState(state);
     }
 
     void setValue(String value) {

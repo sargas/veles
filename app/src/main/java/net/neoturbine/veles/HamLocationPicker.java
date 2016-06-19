@@ -36,8 +36,8 @@ import net.neoturbine.veles.databinding.HamLocationPickerBinding;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import static net.neoturbine.veles.QTHConverter.LatLngToQTH;
@@ -49,6 +49,10 @@ public final class HamLocationPicker extends Fragment
         GoogleApiClient.OnConnectionFailedListener,
         FragmentCompat.OnRequestPermissionsResultCallback {
 
+    private static final String STATE_LOCATIONS = "STATE_LOCATIONS";
+    private static final String STATE_TAB_HOLDER = "STATE_TAB_HOLDER";
+    private static final String STATE_SEARCH_QTH = "STATE_SEARCH_QTH";
+
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
     private static final SparseArray<CurrentTab> mIdsToTabs =
             new SparseArray<>(CurrentTab.values().length);
@@ -58,7 +62,7 @@ public final class HamLocationPicker extends Fragment
             mIdsToTabs.put(tabType.getRadioId(), tabType);
     }
 
-    private final Map<CurrentTab, VelesLocation> mLastLocations = new HashMap<>();
+    private final HashMap<CurrentTab, VelesLocation> mLastLocations = new HashMap<>();
     private final Pattern mQTHRegexPattern = Pattern.compile("[A-R][A-R][0-9][0-9]([a-x][a-x]|[A-X][A-X])");
     private final CurrentTabHolder mCurrentTabHolder = new CurrentTabHolder();
     private GoogleApiClient mGoogleApiClient;
@@ -71,6 +75,17 @@ public final class HamLocationPicker extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            //noinspection unchecked
+            mLastLocations.putAll((HashMap) savedInstanceState.getSerializable(STATE_LOCATIONS));
+
+            //noinspection ConstantConditions
+            mCurrentTabHolder.currentTab.set(
+                    ((CurrentTabHolder) savedInstanceState.getSerializable(STATE_TAB_HOLDER))
+                            .currentTab.get());
+        }
+
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -219,6 +234,9 @@ public final class HamLocationPicker extends Fragment
         mBinding.locationCoordinateLat.addTextChangedListener(coordinateWatcher);
         mBinding.locationCoordinateLon.addTextChangedListener(coordinateWatcher);
 
+        if (savedInstanceState != null)
+            mBinding.locationSearchQth.setText(
+                    savedInstanceState.getCharSequence(STATE_SEARCH_QTH));
 
         return mBinding.getRoot();
 
@@ -295,6 +313,15 @@ public final class HamLocationPicker extends Fragment
         }
     }
 
+    @Override
+    public void onSaveInstanceState(final Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putSerializable(STATE_LOCATIONS, mLastLocations);
+        state.putSerializable(STATE_TAB_HOLDER, mCurrentTabHolder);
+        /* This value must be saved, since onPlaceSelectedListener isn't called on resume */
+        state.putCharSequence(STATE_SEARCH_QTH, mBinding.locationSearchQth.getText());
+    }
+
     @Nullable
     VelesLocation getLocation() {
         return mLastLocations.get(mCurrentTabHolder.currentTab.get());
@@ -323,6 +350,7 @@ public final class HamLocationPicker extends Fragment
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public enum CurrentTab {
         FIND(R.id.location_current_radio),
         QTH(R.id.location_qth_radio),
@@ -340,7 +368,8 @@ public final class HamLocationPicker extends Fragment
         }
     }
 
-    public static final class CurrentTabHolder {
+    public static final class CurrentTabHolder implements Serializable {
+        private static final long serialVersionUID = 8370389244855208970L;
         public final ObservableField<CurrentTab> currentTab = new ObservableField<>();
     }
 }
