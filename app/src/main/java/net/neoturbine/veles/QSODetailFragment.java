@@ -6,7 +6,6 @@ import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
@@ -49,9 +48,7 @@ public class QSODetailFragment extends Fragment {
 
     private static final int QSO_LOADER = 0;
 
-    private static final int REQUEST_EDIT = 1;
-
-    private onFinishListener mCallback;
+    private onQSODetailListener mCallback;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -60,8 +57,9 @@ public class QSODetailFragment extends Fragment {
     public QSODetailFragment() {
     }
 
-    interface onFinishListener {
+    interface onQSODetailListener {
         void onFinishDelete();
+        void onEditQSO(long QSOid);
     }
 
     @Override
@@ -69,7 +67,7 @@ public class QSODetailFragment extends Fragment {
         super.onAttach(context);
 
         try {
-            mCallback = (onFinishListener) context;
+            mCallback = (onQSODetailListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() +
                     " must implement OnFinishEditListener");
@@ -203,10 +201,7 @@ public class QSODetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit:
-                Intent intent = new Intent(getActivity(), QSOEditActivity.class);
-                intent.putExtra(QSOEditActivity.ARG_QSO_ID, mQSOid);
-
-                startActivityForResult(intent, REQUEST_EDIT);
+                mCallback.onEditQSO(mQSOid);
                 return true;
             case R.id.action_delete:
                 getActivity().getContentResolver().delete(
@@ -218,17 +213,6 @@ public class QSODetailFragment extends Fragment {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_EDIT:
-                if (resultCode == QSOEditActivity.RESULT_DELETED) {
-                    mCallback.onFinishDelete();
-                }
-                break;
         }
     }
 }

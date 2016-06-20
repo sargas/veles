@@ -14,8 +14,9 @@ import android.view.MenuItem;
  * in a {@link QSOListActivity}.
  */
 public class QSODetailActivity extends AppCompatActivity
-        implements QSODetailFragment.onFinishListener {
+        implements QSODetailFragment.onQSODetailListener {
     static final String ARG_QSO_ID = "qso_id";
+    private static final int REQUEST_EDIT = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,5 +73,22 @@ public class QSODetailActivity extends AppCompatActivity
         finish();
     }
 
+    @Override
+    public void onEditQSO(final long QSOid) {
+        Intent intent = new Intent(this, QSOEditActivity.class);
+        intent.putExtra(QSOEditActivity.ARG_QSO_ID, QSOid);
 
+        startActivityForResult(intent, REQUEST_EDIT);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_EDIT:
+                if (resultCode == QSOEditActivity.RESULT_DELETED) {
+                    onFinishDelete();
+                }
+                break;
+        }
+    }
 }
