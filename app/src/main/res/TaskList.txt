@@ -6,4 +6,5 @@ TODO Add espresso tests for launching activities from ListActivity
 TODO Add espresso tests for other activities/fragments
 TODO Add RST values http://www.hamuniverse.com/rst.html
 TODO Show map of previous contacts
-TODO preserve date/time in EditFragment on configuration changes
+TODO Stop reference to activity when opening picker in DateTimePicker and changing orientation
+TODO Make timezones selectable in DateTimePicker

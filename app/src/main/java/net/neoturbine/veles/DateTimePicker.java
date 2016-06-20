@@ -23,6 +23,7 @@ import java.util.Calendar;
 
 public class DateTimePicker extends Fragment {
 
+    private static final String STATE_CALENDAR = "STATE_CALENDAR";
     private Calendar mCalendar;
     private TextView mTimeButton;
     private TextView mDateButton;
@@ -41,7 +42,11 @@ public class DateTimePicker extends Fragment {
 
         mTimeButton = binding.dateTimePickerTime;
         mDateButton = binding.dateTimePickerDate;
-        mCalendar = Calendar.getInstance();
+        if (savedInstanceState == null) {
+            mCalendar = Calendar.getInstance();
+        } else {
+            mCalendar = (Calendar) savedInstanceState.getSerializable(STATE_CALENDAR);
+        }
 
         bindButtons();
         binding.dateTimePickerTextInputLayout.setHint(mHintText);
@@ -103,6 +108,12 @@ public class DateTimePicker extends Fragment {
         mHintText = a.getText(R.styleable.DateTimePicker_hint);
 
         a.recycle();
+    }
+
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(STATE_CALENDAR, mCalendar);
     }
 
     void setTimeInMillis(long timeInMillis) {
