@@ -32,77 +32,21 @@
             android:inputType="textNoSuggestions|textCapCharacters"/>
     </android.support.design.widget.TextInputLayout>
 
-    <LinearLayout
+    <fragment
+        android:id="@+id/qso_start_time"
+        android:name="net.neoturbine.veles.DateTimePicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingEnd="@dimen/list_text_margin"
-        android:paddingStart="@dimen/list_text_margin">
+        app:hint="@string/qso_edit_start_time"
+        tools:layout="@layout/fragment_date_time_picker"/>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/qso_pick_start_date"
-                style="@android:style/Widget.DeviceDefault.Light.Spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:editable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:hint="@string/qso_edit_start_time"
-                android:inputType="none"
-                tools:ignore="Deprecated,TextFields"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/qso_pick_start_time"
-            style="@android:style/Widget.DeviceDefault.Light.Spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <LinearLayout
+    <fragment
+        android:id="@+id/qso_end_time"
+        android:name="net.neoturbine.veles.DateTimePicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingEnd="@dimen/list_text_margin"
-        android:paddingStart="@dimen/list_text_margin">
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/qso_pick_end_date"
-                style="@android:style/Widget.DeviceDefault.Light.Spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:editable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:hint="@string/qso_edit_end_time"
-                android:inputType="none"
-                tools:ignore="Deprecated,TextFields"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/qso_pick_end_time"
-            style="@android:style/Widget.DeviceDefault.Light.Spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+        app:hint="@string/qso_edit_end_time"
+        tools:layout="@layout/fragment_date_time_picker"/>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"

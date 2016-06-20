@@ -39,7 +39,7 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
+    // Set this dependency to use JUnit 4 rules
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support:support-v4:24.0.0'
     compile 'com.android.support:support-v13:24.0.0'
@@ -49,10 +49,10 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:9.0.2'
     compile 'com.android.support:cardview-v7:24.0.0'
     compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
+    testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.android.support:support-annotations:24.0.0'
     androidTestCompile 'com.android.support.test:runner:0.5'
-    // Set this dependency to use JUnit 4 rules
     androidTestCompile 'com.android.support.test:rules:0.5'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
 }

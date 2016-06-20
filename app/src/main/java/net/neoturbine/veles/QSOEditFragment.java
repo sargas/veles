@@ -1,9 +1,8 @@
 package net.neoturbine.veles;
 
-import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.LoaderManager;
-import android.app.TimePickerDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,9 +11,7 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.UiThread;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,14 +20,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.apache.commons.lang3.SerializationUtils;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,13 +39,7 @@ public class QSOEditFragment extends Fragment {
     private static final String PREF_LAST_USED_STATION = "PREF_LAST_USED_STATION";
 
     private long mQSOid = -1;
-    private Calendar mStartTime;
-    private Calendar mEndTime;
 
-    private TextView mStartTimeButton;
-    private TextView mStartDateButton;
-    private TextView mEndTimeButton;
-    private TextView mEndDateButton;
     private OnFinishEditListener mCallback;
 
     private static final int QSO_LOADER = 0;
@@ -59,6 +47,7 @@ public class QSOEditFragment extends Fragment {
     private final Map<TextView, String> mTextBoxes = new HashMap<>(4);
     private final Map<EditTextWithUnitsView, String> mTextBoxWithUnits = new HashMap<>(3);
     private final Map<HamLocationPicker, String> mLocationPickers = new HashMap<>(2);
+    private final Map<DateTimePicker, String> mDatetimePickers = new HashMap<>(2);
     private TextView mMyStation;
     private SharedPreferences mPrefs;
 
@@ -125,17 +114,15 @@ public class QSOEditFragment extends Fragment {
                 android.R.layout.simple_list_item_1,
                 getResources().getStringArray(R.array.qso_modes)));
 
-        mStartDateButton = (TextView) rootView.findViewById(R.id.qso_pick_start_date);
-        mStartTimeButton = (TextView) rootView.findViewById(R.id.qso_pick_start_time);
-        mEndDateButton = (TextView) rootView.findViewById(R.id.qso_pick_end_date);
-        mEndTimeButton = (TextView) rootView.findViewById(R.id.qso_pick_end_time);
         mMyStation = (TextView) rootView.findViewById(R.id.qso_my_station);
 
+        FragmentManager fm = getChildFragmentManager();
+
         mLocationPickers.put(
-                (HamLocationPicker) getChildFragmentManager().findFragmentById(R.id.qso_my_location),
+                (HamLocationPicker) fm.findFragmentById(R.id.qso_my_location),
                 QSOColumns.MY_LOCATION);
         mLocationPickers.put(
-                (HamLocationPicker) getChildFragmentManager().findFragmentById(R.id.qso_other_location),
+                (HamLocationPicker) fm.findFragmentById(R.id.qso_other_location),
                 QSOColumns.OTHER_LOCATION);
 
         mTextBoxWithUnits.put((EditTextWithUnitsView) rootView.findViewById(R.id.qso_tx_freq),
@@ -150,8 +137,12 @@ public class QSOEditFragment extends Fragment {
         mTextBoxes.put((TextView) rootView.findViewById(R.id.qso_mode), QSOColumns.MODE);
         mTextBoxes.put((TextView) rootView.findViewById(R.id.qso_comment), QSOColumns.COMMENT);
 
-        mStartTime = Calendar.getInstance();
-        mEndTime = Calendar.getInstance();
+        mDatetimePickers.put(
+                (DateTimePicker) fm.findFragmentById(R.id.qso_start_time),
+                QSOColumns.START_TIME);
+        mDatetimePickers.put(
+                (DateTimePicker) fm.findFragmentById(R.id.qso_end_time),
+                QSOColumns.END_TIME);
 
         mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
@@ -187,17 +178,15 @@ public class QSOEditFragment extends Fragment {
                                 data.getString(data.getColumnIndexOrThrow(entry.getValue())));
                     }
 
-                    mStartTime.setTimeInMillis(
-                            data.getLong(data.getColumnIndexOrThrow(QSOColumns.START_TIME)));
-                    mEndTime.setTimeInMillis(
-                            data.getLong(data.getColumnIndexOrThrow(QSOColumns.END_TIME)));
+                    for (Map.Entry<DateTimePicker, String> entry : mDatetimePickers.entrySet()) {
+                        entry.getKey().setTimeInMillis(
+                                data.getLong(data.getColumnIndexOrThrow(entry.getValue())));
+                    }
 
                     for (Map.Entry<HamLocationPicker, String> entry : mLocationPickers.entrySet()) {
                         entry.getKey().setLocation(SerializationUtils.<VelesLocation>deserialize(
                                 data.getBlob(data.getColumnIndexOrThrow(entry.getValue()))));
                     }
-
-                    updateTimes();
                 }
 
                 @Override
@@ -210,75 +199,12 @@ public class QSOEditFragment extends Fragment {
             if (appBarLayout != null) {
                 appBarLayout.setTitle(getResources().getString(R.string.title_qso_new));
             }
-            updateTimes();
 
             mMyStation.setText(mPrefs.getString(PREF_LAST_USED_STATION, ""));
 
         }
 
-        bindTimeChangeButtons(mStartDateButton, mStartTimeButton, mStartTime);
-        bindTimeChangeButtons(mEndDateButton, mEndTimeButton, mEndTime);
-
         return rootView;
-    }
-
-    @UiThread
-    private void bindTimeChangeButtons(final View date_button, final View time_button,
-                                       final Calendar calendar) {
-        date_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new DatePickerDialog(
-                        getActivity(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                calendar.set(year, month, day);
-                                updateTimes();
-                            }
-                        },
-                        calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)
-                ).show();
-            }
-        });
-
-        time_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new TimePickerDialog(
-                        getActivity(),
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                                calendar.set(Calendar.MINUTE, minute);
-                                updateTimes();
-                            }
-                        },
-                        calendar.get(Calendar.HOUR_OF_DAY),
-                        calendar.get(Calendar.MINUTE),
-                        DateFormat.is24HourFormat(getActivity())
-                ).show();
-            }
-        });
-    }
-
-    @UiThread
-    private void updateTimes() {
-        if (mStartTime != null) {
-            mStartDateButton.setText(
-                    DateFormat.getLongDateFormat(getActivity()).format(mStartTime.getTime()));
-            mStartTimeButton.setText(
-                    DateFormat.getTimeFormat(getActivity()).format(mStartTime.getTime()));
-        }
-        if (mEndTime != null) {
-            mEndDateButton.setText(
-                    DateFormat.getLongDateFormat(getActivity()).format(mEndTime.getTime()));
-            mEndTimeButton.setText(
-                    DateFormat.getTimeFormat(getActivity()).format(mEndTime.getTime()));
-        }
     }
 
     @Override
@@ -302,8 +228,9 @@ public class QSOEditFragment extends Fragment {
                     mNewValues.put(entry.getValue(), entry.getKey().getValueAsString());
                 }
 
-                mNewValues.put(QSOColumns.START_TIME, mStartTime.getTimeInMillis());
-                mNewValues.put(QSOColumns.END_TIME, mEndTime.getTimeInMillis());
+                for (Map.Entry<DateTimePicker, String> entry : mDatetimePickers.entrySet()) {
+                    mNewValues.put(entry.getValue(), entry.getKey().getTimeInMillis());
+                }
 
                 for (Map.Entry<HamLocationPicker, String> entry : mLocationPickers.entrySet()) {
                     mNewValues.put(entry.getValue(),
