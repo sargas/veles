@@ -1,6 +1,8 @@
 package net.neoturbine.veles;
 
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -31,8 +33,10 @@ import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class QSOListActivity extends AppCompatActivity {
+public class QSOListActivity extends AppCompatActivity
+        implements QSODetailFragment.onQSODetailListener, QSOEditFragment.OnFinishEditListener {
 
+    private static final String QSO_LIST_DETAIL_TAG = "QSO_LIST_DETAIL_TAG";
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
@@ -57,12 +61,24 @@ public class QSOListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
+        if (findViewById(R.id.qso_detail_container) != null) {
+            // The detail container view will be present only in the
+            // large-screen layouts (res/values-w900dp).
+            // If this view is present, then the
+            // activity should be in two-pane mode.
+            mTwoPane = true;
+        }
+
         View.OnClickListener startAddActivity = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Context context = view.getContext();
-                Intent intent = new Intent(context, QSOEditActivity.class);
-                context.startActivity(intent);
+                if (mTwoPane) {
+                    switchFragment(QSOEditFragment.newInstance());
+                } else {
+                    Context context = view.getContext();
+                    Intent intent = new Intent(context, QSOEditActivity.class);
+                    context.startActivity(intent);
+                }
             }
         };
 
@@ -91,13 +107,6 @@ public class QSOListActivity extends AppCompatActivity {
         });
         displayOrHideEmptyView();
 
-        if (findViewById(R.id.qso_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-        }
         getLoaderManager().initLoader(QSO_LOADER, null, new LoaderManager.LoaderCallbacks<Cursor>() {
             @Override
             public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -169,9 +178,7 @@ public class QSOListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (mTwoPane) {
                         QSODetailFragment fragment = QSODetailFragment.newInstance(getItemId(holder.getAdapterPosition()));
-                        getFragmentManager().beginTransaction()
-                                .replace(R.id.qso_detail_container, fragment)
-                                .commit();
+                        switchFragment(fragment);
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, QSODetailActivity.class);
@@ -242,5 +249,39 @@ public class QSOListActivity extends AppCompatActivity {
                 return super.toString() + " '" + mDateView.getText() + "'";
             }
         }
+    }
+
+    @Override
+    public void onFinishDelete() {
+        switchFragment(null);
+    }
+
+    @Override
+    public void onEditQSO(final long QSOid) {
+        switchFragment(QSOEditFragment.newInstance(QSOid));
+    }
+
+    @Override
+    public void onFinishEdit() {
+        getFragmentManager().popBackStack();
+    }
+
+    @UiThread
+    private void switchFragment(Fragment fragment) {
+        Fragment currentFragment = getFragmentManager().findFragmentByTag(QSO_LIST_DETAIL_TAG);
+        if (currentFragment != null && fragment != null
+                && fragment.getClass().equals(currentFragment.getClass())
+                && fragment instanceof QSOIdContainer && currentFragment instanceof QSOIdContainer
+                && ((QSOIdContainer) fragment).getQSOId() == ((QSOIdContainer) currentFragment).getQSOId()) {
+            return;
+        }
+        FragmentTransaction ft = getFragmentManager().beginTransaction().addToBackStack(null);
+
+        if (fragment != null)
+            ft.replace(R.id.qso_detail_container, fragment, QSO_LIST_DETAIL_TAG);
+        else
+            ft.remove(currentFragment);
+
+        ft.commit();
     }
 }

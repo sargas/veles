@@ -37,7 +37,7 @@ import net.neoturbine.veles.databinding.QsoDetailBinding;
  * in two-pane mode (on tablets) or a {@link QSODetailActivity}
  * on handsets.
  */
-public class QSODetailFragment extends Fragment {
+public class QSODetailFragment extends Fragment implements QSOIdContainer {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -59,6 +59,7 @@ public class QSODetailFragment extends Fragment {
 
     interface onQSODetailListener {
         void onFinishDelete();
+
         void onEditQSO(long QSOid);
     }
 
@@ -78,8 +79,9 @@ public class QSODetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        View rootView = DataBindingUtil.inflate(inflater, R.layout.qso_detail, container, false)
-                .getRoot();
+        final QsoDetailBinding binding =
+                DataBindingUtil.inflate(inflater, R.layout.qso_detail, container, false);
+        View rootView = binding.getRoot();
 
         if (getArguments().containsKey(ARG_QSO_ID)) {
             mQSOid = getArguments().getLong(ARG_QSO_ID);
@@ -103,8 +105,6 @@ public class QSODetailFragment extends Fragment {
                     if (!data.moveToFirst()) {
                         return;
                     }
-                    QsoDetailBinding binding = DataBindingUtil.getBinding(getView());
-                    assert binding != null;
 
                     final QSO qso = new QSO(data);
 
@@ -214,5 +214,13 @@ public class QSODetailFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public long getQSOId() {
+        if (getArguments() != null) {
+            return getArguments().getLong(ARG_QSO_ID);
+        }
+        return mQSOid;
     }
 }

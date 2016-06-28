@@ -34,7 +34,7 @@ import java.util.Map;
  * Use the {@link QSOEditFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class QSOEditFragment extends Fragment {
+public class QSOEditFragment extends Fragment implements QSOIdContainer {
     private static final String ARG_QSO_ID = "qso_id";
     private static final String PREF_LAST_USED_STATION = "PREF_LAST_USED_STATION";
 
@@ -146,7 +146,7 @@ public class QSOEditFragment extends Fragment {
 
         mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
-        if (mQSOid != -1) {
+        if (isEditingQSO()) {
             getLoaderManager().initLoader(QSO_LOADER, null, new LoaderManager.LoaderCallbacks<Cursor>() {
                 @Override
                 public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -210,7 +210,7 @@ public class QSOEditFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.qso_edit_menu, menu);
-        menu.findItem(R.id.action_delete).setVisible(mQSOid != -1);
+        menu.findItem(R.id.action_delete).setVisible(isEditingQSO());
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -237,7 +237,12 @@ public class QSOEditFragment extends Fragment {
                             SerializationUtils.serialize(entry.getKey().getLocation()));
                 }
 
-                if (mQSOid == -1) {
+                if (isEditingQSO()) {
+                    getActivity().getContentResolver().update(
+                            ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
+                            mNewValues, null, null
+                    );
+                } else {
                     getActivity().getContentResolver().insert(
                             QSOColumns.CONTENT_URI,
                             mNewValues
@@ -246,11 +251,6 @@ public class QSOEditFragment extends Fragment {
                     mPrefs.edit()
                             .putString(PREF_LAST_USED_STATION, mMyStation.getText().toString())
                             .apply();
-                } else {
-                    getActivity().getContentResolver().update(
-                            ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
-                            mNewValues, null, null
-                    );
                 }
                 mCallback.onFinishEdit();
                 return true;
@@ -265,5 +265,17 @@ public class QSOEditFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private boolean isEditingQSO() {
+        return mQSOid != -1;
+    }
+
+    @Override
+    public long getQSOId() {
+        if (getArguments() != null) {
+            return getArguments().getLong(ARG_QSO_ID);
+        }
+        return mQSOid;
     }
 }

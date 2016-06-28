@@ -6,4 +6,5 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="list_text_margin">4dp</dimen>
     <dimen name="half_list_text_margin">2dp</dimen>
+    <dimen name="wide_screen_margin">16dp</dimen>
 </resources>
