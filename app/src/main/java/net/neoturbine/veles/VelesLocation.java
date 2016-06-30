@@ -9,31 +9,31 @@ import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.io.Serializable;
 
-import static net.neoturbine.veles.QTHConverter.fromQTH;
-import static net.neoturbine.veles.QTHConverter.toQTH;
+import static net.neoturbine.veles.QTHConverter.fromLocator;
+import static net.neoturbine.veles.QTHConverter.toLocator;
 
 class VelesLocation implements Serializable {
     private static final long serialVersionUID = 6587082321100439439L;
     private final double mLongitude;
     private final double mLatitude;
     @NonNull
-    private final String mQTH;
+    private final String mLocator;
     @NonNull
     private final Type mType;
 
     VelesLocation(double longitude, double latitude) {
         this.mLongitude = longitude;
         this.mLatitude = latitude;
-        this.mQTH = toQTH(longitude, latitude);
+        this.mLocator = toLocator(longitude, latitude);
         this.mType = Type.LatitudeLongitude;
     }
 
-    VelesLocation(@NonNull String qth) {
-        LatLng center = fromQTH(qth);
+    VelesLocation(@NonNull String locator) {
+        LatLng center = fromLocator(locator);
         this.mLongitude = center.longitude;
         this.mLatitude = center.latitude;
-        this.mQTH = qth;
-        this.mType = Type.QTH;
+        this.mLocator = locator;
+        this.mType = Type.Locator;
     }
 
     VelesLocation(@NonNull Location location) {
@@ -49,7 +49,7 @@ class VelesLocation implements Serializable {
     public String toString() {
         return "VelesLocation{" + "mLongitude=" + mLongitude +
                 ", mLatitude=" + mLatitude +
-                ", mQTH='" + mQTH + '\'' +
+                ", mLocator='" + mLocator + '\'' +
                 ", mType=" + mType +
                 '}';
     }
@@ -63,8 +63,8 @@ class VelesLocation implements Serializable {
     }
 
     @NonNull
-    String getQTH() {
-        return mQTH;
+    String getLocator() {
+        return mLocator;
     }
 
     @NonNull
@@ -73,7 +73,7 @@ class VelesLocation implements Serializable {
     }
 
     enum Type {
-        LatitudeLongitude, QTH
+        LatitudeLongitude, Locator
     }
 
     @NonNull

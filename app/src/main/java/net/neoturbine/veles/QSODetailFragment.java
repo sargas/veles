@@ -164,7 +164,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer {
                                     .title(station)
                                     .position(location.asLatLng()));
                             break;
-                        case QTH:
+                        case Locator:
                             googleMap.addPolygon(location.asPolygonOptions()
                                     .strokeColor(Color.BLACK));
                             break;

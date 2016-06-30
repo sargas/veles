@@ -12,8 +12,8 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static net.neoturbine.veles.QTHConverter.LatLngToQTH;
-import static net.neoturbine.veles.QTHConverter.fromQTH;
+import static net.neoturbine.veles.QTHConverter.LatLngToLocator;
+import static net.neoturbine.veles.QTHConverter.fromLocator;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Enclosed.class)
@@ -38,13 +38,13 @@ public class QTHConverterUnitTest {
         }
 
         @Test
-        public void test_toQTHString() {
-            assertEquals(mString, LatLngToQTH(mLatLng));
+        public void test_toLocatorString() {
+            assertEquals(mString, LatLngToLocator(mLatLng));
         }
 
         @Test
-        public void test_fromQTHString() {
-            LatLng actual = fromQTH(mString);
+        public void test_fromLocatorString() {
+            LatLng actual = fromLocator(mString);
             assertEquals(mLatLng.longitude, actual.longitude, 5.0 / 60.);
             assertEquals(mLatLng.latitude, actual.latitude, 2.5 / 60.);
         }

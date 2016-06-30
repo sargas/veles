@@ -34,12 +34,12 @@ final class QTHConverter {
         throw new IllegalArgumentException("digit " + digit + " not recognized.");
     }
 
-    static String LatLngToQTH(@NonNull final LatLng latlng) {
-        return toQTH(latlng.longitude, latlng.latitude);
+    static String LatLngToLocator(@NonNull final LatLng latlng) {
+        return toLocator(latlng.longitude, latlng.latitude);
     }
 
     @NonNull
-    static String toQTH(double longitude, double latitude) {
+    static String toLocator(double longitude, double latitude) {
         StringBuilder output = new StringBuilder("123456");
 
         latitude += 90;
@@ -56,18 +56,18 @@ final class QTHConverter {
         return output.toString();
     }
 
-    static LatLng fromQTH(@NonNull String qth) {
-        if (qth.length() != 6)
+    static LatLng fromLocator(@NonNull String locator) {
+        if (locator.length() != 6)
             throw new IllegalArgumentException("length of QTH locator must be 6");
-        double latitude = (toDigit(qth.charAt(1)) - 1.0) * 10.0 + toDigit(qth.charAt(3)) + (toDigit(qth.charAt(5)) - 1.0) / 24.0 + 1.0 / 48.0;
-        double longitude = (toDigit(qth.charAt(0)) - 1.0) * 20.0 + toDigit(qth.charAt(2)) * 2 + (toDigit(qth.charAt(4)) - 1.0) / 12.0 + 1.0 / 24.0;
+        double latitude = (toDigit(locator.charAt(1)) - 1.0) * 10.0 + toDigit(locator.charAt(3)) + (toDigit(locator.charAt(5)) - 1.0) / 24.0 + 1.0 / 48.0;
+        double longitude = (toDigit(locator.charAt(0)) - 1.0) * 20.0 + toDigit(locator.charAt(2)) * 2 + (toDigit(locator.charAt(4)) - 1.0) / 12.0 + 1.0 / 24.0;
 
         latitude -= 90.0;
         longitude -= 180.0;
         return new LatLng(latitude, longitude);
     }
 
-    static String LocationToQTH(@NonNull final Location location) {
-        return toQTH(location.getLongitude(), location.getLatitude());
+    static String LocationToLocator(@NonNull final Location location) {
+        return toLocator(location.getLongitude(), location.getLatitude());
     }
 }

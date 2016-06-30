@@ -25,22 +25,22 @@
 
     <string name="toast_deleted">Deleted QSO</string>
 
-    <string name="location_current">Find Me</string>
+    <string name="location_current">Current Location</string>
     <string name="location_search">Search</string>
-    <string name="location_qth">QTH</string>
+    <string name="location_locator">Locator</string>
     <string name="location_coordinate">Coordinate</string>
 
     <string name="location_current_no_location">Unknown Location</string>
 
-    <string name="location_qth_hint">6-digit QTH Locator</string>
-    <string name="location_qth_error">Invalid. Examples include FN31pr or BL11BH</string>
+    <string name="location_locator_hint">6-digit QTH Locator</string>
+    <string name="location_locator_error">Invalid. Examples include FN31pr or BL11BH</string>
 
     <string name="location_coordinate_latitude">Latitude</string>
     <string name="location_coordinate_latitude_error">Must be between -90 and 90</string>
     <string name="location_coordinate_longitude">Longitude</string>
     <string name="location_coordinate_longitude_error">Must be between -180 and 180</string>
 
-    <string name="format_qth">QTH: %1$s</string>
+    <string name="format_locator">Locator: %1$s</string>
     <string name="format_error">Error: %1$s</string>
 
     <string-array name="qso_modes">

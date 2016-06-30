@@ -32,8 +32,7 @@
         <RadioGroup
             android:id="@+id/location_radio_group"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <RadioButton
                 android:id="@+id/location_current_radio"
@@ -42,10 +41,10 @@
                 android:text="@string/location_current"/>
 
             <RadioButton
-                android:id="@+id/location_qth_radio"
+                android:id="@+id/location_locator_radio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/location_qth"/>
+                android:text="@string/location_locator"/>
 
             <RadioButton
                 android:id="@+id/location_search_radio"
@@ -78,7 +77,7 @@
                     tools:layout="@layout/place_autocomplete_fragment"/>
 
                 <TextView
-                    android:id="@+id/location_search_qth"
+                    android:id="@+id/location_search_locator"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/place_autocomplete_fragment"
@@ -93,7 +92,7 @@
             card_view:cardCornerRadius="4dp">
 
             <TextView
-                android:id="@+id/location_current_qth"
+                android:id="@+id/location_current_locator"
                 android:text="@string/location_current_no_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
@@ -102,19 +101,19 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="@{currentTab.currentTab.getRadioId() == R.id.location_qth_radio ? View.VISIBLE : View.GONE}"
+            android:visibility="@{currentTab.currentTab.getRadioId() == R.id.location_locator_radio ? View.VISIBLE : View.GONE}"
             card_view:cardCornerRadius="4dp">
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/location_manual_qth_layout"
+                android:id="@+id/location_manual_locator_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/location_manual_qth"
+                    android:id="@+id/location_manual_locator"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/location_qth_hint"
+                    android:hint="@string/location_locator_hint"
                     android:inputType="text|textNoSuggestions"/>
 
             </android.support.design.widget.TextInputLayout>
@@ -178,7 +177,7 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <TextView
-                    android:id="@+id/location_coordinate_qth"
+                    android:id="@+id/location_coordinate_locator"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/list_text_margin"

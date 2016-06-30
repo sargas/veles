@@ -1,10 +1,12 @@
 TODO Make receiving frequency (when adding new QSO) default to transmitting one, maybe with a checkbox
 TODO Make clicking a QSO (or the Edit button, or the FAB) show a smooth animation to the activity
 TODO Make QSO list have bigger items, more stylized
-TODO Add espresso tests for launching activities from ListActivity
+TODO Add espresso tests for launching activities/fragments from ListActivity
 TODO Add espresso tests for other activities/fragments
 TODO Add RST values http://www.hamuniverse.com/rst.html
 TODO Show map of previous contacts
 TODO Stop reference to activity when opening picker in DateTimePicker and changing orientation
 TODO Make timezones selectable in DateTimePicker
 TODO Add valuable features from http://www.tavlikos.com/apps/mylotw/mylotw.html
+TODO Make FAB only show up over QSO list
+TODO Test multiwindow android n functionality

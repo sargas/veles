@@ -40,9 +40,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-import static net.neoturbine.veles.QTHConverter.LatLngToQTH;
-import static net.neoturbine.veles.QTHConverter.LocationToQTH;
-import static net.neoturbine.veles.QTHConverter.toQTH;
+import static net.neoturbine.veles.QTHConverter.LatLngToLocator;
+import static net.neoturbine.veles.QTHConverter.LocationToLocator;
+import static net.neoturbine.veles.QTHConverter.toLocator;
 
 public final class HamLocationPicker extends Fragment
         implements GoogleApiClient.ConnectionCallbacks,
@@ -51,7 +51,7 @@ public final class HamLocationPicker extends Fragment
 
     private static final String STATE_LOCATIONS = "STATE_LOCATIONS";
     private static final String STATE_TAB_HOLDER = "STATE_TAB_HOLDER";
-    private static final String STATE_SEARCH_QTH = "STATE_SEARCH_QTH";
+    private static final String STATE_SEARCH_LOCATOR = "STATE_SEARCH_LOCATOR";
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
     private static final SparseArray<CurrentTab> mIdsToTabs =
@@ -63,7 +63,7 @@ public final class HamLocationPicker extends Fragment
     }
 
     private final HashMap<CurrentTab, VelesLocation> mLastLocations = new HashMap<>();
-    private final Pattern mQTHRegexPattern = Pattern.compile("[A-R][A-R][0-9][0-9]([a-x][a-x]|[A-X][A-X])");
+    private final Pattern mLocatorRegexPattern = Pattern.compile("[A-R][A-R][0-9][0-9]([a-x][a-x]|[A-X][A-X])");
     private final CurrentTabHolder mCurrentTabHolder = new CurrentTabHolder();
     private GoogleApiClient mGoogleApiClient;
     private HamLocationPickerBinding mBinding;
@@ -130,7 +130,7 @@ public final class HamLocationPicker extends Fragment
                 fillFusedLocation(true);
             }
         });
-        mBinding.locationQthRadio.setOnClickListener(setTab);
+        mBinding.locationLocatorRadio.setOnClickListener(setTab);
         mBinding.locationSearchRadio.setOnClickListener(setTab);
         mBinding.locationCoordinateRadio.setOnClickListener(setTab);
 
@@ -141,21 +141,21 @@ public final class HamLocationPicker extends Fragment
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(final Place place) {
-                mBinding.locationSearchQth.setText(
+                mBinding.locationSearchLocator.setText(
                         getString(
-                                R.string.format_qth, LatLngToQTH(place.getLatLng())));
+                                R.string.format_locator, LatLngToLocator(place.getLatLng())));
                 mLastLocations.put(CurrentTab.SEARCH, new VelesLocation(place.getLatLng()));
             }
 
             @Override
             public void onError(final Status status) {
-                mBinding.locationSearchQth.setText(
+                mBinding.locationSearchLocator.setText(
                         getString(R.string.format_error,
                                 PlacesStatusCodes.getStatusCodeString(status.getStatusCode())));
             }
         });
 
-        mBinding.locationManualQth.addTextChangedListener(new TextWatcher() {
+        mBinding.locationManualLocator.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
             }
@@ -167,15 +167,15 @@ public final class HamLocationPicker extends Fragment
             @Override
             public void afterTextChanged(final Editable s) {
                 if (TextUtils.isEmpty(s)) {
-                    mBinding.locationManualQthLayout.setError(null);
-                    mLastLocations.remove(CurrentTab.QTH);
-                } else if (mQTHRegexPattern.matcher(s).matches()) {
-                    mBinding.locationManualQthLayout.setError(null);
-                    mLastLocations.put(CurrentTab.QTH, new VelesLocation(s.toString()));
+                    mBinding.locationManualLocatorLayout.setError(null);
+                    mLastLocations.remove(CurrentTab.LOCATOR);
+                } else if (mLocatorRegexPattern.matcher(s).matches()) {
+                    mBinding.locationManualLocatorLayout.setError(null);
+                    mLastLocations.put(CurrentTab.LOCATOR, new VelesLocation(s.toString()));
                 } else {
-                    mBinding.locationManualQthLayout.setError(
-                            getString(R.string.location_qth_error));
-                    mLastLocations.remove(CurrentTab.QTH);
+                    mBinding.locationManualLocatorLayout.setError(
+                            getString(R.string.location_locator_error));
+                    mLastLocations.remove(CurrentTab.LOCATOR);
                 }
             }
         });
@@ -222,11 +222,11 @@ public final class HamLocationPicker extends Fragment
                 }
 
                 if (isValid) {
-                    mBinding.locationCoordinateQth.setText(
-                            getString(R.string.format_qth, toQTH(longitude, latitude)));
+                    mBinding.locationCoordinateLocator.setText(
+                            getString(R.string.format_locator, toLocator(longitude, latitude)));
                     mLastLocations.put(CurrentTab.COORDINATE, new VelesLocation(longitude, latitude));
                 } else {
-                    mBinding.locationCoordinateQth.setText("");
+                    mBinding.locationCoordinateLocator.setText("");
                     mLastLocations.remove(CurrentTab.COORDINATE);
                 }
             }
@@ -235,8 +235,8 @@ public final class HamLocationPicker extends Fragment
         mBinding.locationCoordinateLon.addTextChangedListener(coordinateWatcher);
 
         if (savedInstanceState != null)
-            mBinding.locationSearchQth.setText(
-                    savedInstanceState.getCharSequence(STATE_SEARCH_QTH));
+            mBinding.locationCoordinateLocator.setText(
+                    savedInstanceState.getCharSequence(STATE_SEARCH_LOCATOR));
 
         return mBinding.getRoot();
 
@@ -276,8 +276,8 @@ public final class HamLocationPicker extends Fragment
             return;
         }
 
-        mBinding.locationCurrentQth.setText(
-                getString(R.string.format_qth, LocationToQTH(lastLocation)));
+        mBinding.locationCurrentLocator.setText(
+                getString(R.string.format_locator, LocationToLocator(lastLocation)));
         mLastLocations.put(CurrentTab.FIND, new VelesLocation(lastLocation));
     }
 
@@ -319,7 +319,7 @@ public final class HamLocationPicker extends Fragment
         state.putSerializable(STATE_LOCATIONS, mLastLocations);
         state.putSerializable(STATE_TAB_HOLDER, mCurrentTabHolder);
         /* This value must be saved, since onPlaceSelectedListener isn't called on resume */
-        state.putCharSequence(STATE_SEARCH_QTH, mBinding.locationSearchQth.getText());
+        state.putCharSequence(STATE_SEARCH_LOCATOR, mBinding.locationSearchLocator.getText());
     }
 
     @Nullable
@@ -340,12 +340,12 @@ public final class HamLocationPicker extends Fragment
                 mBinding.locationCoordinateLat.setText(
                         String.valueOf(location.getLatitude()));
                 break;
-            case QTH:
-                mCurrentTabHolder.currentTab.set(CurrentTab.QTH);
-                mBinding.locationQthRadio.setChecked(true);
-                mLastLocations.put(CurrentTab.QTH, location);
-                mBinding.locationManualQth.setText(
-                        location.getQTH());
+            case Locator:
+                mCurrentTabHolder.currentTab.set(CurrentTab.LOCATOR);
+                mBinding.locationLocatorRadio.setChecked(true);
+                mLastLocations.put(CurrentTab.LOCATOR, location);
+                mBinding.locationManualLocator.setText(
+                        location.getLocator());
                 break;
         }
     }
@@ -353,7 +353,7 @@ public final class HamLocationPicker extends Fragment
     @SuppressWarnings("WeakerAccess")
     public enum CurrentTab {
         FIND(R.id.location_current_radio),
-        QTH(R.id.location_qth_radio),
+        LOCATOR(R.id.location_locator_radio),
         SEARCH(R.id.location_search_radio),
         COORDINATE(R.id.location_coordinate_radio);
 
