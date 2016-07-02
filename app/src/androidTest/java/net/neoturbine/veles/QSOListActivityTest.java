@@ -1,10 +1,12 @@
 package net.neoturbine.veles;
 
 
+import android.content.ComponentName;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -16,18 +18,27 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.BundleMatchers.hasEntry;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtras;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
 public class QSOListActivityTest {
     @Rule
-    public ActivityTestRule<QSOListActivity> mActivityRule =
-            new ActivityTestRule<>(QSOListActivity.class);
+    public final ActivityTestRule<QSOListActivity> mActivityRule =
+            new IntentsTestRule<>(QSOListActivity.class);
 
     @Test
     public void QSOListActivity_empty_messages() {
@@ -49,6 +60,22 @@ public class QSOListActivityTest {
                 .check(matches(not(withEffectiveVisibility(ViewMatchers.Visibility.GONE))));
         onView(withId(R.id.qso_list))
                 .check(matches(not(withEffectiveVisibility(ViewMatchers.Visibility.GONE))));
+    }
+
+    @Test
+    public void QSOListActivity_fab_new_qso() {
+        onView(withId(R.id.fab))
+                .perform(click());
+
+        if (mActivityRule.getActivity().findViewById(R.id.qso_detail_container) != null) {
+            onView(withId(R.id.qso_station)).check(matches(isDisplayed()));
+        } else {
+            intended(allOf(hasComponent(
+                    new ComponentName(mActivityRule.getActivity().getPackageName(),
+                            QSOEditActivity.class.getName())),
+                    not(hasExtras(hasEntry(equalTo(QSOEditActivity.ARG_QSO_ID), anything())))
+            ));
+        }
     }
 
     private static class ChangeAdapterAction implements ViewAction {
