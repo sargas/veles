@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
@@ -22,7 +23,10 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.BundleMatchers.hasEntry;
+import static android.support.test.espresso.intent.matcher.ComponentNameMatchers.hasClassName;
+import static android.support.test.espresso.intent.matcher.ComponentNameMatchers.hasPackageName;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtras;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
@@ -78,8 +82,26 @@ public class QSOListActivityTest {
         }
     }
 
+    @Test
+    public void QSOListActivity_open_qso_activity() {
+        if (mActivityRule.getActivity().findViewById(R.id.qso_detail_container) != null)
+            return; // skip on big screens
+
+        onView(isRoot()).perform(ChangeAdapterAction.cursorWithItems());
+        onView(withId(R.id.qso_list)).perform(
+                RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        intended(allOf(
+                hasComponent(
+                        allOf(hasClassName(QSODetailActivity.class.getName()),
+                                hasPackageName(mActivityRule.getActivity().getPackageName()))
+                ),
+                hasExtra(QSODetailActivity.ARG_QSO_ID, ChangeAdapterAction.ID_OF_ITEM)
+        ));
+    }
+
     private static class ChangeAdapterAction implements ViewAction {
         final Cursor mCursor;
+        static final long ID_OF_ITEM = 1234L;
 
         ChangeAdapterAction(Cursor c) {
             mCursor = c;
@@ -111,7 +133,7 @@ public class QSOListActivityTest {
                     QSOColumns._ID, QSOColumns.MODE, QSOColumns.START_TIME,
                     QSOColumns.TRANSMISSION_FREQUENCY, QSOColumns.OTHER_STATION
             });
-            c.addRow(new Object[]{1, "FM", 1464804014L, "101.1 MHz", "WWW"});
+            c.addRow(new Object[]{ID_OF_ITEM, "FM", 1464804014L, "101.1 MHz", "WWW"});
             return new ChangeAdapterAction(c);
         }
     }
