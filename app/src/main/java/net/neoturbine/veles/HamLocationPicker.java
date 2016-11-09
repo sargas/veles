@@ -133,6 +133,7 @@ public final class HamLocationPicker extends Fragment
         mBinding.locationLocatorRadio.setOnClickListener(setTab);
         mBinding.locationSearchRadio.setOnClickListener(setTab);
         mBinding.locationCoordinateRadio.setOnClickListener(setTab);
+        mBinding.locationFreeFormRadio.setOnClickListener(setTab);
 
         PlaceAutocompleteFragment autocompleteFragment =
                 (PlaceAutocompleteFragment) getChildFragmentManager()
@@ -171,11 +172,29 @@ public final class HamLocationPicker extends Fragment
                     mLastLocations.remove(CurrentTab.LOCATOR);
                 } else if (mLocatorRegexPattern.matcher(s).matches()) {
                     mBinding.locationManualLocatorLayout.setError(null);
-                    mLastLocations.put(CurrentTab.LOCATOR, new VelesLocation(s.toString()));
+                    mLastLocations.put(CurrentTab.LOCATOR, VelesLocation.fromLocatorString(s));
                 } else {
                     mBinding.locationManualLocatorLayout.setError(
                             getString(R.string.location_locator_error));
                     mLastLocations.remove(CurrentTab.LOCATOR);
+                }
+            }
+        });
+        mBinding.locationFreeForm.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence s, final int start, final int count, final int after) {
+            }
+
+            @Override
+            public void afterTextChanged(final Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    mLastLocations.remove(CurrentTab.FREE_FORM);
+                } else {
+                    mLastLocations.put(CurrentTab.FREE_FORM, VelesLocation.fromFreeFormString(s));
                 }
             }
         });
@@ -224,7 +243,8 @@ public final class HamLocationPicker extends Fragment
                 if (isValid) {
                     mBinding.locationCoordinateLocator.setText(
                             getString(R.string.format_locator, toLocator(longitude, latitude)));
-                    mLastLocations.put(CurrentTab.COORDINATE, new VelesLocation(longitude, latitude));
+                    mLastLocations.put(CurrentTab.COORDINATE,
+                            VelesLocation.fromLongitudeLatitude(longitude, latitude));
                 } else {
                     mBinding.locationCoordinateLocator.setText("");
                     mLastLocations.remove(CurrentTab.COORDINATE);
@@ -347,6 +367,12 @@ public final class HamLocationPicker extends Fragment
                 mBinding.locationManualLocator.setText(
                         location.getLocator());
                 break;
+            case FreeForm:
+                mCurrentTabHolder.currentTab.set(CurrentTab.FREE_FORM);
+                mBinding.locationFreeFormRadio.setChecked(true);
+                mLastLocations.put(CurrentTab.FREE_FORM, location);
+                mBinding.locationFreeForm.setText(location.getFreeForm());
+                break;
         }
     }
 
@@ -355,7 +381,8 @@ public final class HamLocationPicker extends Fragment
         FIND(R.id.location_current_radio),
         LOCATOR(R.id.location_locator_radio),
         SEARCH(R.id.location_search_radio),
-        COORDINATE(R.id.location_coordinate_radio);
+        COORDINATE(R.id.location_coordinate_radio),
+        FREE_FORM(R.id.location_free_form_radio);
 
         private final int mRadioID;
 

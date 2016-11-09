@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--suppress XmlUnboundNsPrefix -->
 <resources>
     <!-- Not a fan of this. http://stackoverflow.com/a/28241335/239003 -->
 	<string name="ignored">Ignored</string>

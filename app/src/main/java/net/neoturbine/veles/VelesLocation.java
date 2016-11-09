@@ -20,20 +20,43 @@ class VelesLocation implements Serializable {
     private final String mLocator;
     @NonNull
     private final Type mType;
+    @NonNull
+    private final String mFreeForm;
 
-    VelesLocation(double longitude, double latitude) {
+    private VelesLocation(double longitude, double latitude) {
         this.mLongitude = longitude;
         this.mLatitude = latitude;
         this.mLocator = toLocator(longitude, latitude);
         this.mType = Type.LatitudeLongitude;
+        this.mFreeForm = this.mLocator;
     }
 
-    VelesLocation(@NonNull String locator) {
+    private VelesLocation(@NonNull String locator) {
         LatLng center = fromLocator(locator);
         this.mLongitude = center.longitude;
         this.mLatitude = center.latitude;
         this.mLocator = locator;
         this.mType = Type.Locator;
+        this.mFreeForm = locator;
+    }
+
+    private VelesLocation(@NonNull String freeForm, @SuppressWarnings({"SameParameterValue", "UnusedParameters"}) int ignored) {
+        this.mLatitude = this.mLongitude = 0;
+        this.mLocator = "";
+        this.mType = Type.FreeForm;
+        this.mFreeForm = freeForm;
+    }
+
+    static VelesLocation fromLongitudeLatitude(double longitude, double latitude) {
+        return new VelesLocation(longitude, latitude);
+    }
+
+    static VelesLocation fromLocatorString(@NonNull CharSequence locator) {
+        return new VelesLocation(locator.toString());
+    }
+
+    static VelesLocation fromFreeFormString(@NonNull CharSequence freeForm) {
+        return new VelesLocation(freeForm.toString(), 0);
     }
 
     VelesLocation(@NonNull Location location) {
@@ -72,8 +95,13 @@ class VelesLocation implements Serializable {
         return mType;
     }
 
+    @NonNull
+    public String getFreeForm() {
+        return mFreeForm;
+    }
+
     enum Type {
-        LatitudeLongitude, Locator
+        LatitudeLongitude, Locator, FreeForm
     }
 
     @NonNull

@@ -168,6 +168,12 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer {
                             googleMap.addPolygon(location.asPolygonOptions()
                                     .strokeColor(Color.BLACK));
                             break;
+                        case FreeForm:
+                            googleMap.addMarker(new MarkerOptions()
+                                    .title(location.getFreeForm())
+                                    .position(location.asLatLng())).showInfoWindow();
+                            googleMap.getUiSettings().setMapToolbarEnabled(false);
+                            googleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
                     }
                 }
             });
