@@ -148,7 +148,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/qso_details_maps_guideline"
                 android:orientation="vertical"
-                app:relativePercent="51"/>
+                app:layout_constraintGuide_percent="0.51"/>
 
             <TextView
                 android:text="@string/qso_edit_other_location"
