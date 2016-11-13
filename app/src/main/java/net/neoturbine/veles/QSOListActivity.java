@@ -16,14 +16,21 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
+
+import net.danlew.android.joda.DateUtils;
+import net.danlew.android.joda.JodaTimeAndroid;
+
+import org.apache.commons.lang3.SerializationUtils;
+import org.joda.time.DateTime;
+
 
 /**
  * An activity representing a list of QSOs. This activity
@@ -54,6 +61,7 @@ public class QSOListActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        JodaTimeAndroid.init(this);
         setContentView(R.layout.activity_qso_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -113,7 +121,7 @@ public class QSOListActivity extends AppCompatActivity
                 switch (id) {
                     case QSO_LOADER:
                         return new CursorLoader(getApplicationContext(), QSOColumns.CONTENT_URI, null,
-                                null, null, QSOColumns.START_TIME + " DESC");
+                                null, null, QSOColumns.UTC_START_TIME + " DESC");
                     default:
                         throw new IllegalArgumentException("Unknown type of loader: " + id);
                 }
@@ -165,9 +173,12 @@ public class QSOListActivity extends AppCompatActivity
             if (mValidData && mCursor.moveToPosition(position)) {
                 holder.mStationView.setText(
                         mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)));
-                holder.mDateView.setText(
-                        DateUtils.getRelativeTimeSpanString(
-                                mCursor.getLong(mCursor.getColumnIndexOrThrow(QSOColumns.START_TIME))));
+
+                DateTime startTime = SerializationUtils.deserialize(
+                        mCursor.getBlob(
+                                mCursor.getColumnIndexOrThrow(QSOColumns.START_TIME)));
+                holder.mDateView.setText(DateUtils.getRelativeTimeSpanString(
+                        QSOListActivity.this, startTime));
                 holder.mModeView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.MODE)));
                 holder.mFrequencyView.setText(
                         mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.TRANSMISSION_FREQUENCY)));

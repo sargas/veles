@@ -25,6 +25,8 @@
 
     <string name="toast_deleted">Deleted QSO</string>
 
+    <string name="datetime_picker_timezone">Timezone:</string>
+
     <string name="location_current">Current Location</string>
     <string name="location_search">Search</string>
     <string name="location_locator">Locator</string>

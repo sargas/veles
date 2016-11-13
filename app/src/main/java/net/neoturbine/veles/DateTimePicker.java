@@ -13,24 +13,39 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import net.danlew.android.joda.JodaTimeAndroid;
 import net.neoturbine.veles.databinding.FragmentDateTimePickerBinding;
 
-import java.util.Calendar;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+
 
 public class DateTimePicker extends Fragment {
 
-    private static final String STATE_CALENDAR = "STATE_CALENDAR";
-    private Calendar mCalendar;
+    private static final String STATE_TIME = "STATE_TIME";
+    private DateTime mTime;
     private TextView mTimeButton;
     private TextView mDateButton;
+    private Spinner mTimeZoneSpinner;
     private CharSequence mHintText;
+    private ArrayAdapter<String> mTimeZoneAdapter;
 
     public DateTimePicker() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        JodaTimeAndroid.init(getActivity());
     }
 
     @Override
@@ -42,10 +57,11 @@ public class DateTimePicker extends Fragment {
 
         mTimeButton = binding.dateTimePickerTime;
         mDateButton = binding.dateTimePickerDate;
+        mTimeZoneSpinner = binding.dateTimePickerTimezone;
         if (savedInstanceState == null) {
-            mCalendar = Calendar.getInstance();
+            mTime = new DateTime();
         } else {
-            mCalendar = (Calendar) savedInstanceState.getSerializable(STATE_CALENDAR);
+            mTime = (DateTime) savedInstanceState.getSerializable(STATE_TIME);
         }
 
         bindButtons();
@@ -66,13 +82,13 @@ public class DateTimePicker extends Fragment {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                mCalendar.set(year, month, day);
+                                mTime = mTime.withDate(year, month, day);
                                 updateTimes();
                             }
                         },
-                        mCalendar.get(Calendar.YEAR),
-                        mCalendar.get(Calendar.MONTH),
-                        mCalendar.get(Calendar.DAY_OF_MONTH)
+                        mTime.getYear(),
+                        mTime.getMonthOfYear(),
+                        mTime.getDayOfMonth()
                 ).show();
             }
         });
@@ -85,15 +101,31 @@ public class DateTimePicker extends Fragment {
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                                mCalendar.set(Calendar.HOUR_OF_DAY, hour);
-                                mCalendar.set(Calendar.MINUTE, minute);
+                                mTime = mTime.withHourOfDay(hour).withMinuteOfHour(minute);
                                 updateTimes();
                             }
                         },
-                        mCalendar.get(Calendar.HOUR_OF_DAY),
-                        mCalendar.get(Calendar.MINUTE),
+                        mTime.getHourOfDay(),
+                        mTime.getMinuteOfHour(),
                         DateFormat.is24HourFormat(getActivity())
                 ).show();
+            }
+        });
+
+        // from http://stackoverflow.com/a/23740502/239003
+        final String[] idArray = DateTimeZone.getAvailableIDs().toArray(new String[0]);
+        mTimeZoneAdapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner_dropdown_item_aligned,
+                idArray);
+        mTimeZoneSpinner.setAdapter(mTimeZoneAdapter);
+        mTimeZoneSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(final AdapterView<?> parent, final View view, final int pos, final long id) {
+                mTime = mTime.withZoneRetainFields(DateTimeZone.forID(mTimeZoneAdapter.getItem(pos)));
+                updateTimes();
+            }
+
+            @Override
+            public void onNothingSelected(final AdapterView<?> parent) {
             }
         });
     }
@@ -113,23 +145,31 @@ public class DateTimePicker extends Fragment {
     @Override
     public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(STATE_CALENDAR, mCalendar);
+        outState.putSerializable(STATE_TIME, mTime);
     }
 
-    void setTimeInMillis(long timeInMillis) {
-        mCalendar.setTimeInMillis(timeInMillis);
+    void setDateTime(final DateTime newTime) {
+        mTime = newTime;
         updateTimes();
     }
 
-    long getTimeInMillis() {
-        return mCalendar.getTimeInMillis();
+    DateTime getDateTime() {
+        return mTime;
     }
 
     @UiThread
     private void updateTimes() {
-        mDateButton.setText(
-                DateFormat.getLongDateFormat(getActivity()).format(mCalendar.getTime()));
-        mTimeButton.setText(
-                DateFormat.getTimeFormat(getActivity()).format(mCalendar.getTime()));
+
+        mDateButton.setText(DateTimeFormat.longDate().print(mTime));
+        mTimeButton.setText(DateTimeFormat.shortTime().print(mTime));
+
+        // from http://stackoverflow.com/a/23740502/239003
+        for (int i = 0; i < mTimeZoneAdapter.getCount(); i++) {
+            String timezone = mTimeZoneAdapter.getItem(i);
+            assert timezone != null;
+            if (timezone.equals(mTime.getZone().getID())) {
+                mTimeZoneSpinner.setSelection(i);
+            }
+        }
     }
 }

@@ -6,7 +6,8 @@ TODO Add espresso tests for other activities/fragments
 TODO Add RST values http://www.hamuniverse.com/rst.html
 TODO Show map of previous contacts
 TODO Stop reference to activity when opening picker in DateTimePicker and changing orientation
-TODO Make timezones selectable in DateTimePicker
 TODO Add valuable features from http://www.tavlikos.com/apps/mylotw/mylotw.html
 TODO Make FAB only show up over QSO list
 TODO Test multiwindow android n functionality
+TODO Use place picker ( https://developers.google.com/places/android-api/placepicker ) instead of place autocomplete widget
+TODO profile application startup, both on normal use and first use after install

@@ -23,7 +23,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import org.apache.commons.lang3.SerializationUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -84,6 +88,7 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        JodaTimeAndroid.init(getActivity());
         if (getArguments() != null) {
             mQSOid = getArguments().getLong(ARG_QSO_ID);
         }
@@ -179,8 +184,8 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
                     }
 
                     for (Map.Entry<DateTimePicker, String> entry : mDatetimePickers.entrySet()) {
-                        entry.getKey().setTimeInMillis(
-                                data.getLong(data.getColumnIndexOrThrow(entry.getValue())));
+                        entry.getKey().setDateTime(SerializationUtils.<DateTime>deserialize(
+                                data.getBlob(data.getColumnIndexOrThrow(entry.getValue()))));
                     }
 
                     for (Map.Entry<HamLocationPicker, String> entry : mLocationPickers.entrySet()) {
@@ -229,7 +234,12 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
                 }
 
                 for (Map.Entry<DateTimePicker, String> entry : mDatetimePickers.entrySet()) {
-                    mNewValues.put(entry.getValue(), entry.getKey().getTimeInMillis());
+                    mNewValues.put(entry.getValue(),
+                            SerializationUtils.serialize(entry.getKey().getDateTime()));
+
+                    if (entry.getValue().equals(QSOColumns.START_TIME))
+                        mNewValues.put(QSOColumns.UTC_START_TIME,
+                                entry.getKey().getDateTime().withZone(DateTimeZone.UTC).getMillis());
                 }
 
                 for (Map.Entry<HamLocationPicker, String> entry : mLocationPickers.entrySet()) {

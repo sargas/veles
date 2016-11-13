@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.joda.time.DateTime;
 
 @SuppressWarnings("unused")
 public final class QSO {
@@ -12,8 +13,10 @@ public final class QSO {
     private final String mMyStation;
     @NonNull
     private final String mOtherStation;
-    private final long mStartTime;
-    private final long mEndTime;
+    @NonNull
+    private final DateTime mStartTime;
+    @NonNull
+    private final DateTime mEndTime;
     @NonNull
     private final String mMode;
     @NonNull
@@ -30,7 +33,7 @@ public final class QSO {
     private final String mComment;
 
     private QSO(@NonNull String myStation, @NonNull String otherStation,
-                long startTime, long endTime, @NonNull String mode, @NonNull String power,
+                @NonNull DateTime startTime, @NonNull DateTime endTime, @NonNull String mode, @NonNull String power,
                 @Nullable VelesLocation myLocation, @Nullable VelesLocation otherLocation,
                 @NonNull String txFrequency,
                 @NonNull String rxFrequency, @NonNull String comment) {
@@ -51,8 +54,10 @@ public final class QSO {
         this(
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.MY_STATION)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)),
-                data.getLong(data.getColumnIndexOrThrow(QSOColumns.START_TIME)),
-                data.getLong(data.getColumnIndexOrThrow(QSOColumns.END_TIME)),
+                SerializationUtils.<DateTime>deserialize(
+                        data.getBlob(data.getColumnIndexOrThrow(QSOColumns.START_TIME))),
+                SerializationUtils.<DateTime>deserialize(
+                        data.getBlob(data.getColumnIndexOrThrow(QSOColumns.END_TIME))),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.MODE)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.POWER)),
                 SerializationUtils.<VelesLocation>deserialize(
@@ -85,11 +90,13 @@ public final class QSO {
         return mOtherStation;
     }
 
-    public long getStartTime() {
+    @NonNull
+    public DateTime getStartTime() {
         return mStartTime;
     }
 
-    public long getEndTime() {
+    @NonNull
+    public DateTime getEndTime() {
         return mEndTime;
     }
 

@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.UiThread;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +28,8 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import net.danlew.android.joda.DateUtils;
+import net.danlew.android.joda.JodaTimeAndroid;
 import net.neoturbine.veles.databinding.QsoDetailBinding;
 
 /**
@@ -76,6 +77,12 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer {
     }
 
     @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        JodaTimeAndroid.init(getActivity());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -109,12 +116,16 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer {
                     final QSO qso = new QSO(data);
 
                     binding.setQso(qso);
+
                     binding.setStartTime(DateUtils.formatDateTime(
                             getActivity(), qso.getStartTime(),
-                            DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR));
+                            DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR) + " " +
+                            qso.getStartTime().getZone().getShortName(qso.getStartTime().getMillis()));
+
                     binding.setEndTime(DateUtils.formatDateTime(
                             getActivity(), qso.getEndTime(),
-                            DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR));
+                            DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR) + " " +
+                            qso.getEndTime().getZone().getShortName(qso.getEndTime().getMillis()));
 
                     CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity().findViewById(R.id.toolbar_layout);
                     if (appBarLayout != null) {
