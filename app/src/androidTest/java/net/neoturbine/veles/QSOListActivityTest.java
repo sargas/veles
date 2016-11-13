@@ -13,7 +13,9 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.hamcrest.Matcher;
+import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +48,7 @@ public class QSOListActivityTest {
 
     @Test
     public void QSOListActivity_empty_messages() {
-        onView(isRoot()).perform(ChangeAdapterAction.emptyCursor());
+        onView(isRoot()).perform(ChangeAdapterAction.emptyCursor(mActivityRule.getActivity()));
         onView(withId(R.id.qso_list))
                 .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         onView(withId(R.id.qso_list))
@@ -57,7 +59,7 @@ public class QSOListActivityTest {
 
     @Test
     public void QSOListActivity_hide_empty_messages() {
-        onView(isRoot()).perform(ChangeAdapterAction.cursorWithItems());
+        onView(isRoot()).perform(ChangeAdapterAction.cursorWithItems(mActivityRule.getActivity()));
         onView(withId(R.id.qso_list))
                 .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
         onView(withId(R.id.qso_list))
@@ -87,7 +89,7 @@ public class QSOListActivityTest {
         if (mActivityRule.getActivity().findViewById(R.id.qso_detail_container) != null)
             return; // skip on big screens
 
-        onView(isRoot()).perform(ChangeAdapterAction.cursorWithItems());
+        onView(isRoot()).perform(ChangeAdapterAction.cursorWithItems(mActivityRule.getActivity()));
         onView(withId(R.id.qso_list)).perform(
                 RecyclerViewActions.actionOnItemAtPosition(0, click()));
         intended(allOf(
@@ -101,17 +103,17 @@ public class QSOListActivityTest {
 
     private static class ChangeAdapterAction implements ViewAction {
         final Cursor mCursor;
+        final QSOListActivity mActivity;
         static final long ID_OF_ITEM = 1234L;
 
-        ChangeAdapterAction(Cursor c) {
+        ChangeAdapterAction(Cursor c, QSOListActivity activity) {
             mCursor = c;
+            mActivity = activity;
         }
 
         @Override
         public void perform(UiController uiController, View view) {
-            uiController.loopMainThreadUntilIdle();
-            QSOListActivity activity = (QSOListActivity) view.getContext();
-            activity.mAdapter.changeCursor(mCursor);
+            mActivity.mAdapter.changeCursor(mCursor);
         }
 
         @Override
@@ -124,17 +126,18 @@ public class QSOListActivityTest {
             return isA(View.class);
         }
 
-        static ChangeAdapterAction emptyCursor() {
-            return new ChangeAdapterAction(new MatrixCursor(new String[]{"_ID"}));
+        static ChangeAdapterAction emptyCursor(QSOListActivity activity) {
+            return new ChangeAdapterAction(new MatrixCursor(new String[]{"_ID"}), activity);
         }
 
-        static ChangeAdapterAction cursorWithItems() {
+        static ChangeAdapterAction cursorWithItems(QSOListActivity activity) {
             MatrixCursor c = new MatrixCursor(new String[]{
-                    QSOColumns._ID, QSOColumns.MODE, QSOColumns.START_TIME,
+                    QSOColumns._ID, QSOColumns.MODE, QSOColumns.START_TIME, QSOColumns.UTC_START_TIME,
                     QSOColumns.TRANSMISSION_FREQUENCY, QSOColumns.OTHER_STATION
             });
-            c.addRow(new Object[]{ID_OF_ITEM, "FM", 1464804014L, "101.1 MHz", "WWW"});
-            return new ChangeAdapterAction(c);
+            c.addRow(new Object[]{ID_OF_ITEM, "FM", SerializationUtils.serialize(DateTime.now()),
+                    1464804014L, "101.1 MHz", "WWW"});
+            return new ChangeAdapterAction(c, activity);
         }
     }
 }
