@@ -40,9 +40,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-import static net.neoturbine.veles.QTHConverter.LatLngToLocator;
-import static net.neoturbine.veles.QTHConverter.LocationToLocator;
-import static net.neoturbine.veles.QTHConverter.toLocator;
+import static net.neoturbine.veles.LocatorConverter.LatLngToLocator;
+import static net.neoturbine.veles.LocatorConverter.LocationToLocator;
+import static net.neoturbine.veles.LocatorConverter.toLocator;
 
 public final class HamLocationPicker extends Fragment
         implements GoogleApiClient.ConnectionCallbacks,

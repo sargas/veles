@@ -9,8 +9,8 @@ import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.io.Serializable;
 
-import static net.neoturbine.veles.QTHConverter.fromLocator;
-import static net.neoturbine.veles.QTHConverter.toLocator;
+import static net.neoturbine.veles.LocatorConverter.fromLocator;
+import static net.neoturbine.veles.LocatorConverter.toLocator;
 
 class VelesLocation implements Serializable {
     private static final long serialVersionUID = 6587082321100439439L;

@@ -9,8 +9,8 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static net.neoturbine.veles.QTHConverter.nThLetter;
-import static net.neoturbine.veles.QTHConverter.toDigit;
+import static net.neoturbine.veles.LocatorConverter.nThLetter;
+import static net.neoturbine.veles.LocatorConverter.toDigit;
 import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("unused")

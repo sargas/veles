@@ -1,13 +1,29 @@
+For Release:
+TODO Make sure that maps are okay even if permissions are rescinded
 TODO Make receiving frequency (when adding new QSO) default to transmitting one, maybe with a checkbox
+TODO Add RST values http://www.hamuniverse.com/rst.html
+TODO Sync to file in xlog format
+TODO profile application startup, both on normal use and first use after install
+TODO Stop reference to activity when opening picker in DateTimePicker and changing orientation
+
 TODO Make clicking a QSO (or the Edit button, or the FAB) show a smooth animation to the activity
 TODO Make QSO list have bigger items, more stylized
 TODO Add espresso tests for launching activities/fragments from ListActivity
 TODO Add espresso tests for other activities/fragments
-TODO Add RST values http://www.hamuniverse.com/rst.html
 TODO Show map of previous contacts
-TODO Stop reference to activity when opening picker in DateTimePicker and changing orientation
-TODO Add valuable features from http://www.tavlikos.com/apps/mylotw/mylotw.html
 TODO Make FAB only show up over QSO list
 TODO Test multiwindow android n functionality
 TODO Use place picker ( https://developers.google.com/places/android-api/placepicker ) instead of place autocomplete widget
-TODO profile application startup, both on normal use and first use after install
+TODO Sync to Dropbox/Box/OneDrive
+TODO Search by callsign
+TODO Show info on callsigns (at least American ones)
+TODO Sync to file in ADIF (maybe Cabrillo) formats
+TODO Generate qsl cards for printing, saving, etc
+TODO Support extended locators
+TODO Keep track of whether QSLs have been sent out or received
+TODO Use buttons to set time (i.e., "5 Minutes ago")
+TODO Interesting stats for QSLs (where, when, etc)
+TODO Figure out how to sync with HRD
+TODO Sync with online logbook services (eQSL, HRDlog.net, clublog)
+TODO Track awards
+TODO Integration with TQSL?

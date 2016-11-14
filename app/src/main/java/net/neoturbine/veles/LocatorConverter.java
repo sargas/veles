@@ -7,8 +7,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.commons.lang3.CharUtils;
 
-final class QTHConverter {
-    private QTHConverter() {
+final class LocatorConverter {
+    private LocatorConverter() {
     }
 
     static char nThLetter(final int number, final boolean upperCase) {

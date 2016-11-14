@@ -12,12 +12,12 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static net.neoturbine.veles.QTHConverter.LatLngToLocator;
-import static net.neoturbine.veles.QTHConverter.fromLocator;
+import static net.neoturbine.veles.LocatorConverter.LatLngToLocator;
+import static net.neoturbine.veles.LocatorConverter.fromLocator;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Enclosed.class)
-public class QTHConverterUnitTest {
+public class LocatorConverterUnitTest {
     @SuppressWarnings("unused")
     @RunWith(Parameterized.class)
     public static class LatLngToStringTest {
