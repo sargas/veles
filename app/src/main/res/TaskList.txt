@@ -12,11 +12,11 @@ TODO Add espresso tests for launching activities/fragments from ListActivity
 TODO Add espresso tests for other activities/fragments
 TODO Show map of previous contacts
 TODO Make FAB only show up over QSO list
-TODO Test multiwindow android n functionality
+TODO Test multi-window android n functionality
 TODO Use place picker ( https://developers.google.com/places/android-api/placepicker ) instead of place autocomplete widget
 TODO Sync to Dropbox/Box/OneDrive
 TODO Search by callsign
-TODO Show info on callsigns (at least American ones)
+TODO Show info on call signs (at least American ones)
 TODO Sync to file in ADIF (maybe Cabrillo) formats
 TODO Generate qsl cards for printing, saving, etc
 TODO Support extended locators

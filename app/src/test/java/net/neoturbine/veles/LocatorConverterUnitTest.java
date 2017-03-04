@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(Enclosed.class)
 public class LocatorConverterUnitTest {
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"CanBeFinal", "unused", "WeakerAccess"})
     @RunWith(Parameterized.class)
     public static class LatLngToStringTest {
         @Parameter

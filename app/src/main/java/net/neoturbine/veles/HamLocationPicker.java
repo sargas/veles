@@ -77,8 +77,9 @@ public final class HamLocationPicker extends Fragment
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            //noinspection unchecked
-            mLastLocations.putAll((HashMap) savedInstanceState.getSerializable(STATE_LOCATIONS));
+            //noinspection ConstantConditions,unchecked
+            mLastLocations.putAll((HashMap<CurrentTab, VelesLocation>)
+                    savedInstanceState.getSerializable(STATE_LOCATIONS));
 
             //noinspection ConstantConditions
             mCurrentTabHolder.currentTab.set(

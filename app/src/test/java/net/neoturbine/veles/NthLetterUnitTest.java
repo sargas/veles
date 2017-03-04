@@ -16,10 +16,10 @@ import static org.junit.Assert.assertEquals;
 @SuppressWarnings("unused")
 @RunWith(Parameterized.class)
 public class NthLetterUnitTest {
-    @SuppressWarnings("WeakerAccess")
+    @SuppressWarnings({"WeakerAccess", "CanBeFinal"})
     @Parameter
     public int mNumber;
-    @SuppressWarnings("WeakerAccess")
+    @SuppressWarnings({"WeakerAccess", "CanBeFinal"})
     @Parameter(value = 1)
     public char mCharacter;
 

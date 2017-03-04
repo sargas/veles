@@ -50,7 +50,7 @@ public class QSOListActivity extends AppCompatActivity
      */
     private boolean mTwoPane;
 
-    @VisibleForTesting
+    @VisibleForTesting(otherwise=VisibleForTesting.PRIVATE)
     final SimpleItemRecyclerViewAdapter mAdapter = new SimpleItemRecyclerViewAdapter();
 
     private static final int QSO_LOADER = 0;
