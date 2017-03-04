@@ -15,7 +15,7 @@ TODO Make FAB only show up over QSO list
 TODO Test multi-window android n functionality
 TODO Use place picker ( https://developers.google.com/places/android-api/placepicker ) instead of place autocomplete widget
 TODO Sync to Dropbox/Box/OneDrive
-TODO Search by callsign
+TODO Search by call sign
 TODO Show info on call signs (at least American ones)
 TODO Sync to file in ADIF (maybe Cabrillo) formats
 TODO Generate qsl cards for printing, saving, etc

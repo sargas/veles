@@ -6,7 +6,7 @@
 
     <string name="qso_edit_start_time">Start Time</string>
     <string name="qso_edit_end_time">End Time</string>
-    <string name="qso_edit_my_station">Your Callsign</string>
+    <string name="qso_edit_my_station">Your Call Sign</string>
     <string name="qso_edit_station">Other Station or Net</string>
     <string name="qso_edit_mode">Mode</string>
     <string name="qso_power">Power</string>
