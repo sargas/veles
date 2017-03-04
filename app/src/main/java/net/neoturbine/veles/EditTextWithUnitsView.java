@@ -2,17 +2,13 @@ package net.neoturbine.veles;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.databinding.BaseObservable;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.databinding.InverseBindingListener;
 import android.databinding.InverseBindingMethod;
 import android.databinding.InverseBindingMethods;
-import android.databinding.ObservableField;
-import android.databinding.ObservableInt;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import net.neoturbine.veles.databinding.EditTextWithUnitsViewBinding;
-
-import java.io.Serializable;
 
 @InverseBindingMethods({
         @InverseBindingMethod(type = Spinner.class,
@@ -35,17 +29,7 @@ public class EditTextWithUnitsView extends LinearLayout {
     private final String STATE_SUPER = "SUPER_STATE";
     private final String STATE_VALUE = "STATE_VALUE";
 
-    @SuppressWarnings("WeakerAccess")
-    public static class Value extends BaseObservable implements Serializable {
-        private static final long serialVersionUID = -5491155345942093530L;
-        public final ObservableField<String> valueNumber = new ObservableField<>("");
-        public final ObservableField<String> valueNumberHint = new ObservableField<>("");
-        public final ObservableInt unitIdx = new ObservableInt();
-    }
-
-    private final Value mValue = new Value();
-    private final CharSequence[] mUnitList;
-    private final int mDefaultUnitPosition;
+    private final ValueWithUnit mValue;
 
     public EditTextWithUnitsView(Context context) {
         this(context, null);
@@ -80,18 +64,14 @@ public class EditTextWithUnitsView extends LinearLayout {
         TypedArray typedAttrs = context.getTheme().obtainStyledAttributes(
                 attrs, R.styleable.EditTextWithUnitsView, 0, 0);
         try {
-            mValue.valueNumberHint.set(
-                    typedAttrs.getString(R.styleable.EditTextWithUnitsView_hint)
+            mValue = new ValueWithUnit(
+                    typedAttrs.getInteger(R.styleable.EditTextWithUnitsView_default_position, 0),
+                    typedAttrs.getString(R.styleable.EditTextWithUnitsView_hint),
+                    typedAttrs.getTextArray(R.styleable.EditTextWithUnitsView_units)
             );
-            mUnitList = typedAttrs.getTextArray(R.styleable.EditTextWithUnitsView_units);
-            mDefaultUnitPosition =
-                    typedAttrs.getInteger(R.styleable.EditTextWithUnitsView_default_position, 0);
         } finally {
             typedAttrs.recycle();
         }
-
-        mValue.unitIdx.set(mDefaultUnitPosition);
-
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -103,7 +83,7 @@ public class EditTextWithUnitsView extends LinearLayout {
 
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
                 getContext(), android.R.layout.simple_spinner_item,
-                mUnitList);
+                mValue.unitList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.unit.setAdapter(adapter);
     }
@@ -121,10 +101,9 @@ public class EditTextWithUnitsView extends LinearLayout {
         if (state instanceof Bundle) {
             Bundle savedState = (Bundle) state;
 
-            Value oldValue = (Value) savedState.getSerializable(STATE_VALUE);
+            ValueWithUnit oldValue = (ValueWithUnit) savedState.getSerializable(STATE_VALUE);
             assert oldValue != null;
-            mValue.valueNumber.set(oldValue.valueNumber.get());
-            mValue.unitIdx.set(oldValue.unitIdx.get());
+            mValue.fromValue(oldValue);
 
             state = savedState.getParcelable(STATE_SUPER);
         }
@@ -132,32 +111,10 @@ public class EditTextWithUnitsView extends LinearLayout {
     }
 
     void setValue(String value) {
-        if (TextUtils.isEmpty(value)) {
-            mValue.unitIdx.set(mDefaultUnitPosition);
-            mValue.valueNumber.set("");
-            return;
-        }
-        for (int i = 1; i < mUnitList.length; i++) {
-            String suffix = mUnitList[i].toString();
-            if (value.endsWith(" " + suffix)) {
-                mValue.unitIdx.set(i);
-                mValue.valueNumber.set(value.replaceAll(" ?" + suffix + "$", ""));
-                return;
-            }
-        }
-        mValue.unitIdx.set(0);
-        mValue.valueNumber.set(value);
+        mValue.fromString(value);
     }
 
     String getValueAsString() {
-        if (TextUtils.isEmpty(mValue.valueNumber.get())) {
-            return "";
-        } else if (mValue.unitIdx.get() > 0) {
-            return String.format("%s %s",
-                    mValue.valueNumber.get(),
-                    mUnitList[mValue.unitIdx.get()]);
-        } else {
-            return mValue.valueNumber.get();
-        }
+        return mValue.toString();
     }
 }
