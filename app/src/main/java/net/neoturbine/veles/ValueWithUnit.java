@@ -3,9 +3,9 @@ package net.neoturbine.veles;
 import android.databinding.BaseObservable;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
-import android.text.TextUtils;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 @SuppressWarnings("WeakerAccess")
 public class ValueWithUnit extends BaseObservable implements Serializable {
@@ -20,11 +20,15 @@ public class ValueWithUnit extends BaseObservable implements Serializable {
         unitIdx = new ObservableInt(defaultPosition);
         mDefaultUnitPosition = defaultPosition;
         valueNumberHint = new ObservableField<>(numberHint);
+
+        if (unitList == null || unitList.length == 0 || !"".equals(unitList[0]))
+            throw new IllegalArgumentException("Passed a list of units ("
+                    + Arrays.toString(unitList) + ") not starting with an empty unit");
         this.unitList = unitList;
     }
 
     public String toString() {
-        if (TextUtils.isEmpty(valueNumber.get())) {
+        if ("".equals(valueNumber.get())) {
             return "";
         } else if (unitIdx.get() > 0) {
             return String.format("%s %s",
@@ -36,7 +40,7 @@ public class ValueWithUnit extends BaseObservable implements Serializable {
     }
 
     public void fromString(String value) {
-        if (TextUtils.isEmpty(value)) {
+        if ("".equals(value)) {
             unitIdx.set(mDefaultUnitPosition);
             valueNumber.set("");
             return;
@@ -54,6 +58,9 @@ public class ValueWithUnit extends BaseObservable implements Serializable {
     }
 
     public void fromValue(ValueWithUnit other) {
+        if (!Arrays.equals(unitList, other.unitList))
+            throw new IllegalArgumentException("Passed inconsistent unit lists");
+
         valueNumber.set(other.valueNumber.get());
         unitIdx.set(other.unitIdx.get());
     }
