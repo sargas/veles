@@ -85,6 +85,22 @@ public class QSOListActivityTest {
     }
 
     @Test
+    public void QSOListActivity_new_qso_link() {
+        onView(withId(R.id.empty_list_link))
+                .perform(click());
+
+        if (mActivityRule.getActivity().findViewById(R.id.qso_detail_container) != null) {
+            onView(withId(R.id.qso_station)).check(matches(isDisplayed()));
+        } else {
+            intended(allOf(hasComponent(
+                    new ComponentName(mActivityRule.getActivity().getPackageName(),
+                            QSOEditActivity.class.getName())),
+                    not(hasExtras(hasEntry(equalTo(QSOEditActivity.ARG_QSO_ID), anything())))
+            ));
+        }
+    }
+
+    @Test
     public void QSOListActivity_open_qso_activity() {
         if (mActivityRule.getActivity().findViewById(R.id.qso_detail_container) != null)
             return; // skip on big screens
