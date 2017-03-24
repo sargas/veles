@@ -2,7 +2,6 @@ For Release:
 TODO Make sure that maps are okay even if permissions are rescinded
 TODO Make receiving frequency (when adding new QSO) default to transmitting one, maybe with a checkbox
 TODO Get permission for distributing RST descriptions
-TODO Make sure SignalQualityPicker doesn't crash activity on rotation
 TODO Sync to file in xlog format
 TODO profile application startup, both on normal use and first use after install
 TODO Stop reference to activity when opening picker in DateTimePicker and changing orientation

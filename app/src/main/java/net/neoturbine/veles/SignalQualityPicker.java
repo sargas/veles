@@ -31,6 +31,7 @@ public class SignalQualityPicker extends Fragment {
     private static final int DEFAULT_READABILITY_INDEX = 4;
     private static final int DEFAULT_SIGNAL_INDEX = 8;
     private static final int DEFAULT_TONE_INDEX = 0;
+    private static final String STATE_QUALITY = "state_quality";
 
     public static class SignalQualityData {
         public final ObservableField<String> quality = new ObservableField<>("");
@@ -55,6 +56,9 @@ public class SignalQualityPicker extends Fragment {
             }
         });
 
+        if (savedInstanceState != null)
+            data.quality.set(savedInstanceState.getString(STATE_QUALITY));
+
         return binding.getRoot();
     }
 
@@ -72,6 +76,12 @@ public class SignalQualityPicker extends Fragment {
         } finally {
             typedAttrs.recycle();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(STATE_QUALITY, data.quality.get());
     }
 
     String getQuality() {
@@ -106,6 +116,10 @@ public class SignalQualityPicker extends Fragment {
         @SuppressLint("InflateParams")
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
+            if(savedInstanceState != null) {
+                return super.onCreateDialog(savedInstanceState);
+            }
+
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(mResTitle)
                     .setSingleChoiceItems(mResItems, mDefaultItem, null)
