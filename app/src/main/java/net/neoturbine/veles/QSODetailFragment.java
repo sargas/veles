@@ -153,7 +153,8 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer {
     }
 
     @UiThread
-    private void setupMap(final VelesLocation location, @IdRes final int fragmentId,
+    private void setupMap(final VelesLocation location, @IdRes
+    final int fragmentId,
                           final String station, final View textBox) {
         FragmentManager fm = getChildFragmentManager();
 

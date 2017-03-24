@@ -25,6 +25,10 @@ public final class QSO {
     private final String mTxFrequency;
     @NonNull
     private final String mRxFrequency;
+    @NonNull
+    private final String mMyQuality;
+    @NonNull
+    private final String mOtherQuality;
     @Nullable
     private final VelesLocation mMyLocation;
     @Nullable
@@ -33,7 +37,8 @@ public final class QSO {
     private final String mComment;
 
     private QSO(@NonNull String myStation, @NonNull String otherStation,
-                @NonNull DateTime startTime, @NonNull DateTime endTime, @NonNull String mode, @NonNull String power,
+                @NonNull DateTime startTime, @NonNull DateTime endTime, @NonNull String mode,
+                @NonNull String power, @NonNull String myQuality, @NonNull String otherQuality,
                 @Nullable VelesLocation myLocation, @Nullable VelesLocation otherLocation,
                 @NonNull String txFrequency,
                 @NonNull String rxFrequency, @NonNull String comment) {
@@ -43,6 +48,8 @@ public final class QSO {
         this.mEndTime = endTime;
         this.mMode = mode;
         this.mPower = power;
+        this.mMyQuality = myQuality;
+        this.mOtherQuality = otherQuality;
         this.mMyLocation = myLocation;
         this.mOtherLocation = otherLocation;
         this.mTxFrequency = txFrequency;
@@ -60,6 +67,8 @@ public final class QSO {
                         data.getBlob(data.getColumnIndexOrThrow(QSOColumns.END_TIME))),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.MODE)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.POWER)),
+                data.getString(data.getColumnIndexOrThrow(QSOColumns.MY_QUALITY)),
+                data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_QUALITY)),
                 SerializationUtils.<VelesLocation>deserialize(
                         data.getBlob(data.getColumnIndexOrThrow(QSOColumns.MY_LOCATION))),
                 SerializationUtils.<VelesLocation>deserialize(
@@ -123,5 +132,15 @@ public final class QSO {
     @NonNull
     public String getMyStation() {
         return mMyStation;
+    }
+
+    @NonNull
+    public String getMyQuality() {
+        return mMyQuality;
+    }
+
+    @NonNull
+    public String getOtherQuality() {
+        return mOtherQuality;
     }
 }

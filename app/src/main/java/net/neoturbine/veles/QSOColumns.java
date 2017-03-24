@@ -15,6 +15,8 @@ interface QSOColumns extends BaseColumns {
             "\"tx_freq\" TEXT, " +
             "\"rx_freq\" TEXT, " +
             "\"power\" TEXT, " +
+            "\"my_quality\" TEXT, " +
+            "\"other_quality\" TEXT, " +
             "\"my_location\" BLOB, " +
             "\"other_location\" BLOB, " +
             "\"comment\" TEXT )";
@@ -33,6 +35,8 @@ interface QSOColumns extends BaseColumns {
     String POWER = "power";
     String TRANSMISSION_FREQUENCY = "tx_freq";
     String RECEIVE_FREQUENCY = "rx_freq";
+    String MY_QUALITY = "my_quality";
+    String OTHER_QUALITY = "other_quality";
     String MY_LOCATION = "my_location";
     String OTHER_LOCATION = "other_location";
     String COMMENT = "comment";

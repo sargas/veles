@@ -86,6 +86,21 @@
         app:hint="@string/qso_edit_rx_freq"
         app:units="@array/frequency_units"/>
 
+    <fragment
+        android:id="@+id/qso_other_quality"
+        android:name="net.neoturbine.veles.SignalQualityPicker"
+        tools:layout="@layout/signal_quality_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:hint="@string/qso_edit_other_quality" />
+
+    <fragment
+        android:id="@+id/qso_my_quality"
+        android:name="net.neoturbine.veles.SignalQualityPicker"
+        tools:layout="@layout/signal_quality_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:hint="@string/qso_edit_my_quality" />
 
     <fragment
         android:id="@+id/qso_other_location"

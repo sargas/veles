@@ -86,6 +86,8 @@ public class QSOListActivityTest {
 
     @Test
     public void QSOListActivity_new_qso_link() {
+        onView(isRoot())
+                .perform(ChangeAdapterAction.emptyCursor(mActivityRule.getActivity()));
         onView(withId(R.id.empty_list_link))
                 .perform(click());
 

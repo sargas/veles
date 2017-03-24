@@ -34,7 +34,8 @@ final class LocatorConverter {
         throw new IllegalArgumentException("digit " + digit + " not recognized.");
     }
 
-    static String LatLngToLocator(@NonNull final LatLng latlng) {
+    static String LatLngToLocator(@NonNull
+                                  final LatLng latlng) {
         return toLocator(latlng.longitude, latlng.latitude);
     }
 
@@ -67,7 +68,8 @@ final class LocatorConverter {
         return new LatLng(latitude, longitude);
     }
 
-    static String LocationToLocator(@NonNull final Location location) {
+    static String LocationToLocator(@NonNull
+                                    final Location location) {
         return toLocator(location.getLongitude(), location.getLatitude());
     }
 }

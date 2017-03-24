@@ -12,6 +12,8 @@
     <string name="qso_power">Power</string>
     <string name="qso_edit_tx_freq">Transmission Frequency</string>
     <string name="qso_edit_rx_freq">Receiving Frequency</string>
+    <string name="qso_edit_other_quality">Quality of other station</string>
+    <string name="qso_edit_my_quality">Quality of your station</string>
     <string name="qso_edit_my_location">Your Location</string>
     <string name="qso_edit_other_location">Other Station/Net\'s Location</string>
     <string name="qso_edit_comment">Comments</string>
@@ -45,6 +47,14 @@
 
     <string name="location_free_form_hint">Location</string>
 
+    <string name="rst_button">RST</string>
+    <string name="rst_readability_title">Readability</string>
+    <string name="rst_signal_title">Signal Strength</string>
+    <string name="rst_tone_title">CW Tone</string>
+    <string name="rst_positive_button">Next</string>
+    <string name="rst_negative_button">Cancel</string>
+    <string name="rst_citation">Descriptions from <a href="http://www.hamuniverse.com/rst.html">http://hamuniverse.com/rst.html</a></string>
+
     <string name="format_locator">Locator: %1$s</string>
     <string name="format_error">Error: %1$s</string>
 
@@ -55,16 +65,49 @@
     </string-array>
 
     <string-array name="frequency_units">
-        <item/>
+        <item />
         <item>KHz</item>
         <item>MHz</item>
         <item>GHz</item>
     </string-array>
 
     <string-array name="power_units">
-        <item/>
+        <item />
         <item>mW</item>
         <item>W</item>
         <item>kW</item>
+    </string-array>
+
+    <string-array name="rst_readability">
+        <item>1 &#8212; Unreadable</item>
+        <item>2 &#8212; Barely readable, occasional words distinguishable</item>
+        <item>3 &#8212; Readable with considerable difficulty</item>
+        <item>4 &#8212; Readable with practically no difficulty</item>
+        <item>5 &#8212; Perfectly readable</item>
+    </string-array>
+
+    <string-array name="rst_signal">
+        <item>1 &#8212; Faint signals, barely perceptible</item>
+        <item>2 &#8212; Very weak signals</item>
+        <item>3 &#8212; Weak signals</item>
+        <item>4 &#8212; Fair signals</item>
+        <item>5 &#8212; Fairly good signals</item>
+        <item>6 &#8212; Good signals</item>
+        <item>7 &#8212; Moderately strong signals</item>
+        <item>8 &#8212; Strong signals</item>
+        <item>9 &#8212; Extremely strong signals</item>
+    </string-array>
+
+    <string-array name="rst_tone">
+        <item>Skip</item>
+        <item>1 &#8212; Sixty cycle a.c. or less, very rough and broad</item>
+        <item>2 &#8212; Very rough a.c. , very harsh and broad</item>
+        <item>3 &#8212; Rough a.c. tone, rectified but not filtered</item>
+        <item>4 &#8212; Rough note, some trace of filtering</item>
+        <item>5 &#8212; Filtered rectified a.c. but strongly ripple-modulated</item>
+        <item>6 &#8212; Filtered tone, definite trace of ripple modulation</item>
+        <item>7 &#8212; Near pure tone, trace of ripple modulation</item>
+        <item>8 &#8212; Near perfect tone, slight trace of modulation</item>
+        <item>9 &#8212; Perfect tone, no trace of ripple or modulation of any kind</item>
     </string-array>
 </resources>

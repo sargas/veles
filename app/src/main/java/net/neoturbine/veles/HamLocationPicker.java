@@ -276,7 +276,8 @@ public final class HamLocationPicker extends Fragment
     }
 
     @Override
-    public void onConnected(@Nullable final Bundle bundle) {
+    public void onConnected(@Nullable
+                            final Bundle bundle) {
         setGoogleServicesAvailable(true);
         fillFusedLocation(false);
     }
@@ -303,7 +304,8 @@ public final class HamLocationPicker extends Fragment
     }
 
     @Override
-    public void onConnectionFailed(@NonNull final ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull
+                                   final ConnectionResult connectionResult) {
         setGoogleServicesAvailable(false);
     }
 

@@ -52,6 +52,7 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
     private final Map<EditTextWithUnitsView, String> mTextBoxWithUnits = new HashMap<>(3);
     private final Map<HamLocationPicker, String> mLocationPickers = new HashMap<>(2);
     private final Map<DateTimePicker, String> mDatetimePickers = new HashMap<>(2);
+    private final Map<SignalQualityPicker, String> mSignalQualityPickers = new HashMap<>(2);
     private TextView mMyStation;
     private SharedPreferences mPrefs;
 
@@ -149,6 +150,13 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
                 (DateTimePicker) fm.findFragmentById(R.id.qso_end_time),
                 QSOColumns.END_TIME);
 
+        mSignalQualityPickers.put(
+                (SignalQualityPicker) fm.findFragmentById(R.id.qso_my_quality),
+                QSOColumns.MY_QUALITY);
+        mSignalQualityPickers.put(
+                (SignalQualityPicker) fm.findFragmentById(R.id.qso_other_quality),
+                QSOColumns.OTHER_QUALITY);
+
         mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         if (isEditingQSO()) {
@@ -173,7 +181,7 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
                         return;
                     }
 
-                    for(Map.Entry<TextView, String> entry : mTextBoxes.entrySet()) {
+                    for (Map.Entry<TextView, String> entry : mTextBoxes.entrySet()) {
                         entry.getKey().setText(data.getString(
                                 data.getColumnIndexOrThrow(entry.getValue())));
                     }
@@ -191,6 +199,11 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
                     for (Map.Entry<HamLocationPicker, String> entry : mLocationPickers.entrySet()) {
                         entry.getKey().setLocation(SerializationUtils.<VelesLocation>deserialize(
                                 data.getBlob(data.getColumnIndexOrThrow(entry.getValue()))));
+                    }
+
+                    for (Map.Entry<SignalQualityPicker, String> entry : mSignalQualityPickers.entrySet()) {
+                        entry.getKey().setQuality(
+                                data.getString(data.getColumnIndexOrThrow(entry.getValue())));
                     }
                 }
 
@@ -225,7 +238,7 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
             case R.id.action_save:
                 final ContentValues mNewValues = new ContentValues();
 
-                for(Map.Entry<TextView, String> entry : mTextBoxes.entrySet()) {
+                for (Map.Entry<TextView, String> entry : mTextBoxes.entrySet()) {
                     mNewValues.put(entry.getValue(), entry.getKey().getText().toString());
                 }
 
@@ -245,6 +258,10 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
                 for (Map.Entry<HamLocationPicker, String> entry : mLocationPickers.entrySet()) {
                     mNewValues.put(entry.getValue(),
                             SerializationUtils.serialize(entry.getKey().getLocation()));
+                }
+
+                for (Map.Entry<SignalQualityPicker, String> entry : mSignalQualityPickers.entrySet()) {
+                    mNewValues.put(entry.getValue(), entry.getKey().getQuality());
                 }
 
                 if (isEditingQSO()) {
