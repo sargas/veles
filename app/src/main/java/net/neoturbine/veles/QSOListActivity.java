@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.FloatingActionButton;
@@ -64,20 +65,32 @@ public class QSOListActivity extends AppCompatActivity
         JodaTimeAndroid.init(this);
         setContentView(R.layout.activity_qso_list);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        assert toolbar != null;
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
+        setupToolbar();
+        setupTwoPane();
 
-        if (findViewById(R.id.qso_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-        }
+        View.OnClickListener addQSO = getOnClickToAddQSO();
+        setupFAB(addQSO);
+        setupEmptyListViews(addQSO);
 
-        View.OnClickListener startAddActivity = new View.OnClickListener() {
+        setupList();
+        setupAdapter();
+        getLoaderManager().initLoader(QSO_LOADER, null, new QSOCursorLoader());
+        displayOrHideEmptyView();
+    }
+
+    private void setupAdapter() {
+        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                displayOrHideEmptyView();
+            }
+        });
+    }
+
+    @NonNull
+    private View.OnClickListener getOnClickToAddQSO() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mTwoPane) {
@@ -89,67 +102,68 @@ public class QSOListActivity extends AppCompatActivity
                 }
             }
         };
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        assert fab != null;
-        fab.setOnClickListener(startAddActivity);
+    private void setupTwoPane() {
+        mTwoPane = !isWideLayout();
+    }
 
-        mEmptyListMessage = (TextView) findViewById(R.id.empty_list_message);
-        mEmptyListLink = (TextView) findViewById(R.id.empty_list_link);
-        assert mEmptyListLink != null;
-        mEmptyListLink.setOnClickListener(startAddActivity);
-        mEmptyListLink.setMovementMethod(LinkMovementMethod.getInstance());
+    private boolean isWideLayout() {
+        return findViewById(R.id.qso_detail_container) == null;
+    }
 
+    private void setupList() {
         mRecyclerView = (RecyclerView) findViewById(R.id.qso_list);
         assert mRecyclerView != null;
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this)
                 .showLastDivider().positionInsideItem(true).build());
+    }
 
-        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                displayOrHideEmptyView();
-            }
-        });
-        displayOrHideEmptyView();
+    private void setupEmptyListViews(View.OnClickListener addQSO) {
+        mEmptyListMessage = (TextView) findViewById(R.id.empty_list_message);
+        mEmptyListLink = (TextView) findViewById(R.id.empty_list_link);
+        assert mEmptyListLink != null;
+        mEmptyListLink.setOnClickListener(addQSO);
+        mEmptyListLink.setMovementMethod(LinkMovementMethod.getInstance());
+    }
 
-        getLoaderManager().initLoader(QSO_LOADER, null, new LoaderManager.LoaderCallbacks<Cursor>() {
-            @Override
-            public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                switch (id) {
-                    case QSO_LOADER:
-                        return new CursorLoader(getApplicationContext(), QSOColumns.CONTENT_URI, null,
-                                null, null, QSOColumns.UTC_START_TIME + " DESC");
-                    default:
-                        throw new IllegalArgumentException("Unknown type of loader: " + id);
-                }
-            }
+    private void setupFAB(View.OnClickListener addQSO) {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        assert fab != null;
+        fab.setOnClickListener(addQSO);
+    }
 
-            @Override
-            public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                mAdapter.changeCursor(data);
-            }
-
-            @Override
-            public void onLoaderReset(Loader<Cursor> loader) {
-                mAdapter.changeCursor(null);
-            }
-        });
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        assert toolbar != null;
+        setSupportActionBar(toolbar);
+        toolbar.setTitle(getTitle());
     }
 
     @UiThread
     private void displayOrHideEmptyView() {
-        if (mAdapter.getItemCount() > 0) {
-            mRecyclerView.setVisibility(View.VISIBLE);
-            mEmptyListMessage.setVisibility(View.GONE);
-            mEmptyListLink.setVisibility(View.GONE);
+        if (isEmptyList()) {
+            hideListShowViews();
         } else {
-            mRecyclerView.setVisibility(View.GONE);
-            mEmptyListMessage.setVisibility(View.VISIBLE);
-            mEmptyListLink.setVisibility(View.VISIBLE);
+            showListHideViews();
         }
+    }
+
+    private boolean isEmptyList() {
+        return mAdapter.getItemCount() == 0;
+    }
+
+    private void hideListShowViews() {
+        mRecyclerView.setVisibility(View.GONE);
+        mEmptyListMessage.setVisibility(View.VISIBLE);
+        mEmptyListLink.setVisibility(View.VISIBLE);
+    }
+
+    private void showListHideViews() {
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mEmptyListMessage.setVisibility(View.GONE);
+        mEmptyListLink.setVisibility(View.GONE);
     }
 
     class SimpleItemRecyclerViewAdapter
@@ -280,10 +294,7 @@ public class QSOListActivity extends AppCompatActivity
     @UiThread
     private void switchFragment(Fragment fragment) {
         Fragment currentFragment = getFragmentManager().findFragmentByTag(QSO_LIST_DETAIL_TAG);
-        if (currentFragment != null && fragment != null
-                && fragment.getClass().equals(currentFragment.getClass())
-                && fragment instanceof QSOIdContainer && currentFragment instanceof QSOIdContainer
-                && ((QSOIdContainer) fragment).getQSOId() == ((QSOIdContainer) currentFragment).getQSOId()) {
+        if (isEqualQSO(fragment, currentFragment)) {
             return;
         }
         FragmentTransaction ft = getFragmentManager().beginTransaction().addToBackStack(null);
@@ -294,5 +305,35 @@ public class QSOListActivity extends AppCompatActivity
             ft.remove(currentFragment);
 
         ft.commit();
+    }
+
+    private boolean isEqualQSO(Fragment fragmentA, Fragment fragmentB) {
+        return fragmentB != null && fragmentA != null
+                && fragmentA.getClass().equals(fragmentB.getClass())
+                && fragmentA instanceof QSOIdContainer && fragmentB instanceof QSOIdContainer
+                && ((QSOIdContainer) fragmentA).getQSOId() == ((QSOIdContainer) fragmentB).getQSOId();
+    }
+
+    private class QSOCursorLoader implements LoaderManager.LoaderCallbacks<Cursor> {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            switch (id) {
+                case QSO_LOADER:
+                    return new CursorLoader(getApplicationContext(), QSOColumns.CONTENT_URI, null,
+                            null, null, QSOColumns.UTC_START_TIME + " DESC");
+                default:
+                    throw new IllegalArgumentException("Unknown type of loader: " + id);
+            }
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            mAdapter.changeCursor(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            mAdapter.changeCursor(null);
+        }
     }
 }
