@@ -1,6 +1,6 @@
 For Release:
 TODO Make sure that maps are okay even if permissions are rescinded
-TODO Get permission for distributing RST descriptions
+TODO In accordance with terms at http://www.hamuniverse.com/legalstuff.html , document that copyright belongs to N4UJW/Hamuniverse as well
 TODO Sync to file in xlog format
 TODO profile application startup, both on normal use and first use after install
 TODO Stop reference to activity when opening picker in DateTimePicker and changing orientation
@@ -28,3 +28,4 @@ TODO Figure out how to sync with HRD
 TODO Sync with online logbook services (eQSL, HRDlog.net, clublog)
 TODO Track awards
 TODO Integration with TQSL?
+TODO Let Hamuniverse know I'm using their wording. I think they allow it at http://www.hamuniverse.com/legalstuff.html (since this is noncommercial), but just to clarify
