@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import net.neoturbine.veles.databinding.SignalQualityPickerBinding;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SignalQualityPicker extends Fragment {
     private static final String TAG_READABILITY = "readability";
@@ -48,7 +49,7 @@ public class SignalQualityPicker extends Fragment {
                 inflater, R.layout.signal_quality_picker, container, false
         );
         binding.setData(data);
-        binding.rstButton.setOnClickListener(openRSTPickerReadability);
+        binding.rstButton.setOnClickListener(this::openRSTPickerReadability);
 
         if (savedInstanceState != null)
             data.quality.set(savedInstanceState.getString(STATE_QUALITY));
@@ -92,18 +93,18 @@ public class SignalQualityPicker extends Fragment {
 
     public static class RSTPickerDialogFragment extends DialogFragment {
         interface Callback {
-            void accept(ArrayList<Integer> results);
+            void accept(List<Integer> results);
         }
 
         private int mResTitle;
         private int mResItems;
         private int mDefaultItem;
-        private ArrayList<Integer> mResults;
+        private List<Integer> mResults;
         private Callback mCallback;
 
         private void setParameters(@StringRes int resTitle, @ArrayRes int resItems,
                                    int defaultItem,
-                                   ArrayList<Integer> current_results, Callback callback) {
+                                   List<Integer> current_results, Callback callback) {
             mResTitle = resTitle;
             mResItems = resItems;
             mResults = current_results;
@@ -137,34 +138,25 @@ public class SignalQualityPicker extends Fragment {
         }
     }
 
-    private final View.OnClickListener openRSTPickerReadability = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            createRSTDialog(R.string.rst_readability_title, R.array.rst_readability,
-                    getReadabilityIndex(), new ArrayList<>(3), openRSTPickerSignal, TAG_READABILITY);
-        }
-    };
+    private void openRSTPickerReadability(@SuppressWarnings("unused") View v) {
+        createRSTDialog(R.string.rst_readability_title, R.array.rst_readability,
+                getReadabilityIndex(), new ArrayList<>(3), this::openRSTPickerSignal, TAG_READABILITY);
+    }
 
-    private final RSTPickerDialogFragment.Callback openRSTPickerSignal = new RSTPickerDialogFragment.Callback() {
-        @Override
-        public void accept(ArrayList<Integer> results) {
-            createRSTDialog(R.string.rst_signal_title, R.array.rst_signal,
-                    getSignalIndex(), results, openRSTPickerTone, TAG_SIGNAL);
-        }
-    };
+    private void openRSTPickerSignal(List<Integer> results) {
+        createRSTDialog(R.string.rst_signal_title, R.array.rst_signal,
+                getSignalIndex(), results, this::openRSTPickerTone, TAG_SIGNAL);
+    }
 
-    private final RSTPickerDialogFragment.Callback openRSTPickerTone = new RSTPickerDialogFragment.Callback() {
-        @Override
-        public void accept(ArrayList<Integer> results) {
-            createRSTDialog(R.string.rst_tone_title, R.array.rst_tone,
-                    getToneIndex(), results, openRSTPickerFinish, TAG_TONE);
-        }
-    };
+    private void openRSTPickerTone(List<Integer> results) {
+        createRSTDialog(R.string.rst_tone_title, R.array.rst_tone,
+                getToneIndex(), results, openRSTPickerFinish, TAG_TONE);
+    }
 
     private final RSTPickerDialogFragment.Callback openRSTPickerFinish =
             results -> data.quality.set(convertResultArrayToRST(results));
 
-    private String convertResultArrayToRST(ArrayList<Integer> results) {
+    private String convertResultArrayToRST(List<Integer> results) {
         StringBuilder builder = new StringBuilder();
         builder.append(results.get(0)).append(results.get(1));
 
@@ -174,13 +166,14 @@ public class SignalQualityPicker extends Fragment {
         return builder.toString();
     }
 
-    private boolean hasTone(ArrayList<Integer> results) {
+    private boolean hasTone(List<Integer> results) {
         return results.get(2) != 1;
     }
 
     private void createRSTDialog(@StringRes int resTitle, @ArrayRes int resItems,
                                  int defaultItem,
-                                 ArrayList<Integer> current_results, RSTPickerDialogFragment.Callback callback,
+                                 List<Integer> current_results,
+                                 RSTPickerDialogFragment.Callback callback,
                                  String fragmentTag) {
         RSTPickerDialogFragment dialog = new RSTPickerDialogFragment();
         dialog.setParameters(resTitle, resItems, defaultItem, current_results, callback);
