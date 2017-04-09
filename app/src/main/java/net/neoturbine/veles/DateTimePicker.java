@@ -1,6 +1,7 @@
 package net.neoturbine.veles;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -25,6 +26,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class DateTimePicker extends Fragment {
 
@@ -35,6 +39,7 @@ public class DateTimePicker extends Fragment {
     private Spinner mTimeZoneSpinner;
     private CharSequence mHintText;
     private ArrayAdapter<String> mTimeZoneAdapter;
+    private final List<Dialog> mDialogs = new ArrayList<>(2);
 
     public DateTimePicker() {
         // Required empty public constructor
@@ -71,28 +76,45 @@ public class DateTimePicker extends Fragment {
     }
 
     @UiThread
-    private void bindButtons() {
-        mDateButton.setOnClickListener(view -> new DatePickerDialog(
-                getActivity(),
-                (datePicker, year, month, day) -> {
-                    mTime = mTime.withDate(year, month, day);
-                    updateTimes();
-                },
-                mTime.getYear(),
-                mTime.getMonthOfYear(),
-                mTime.getDayOfMonth()
-        ).show());
+    private void addDialogAndShow(Dialog dialog) {
+        mDialogs.add(dialog);
+        dialog.show();
+    }
 
-        mTimeButton.setOnClickListener(view -> new TimePickerDialog(
-                getActivity(),
-                (timePicker, hour, minute) -> {
-                    mTime = mTime.withHourOfDay(hour).withMinuteOfHour(minute);
-                    updateTimes();
-                },
-                mTime.getHourOfDay(),
-                mTime.getMinuteOfHour(),
-                DateFormat.is24HourFormat(getActivity())
-        ).show());
+    @Override
+    public void onPause() {
+        super.onPause();
+        for (Dialog dialog : mDialogs)
+            dialog.dismiss();
+    }
+
+    @UiThread
+    private void bindButtons() {
+        mDateButton.setOnClickListener(view ->
+                addDialogAndShow(new DatePickerDialog(
+                        getActivity(),
+                        (datePicker, year, month, day) -> {
+                            mTime = mTime.withDate(year, month, day);
+                            updateTimes();
+                        },
+                        mTime.getYear(),
+                        mTime.getMonthOfYear(),
+                        mTime.getDayOfMonth()
+                ))
+        );
+
+        mTimeButton.setOnClickListener(view ->
+                addDialogAndShow(new TimePickerDialog(
+                        getActivity(),
+                        (timePicker, hour, minute) -> {
+                            mTime = mTime.withHourOfDay(hour).withMinuteOfHour(minute);
+                            updateTimes();
+                        },
+                        mTime.getHourOfDay(),
+                        mTime.getMinuteOfHour(),
+                        DateFormat.is24HourFormat(getActivity())
+                ))
+        );
 
         // from http://stackoverflow.com/a/23740502/239003
         final String[] idArray = DateTimeZone.getAvailableIDs().toArray(new String[0]);
