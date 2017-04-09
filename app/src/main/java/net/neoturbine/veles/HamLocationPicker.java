@@ -118,18 +118,10 @@ public final class HamLocationPicker extends Fragment
 
         mBinding.locationText.setText(mTitleText);
 
-        final View.OnClickListener setTab = new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                mCurrentTabHolder.currentTab.set(mIdsToTabs.get(v.getId()));
-            }
-        };
-        mBinding.locationCurrentRadio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setTab.onClick(v);
-                fillFusedLocation(true);
-            }
+        final View.OnClickListener setTab = v -> mCurrentTabHolder.currentTab.set(mIdsToTabs.get(v.getId()));
+        mBinding.locationCurrentRadio.setOnClickListener(v -> {
+            setTab.onClick(v);
+            fillFusedLocation(true);
         });
         mBinding.locationLocatorRadio.setOnClickListener(setTab);
         mBinding.locationSearchRadio.setOnClickListener(setTab);

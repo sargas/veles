@@ -61,17 +61,17 @@ public final class QSO {
         this(
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.MY_STATION)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)),
-                SerializationUtils.<DateTime>deserialize(
+                SerializationUtils.deserialize(
                         data.getBlob(data.getColumnIndexOrThrow(QSOColumns.START_TIME))),
-                SerializationUtils.<DateTime>deserialize(
+                SerializationUtils.deserialize(
                         data.getBlob(data.getColumnIndexOrThrow(QSOColumns.END_TIME))),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.MODE)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.POWER)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.MY_QUALITY)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_QUALITY)),
-                SerializationUtils.<VelesLocation>deserialize(
+                SerializationUtils.deserialize(
                         data.getBlob(data.getColumnIndexOrThrow(QSOColumns.MY_LOCATION))),
-                SerializationUtils.<VelesLocation>deserialize(
+                SerializationUtils.deserialize(
                         data.getBlob(data.getColumnIndexOrThrow(QSOColumns.OTHER_LOCATION))),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.TRANSMISSION_FREQUENCY)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.RECEIVE_FREQUENCY)),

@@ -25,7 +25,6 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import net.danlew.android.joda.DateUtils;
@@ -165,28 +164,25 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer {
             fm.beginTransaction().show(mapFragment).commit();
             textBox.setVisibility(View.VISIBLE);
 
-            mapFragment.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(final GoogleMap googleMap) {
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location.asLatLng(), 10));
+            mapFragment.getMapAsync(googleMap -> {
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location.asLatLng(), 10));
 
-                    switch (location.getType()) {
-                        case LatitudeLongitude:
-                            googleMap.addMarker(new MarkerOptions()
-                                    .title(station)
-                                    .position(location.asLatLng()));
-                            break;
-                        case Locator:
-                            googleMap.addPolygon(location.asPolygonOptions()
-                                    .strokeColor(Color.BLACK));
-                            break;
-                        case FreeForm:
-                            googleMap.addMarker(new MarkerOptions()
-                                    .title(location.getFreeForm())
-                                    .position(location.asLatLng())).showInfoWindow();
-                            googleMap.getUiSettings().setMapToolbarEnabled(false);
-                            googleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-                    }
+                switch (location.getType()) {
+                    case LatitudeLongitude:
+                        googleMap.addMarker(new MarkerOptions()
+                                .title(station)
+                                .position(location.asLatLng()));
+                        break;
+                    case Locator:
+                        googleMap.addPolygon(location.asPolygonOptions()
+                                .strokeColor(Color.BLACK));
+                        break;
+                    case FreeForm:
+                        googleMap.addMarker(new MarkerOptions()
+                                .title(location.getFreeForm())
+                                .position(location.asLatLng())).showInfoWindow();
+                        googleMap.getUiSettings().setMapToolbarEnabled(false);
+                        googleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
                 }
             });
         } else {

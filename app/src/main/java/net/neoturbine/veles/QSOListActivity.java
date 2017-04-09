@@ -29,7 +29,6 @@ import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 import net.danlew.android.joda.DateUtils;
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.joda.time.DateTime;
 
 
@@ -90,16 +89,13 @@ public class QSOListActivity extends AppCompatActivity
 
     @NonNull
     private View.OnClickListener getOnClickToAddQSO() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mTwoPane) {
-                    switchFragment(QSOEditFragment.newInstance());
-                } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, QSOEditActivity.class);
-                    context.startActivity(intent);
-                }
+        return view -> {
+            if (mTwoPane) {
+                switchFragment(QSOEditFragment.newInstance());
+            } else {
+                Context context = view.getContext();
+                Intent intent = new Intent(context, QSOEditActivity.class);
+                context.startActivity(intent);
             }
         };
     }
@@ -195,21 +191,17 @@ public class QSOListActivity extends AppCompatActivity
                 holder.mFrequencyView.setText(qso.getTransmissionFrequency());
             }
 
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mTwoPane) {
-                        QSODetailFragment fragment = QSODetailFragment.newInstance(getItemId(holder.getAdapterPosition()));
-                        switchFragment(fragment);
-                    } else {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, QSODetailActivity.class);
-                        intent.putExtra(QSODetailActivity.ARG_QSO_ID, getItemId(holder.getAdapterPosition()));
+            holder.mView.setOnClickListener(v -> {
+                if (mTwoPane) {
+                    QSODetailFragment fragment = QSODetailFragment.newInstance(getItemId(holder.getAdapterPosition()));
+                    switchFragment(fragment);
+                } else {
+                    Context context = v.getContext();
+                    Intent intent = new Intent(context, QSODetailActivity.class);
+                    intent.putExtra(QSODetailActivity.ARG_QSO_ID, getItemId(holder.getAdapterPosition()));
 
-                        context.startActivity(intent);
-                    }
+                    context.startActivity(intent);
                 }
-
             });
         }
 

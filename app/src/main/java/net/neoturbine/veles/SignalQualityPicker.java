@@ -7,7 +7,6 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableField;
@@ -122,14 +121,11 @@ public class SignalQualityPicker extends Fragment {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(mResTitle)
                     .setSingleChoiceItems(mResItems, mDefaultItem, null)
-                    .setPositiveButton(R.string.rst_positive_button, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            int result = ((AlertDialog) dialog)
-                                    .getListView().getCheckedItemPosition() + 1;
-                            mResults.add(result);
-                            mCallback.accept(mResults);
-                        }
+                    .setPositiveButton(R.string.rst_positive_button, (dialog, which) -> {
+                        int result = ((AlertDialog) dialog)
+                                .getListView().getCheckedItemPosition() + 1;
+                        mResults.add(result);
+                        mCallback.accept(mResults);
                     })
                     .setNegativeButton(R.string.rst_negative_button, null);
 
@@ -145,7 +141,7 @@ public class SignalQualityPicker extends Fragment {
         @Override
         public void onClick(View v) {
             createRSTDialog(R.string.rst_readability_title, R.array.rst_readability,
-                    getReadabilityIndex(), new ArrayList<Integer>(3), openRSTPickerSignal, TAG_READABILITY);
+                    getReadabilityIndex(), new ArrayList<>(3), openRSTPickerSignal, TAG_READABILITY);
         }
     };
 
@@ -165,12 +161,8 @@ public class SignalQualityPicker extends Fragment {
         }
     };
 
-    private final RSTPickerDialogFragment.Callback openRSTPickerFinish = new RSTPickerDialogFragment.Callback() {
-        @Override
-        public void accept(ArrayList<Integer> results) {
-            data.quality.set(convertResultArrayToRST(results));
-        }
-    };
+    private final RSTPickerDialogFragment.Callback openRSTPickerFinish =
+            results -> data.quality.set(convertResultArrayToRST(results));
 
     private String convertResultArrayToRST(ArrayList<Integer> results) {
         StringBuilder builder = new StringBuilder();

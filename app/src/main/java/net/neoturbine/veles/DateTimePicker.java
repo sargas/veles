@@ -15,10 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.neoturbine.veles.databinding.FragmentDateTimePickerBinding;
@@ -74,43 +72,27 @@ public class DateTimePicker extends Fragment {
 
     @UiThread
     private void bindButtons() {
-        mDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new DatePickerDialog(
-                        getActivity(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                mTime = mTime.withDate(year, month, day);
-                                updateTimes();
-                            }
-                        },
-                        mTime.getYear(),
-                        mTime.getMonthOfYear(),
-                        mTime.getDayOfMonth()
-                ).show();
-            }
-        });
+        mDateButton.setOnClickListener(view -> new DatePickerDialog(
+                getActivity(),
+                (datePicker, year, month, day) -> {
+                    mTime = mTime.withDate(year, month, day);
+                    updateTimes();
+                },
+                mTime.getYear(),
+                mTime.getMonthOfYear(),
+                mTime.getDayOfMonth()
+        ).show());
 
-        mTimeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new TimePickerDialog(
-                        getActivity(),
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                                mTime = mTime.withHourOfDay(hour).withMinuteOfHour(minute);
-                                updateTimes();
-                            }
-                        },
-                        mTime.getHourOfDay(),
-                        mTime.getMinuteOfHour(),
-                        DateFormat.is24HourFormat(getActivity())
-                ).show();
-            }
-        });
+        mTimeButton.setOnClickListener(view -> new TimePickerDialog(
+                getActivity(),
+                (timePicker, hour, minute) -> {
+                    mTime = mTime.withHourOfDay(hour).withMinuteOfHour(minute);
+                    updateTimes();
+                },
+                mTime.getHourOfDay(),
+                mTime.getMinuteOfHour(),
+                DateFormat.is24HourFormat(getActivity())
+        ).show());
 
         // from http://stackoverflow.com/a/23740502/239003
         final String[] idArray = DateTimeZone.getAvailableIDs().toArray(new String[0]);

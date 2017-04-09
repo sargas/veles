@@ -26,7 +26,6 @@ import android.widget.Toast;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.apache.commons.lang3.SerializationUtils;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import java.util.HashMap;
@@ -192,12 +191,12 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
                     }
 
                     for (Map.Entry<DateTimePicker, String> entry : mDatetimePickers.entrySet()) {
-                        entry.getKey().setDateTime(SerializationUtils.<DateTime>deserialize(
+                        entry.getKey().setDateTime(SerializationUtils.deserialize(
                                 data.getBlob(data.getColumnIndexOrThrow(entry.getValue()))));
                     }
 
                     for (Map.Entry<HamLocationPicker, String> entry : mLocationPickers.entrySet()) {
-                        entry.getKey().setLocation(SerializationUtils.<VelesLocation>deserialize(
+                        entry.getKey().setLocation(SerializationUtils.deserialize(
                                 data.getBlob(data.getColumnIndexOrThrow(entry.getValue()))));
                     }
 
