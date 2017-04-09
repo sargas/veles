@@ -149,12 +149,18 @@ public class QSOListActivityTest {
         }
 
         static ChangeAdapterAction cursorWithItems(QSOListActivity activity) {
-            MatrixCursor c = new MatrixCursor(new String[]{
-                    QSOColumns._ID, QSOColumns.MODE, QSOColumns.START_TIME, QSOColumns.UTC_START_TIME,
-                    QSOColumns.TRANSMISSION_FREQUENCY, QSOColumns.OTHER_STATION
-            });
-            c.addRow(new Object[]{ID_OF_ITEM, "FM", SerializationUtils.serialize(DateTime.now()),
-                    1464804014L, "101.1 MHz", "WWW"});
+            MatrixCursor c = new MatrixCursor(QSOColumns.ALL_COLUMNS);
+            c.newRow()
+                    .add(QSOColumns._ID, ID_OF_ITEM)
+                    .add(QSOColumns.MODE, "FM")
+                    .add(QSOColumns.START_TIME, SerializationUtils.serialize(DateTime.now()))
+                    .add(QSOColumns.UTC_START_TIME, 1464804014L)
+                    .add(QSOColumns.TRANSMISSION_FREQUENCY, "101.1 MHz")
+                    .add(QSOColumns.OTHER_STATION, "WWW")
+                    //Below needed as SerializationUtils can't handle null columns
+                    .add(QSOColumns.END_TIME, SerializationUtils.serialize(null))
+                    .add(QSOColumns.MY_LOCATION, SerializationUtils.serialize(null))
+                    .add(QSOColumns.OTHER_LOCATION, SerializationUtils.serialize(null));
             return new ChangeAdapterAction(c, activity);
         }
     }

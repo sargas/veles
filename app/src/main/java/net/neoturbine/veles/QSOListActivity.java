@@ -184,18 +184,15 @@ public class QSOListActivity extends AppCompatActivity
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            if (mValidData && mCursor.moveToPosition(position)) {
-                holder.mStationView.setText(
-                        mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)));
+            if (hasRowAtPosition(position)) {
+                QSO qso = new QSO(mCursor);
+                holder.mStationView.setText(qso.getOtherStation());
 
-                DateTime startTime = SerializationUtils.deserialize(
-                        mCursor.getBlob(
-                                mCursor.getColumnIndexOrThrow(QSOColumns.START_TIME)));
+                DateTime startTime = qso.getStartTime();
                 holder.mDateView.setText(DateUtils.getRelativeTimeSpanString(
                         QSOListActivity.this, startTime));
-                holder.mModeView.setText(mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.MODE)));
-                holder.mFrequencyView.setText(
-                        mCursor.getString(mCursor.getColumnIndexOrThrow(QSOColumns.TRANSMISSION_FREQUENCY)));
+                holder.mModeView.setText(qso.getMode());
+                holder.mFrequencyView.setText(qso.getTransmissionFrequency());
             }
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -218,7 +215,7 @@ public class QSOListActivity extends AppCompatActivity
 
         @Override
         public int getItemCount() {
-            if (mValidData && mCursor != null) {
+            if (mValidData) {
                 return mCursor.getCount();
             }
             return 0;
@@ -226,10 +223,14 @@ public class QSOListActivity extends AppCompatActivity
 
         @Override
         public long getItemId(int position) {
-            if (mValidData && mCursor != null && mCursor.moveToPosition(position)) {
+            if (hasRowAtPosition(position)) {
                 return mCursor.getLong(mCursor.getColumnIndexOrThrow(QSOColumns._ID));
             }
             return -1;
+        }
+
+        private boolean hasRowAtPosition(int position) {
+            return mValidData && mCursor.moveToPosition(position);
         }
 
         void changeCursor(Cursor newCursor) {
@@ -317,13 +318,11 @@ public class QSOListActivity extends AppCompatActivity
     private class QSOCursorLoader implements LoaderManager.LoaderCallbacks<Cursor> {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            switch (id) {
-                case QSO_LOADER:
-                    return new CursorLoader(getApplicationContext(), QSOColumns.CONTENT_URI, null,
-                            null, null, QSOColumns.UTC_START_TIME + " DESC");
-                default:
-                    throw new IllegalArgumentException("Unknown type of loader: " + id);
-            }
+            if (id != QSO_LOADER)
+                throw new IllegalArgumentException("Unknown type of loader: " + id);
+
+            return new CursorLoader(getApplicationContext(), QSOColumns.CONTENT_URI, null,
+                    null, null, QSOColumns.UTC_START_TIME + " DESC");
         }
 
         @Override
