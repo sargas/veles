@@ -9,22 +9,25 @@ import android.widget.FrameLayout;
 /* Adapted from http://stackoverflow.com/a/30974956/239003
 * Must be in main source (as opposed to androidTest since ActivityTestRule
 * requires activities to be declared in AndroidManifest */
-public class FragmentUtilActivity extends Activity {
-    private int mViewId;
+public class FragmentOrViewUtilActivity extends Activity {
+    private FrameLayout mFrame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewId = View.generateViewId();
 
-        FrameLayout view = new FrameLayout(this);
-        view.setId(mViewId);
-        setContentView(view);
+        mFrame = new FrameLayout(this);
+        mFrame.setId(View.generateViewId());
+        setContentView(mFrame);
     }
 
     public void addFragment(Fragment frag) {
         getFragmentManager().beginTransaction()
-                .add(mViewId, frag)
+                .add(mFrame.getId(), frag)
                 .commit();
+    }
+
+    public void addView(View view) {
+        mFrame.addView(view);
     }
 }

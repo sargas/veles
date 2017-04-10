@@ -45,7 +45,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.neoturbine.veles.QSOListActivity" />
         </activity>
-        <activity android:name=".testUtils.FragmentUtilActivity" />
+        <activity android:name=".testUtils.FragmentOrViewUtilActivity" />
 
 
         <provider

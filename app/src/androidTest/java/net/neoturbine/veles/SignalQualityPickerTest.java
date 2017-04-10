@@ -3,7 +3,7 @@ package net.neoturbine.veles;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import net.neoturbine.veles.testUtils.FragmentUtilActivity;
+import net.neoturbine.veles.testUtils.FragmentOrViewUtilActivity;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,8 +22,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class SignalQualityPickerTest {
     @Rule
-    public final ActivityTestRule<FragmentUtilActivity> mActivityRule =
-            new ActivityTestRule<>(FragmentUtilActivity.class);
+    public final ActivityTestRule<FragmentOrViewUtilActivity> mActivityRule =
+            new ActivityTestRule<>(FragmentOrViewUtilActivity.class);
     private SignalQualityPicker mPicker;
 
     @Before
