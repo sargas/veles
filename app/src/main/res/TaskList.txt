@@ -3,8 +3,8 @@ TODO Make sure that maps are okay even if permissions are rescinded
 TODO In accordance with terms at http://www.hamuniverse.com/legalstuff.html , document that copyright belongs to N4UJW/Hamuniverse as well
 TODO Sync to file in xlog format
 TODO profile application startup, both on normal use and first use after install
-TODO Stop reference to activity when opening picker in DateTimePicker and changing orientation
 TODO Make sure free-form locations look okay in details fragment
+TODO add license info
 
 TODO Make clicking a QSO (or the Edit button, or the FAB) show a smooth animation to the activity
 TODO Make receiving frequency (when adding new QSO) default to transmitting one, maybe with a checkbox
@@ -29,3 +29,4 @@ TODO Sync with online logbook services (eQSL, HRDlog.net, clublog)
 TODO Track awards
 TODO Integration with TQSL?
 TODO Let Hamuniverse know I'm using their wording. I think they allow it at http://www.hamuniverse.com/legalstuff.html (since this is noncommercial), but just to clarify
+TODO Fix warning about leaked window when rotating DateTimePicker with open timezone spinner

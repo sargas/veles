@@ -16,8 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.neoturbine.veles.databinding.FragmentDateTimePickerBinding;
@@ -34,12 +32,10 @@ public class DateTimePicker extends Fragment {
 
     private static final String STATE_TIME = "STATE_TIME";
     private DateTime mTime;
-    private TextView mTimeButton;
-    private TextView mDateButton;
-    private Spinner mTimeZoneSpinner;
     private CharSequence mHintText;
     private ArrayAdapter<String> mTimeZoneAdapter;
     private final List<Dialog> mDialogs = new ArrayList<>(2);
+    private FragmentDateTimePickerBinding mBinding;
 
     public DateTimePicker() {
         // Required empty public constructor
@@ -54,25 +50,23 @@ public class DateTimePicker extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        FragmentDateTimePickerBinding binding = DataBindingUtil.inflate(
+        mBinding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_date_time_picker, container, true
         );
 
-        mTimeButton = binding.dateTimePickerTime;
-        mDateButton = binding.dateTimePickerDate;
-        mTimeZoneSpinner = binding.dateTimePickerTimezone;
         if (savedInstanceState == null) {
             mTime = new DateTime();
         } else {
             mTime = (DateTime) savedInstanceState.getSerializable(STATE_TIME);
         }
 
-        bindButtons();
-        binding.dateTimePickerTextInputLayout.setHint(mHintText);
-
+        setupButtonListeners();
+        setupTimeZoneSpinnerAndAdapter();
         updateTimes();
 
-        return binding.getRoot();
+        mBinding.dateTimePickerTextInputLayout.setHint(mHintText);
+
+        return mBinding.getRoot();
     }
 
     @UiThread
@@ -84,13 +78,15 @@ public class DateTimePicker extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+
         for (Dialog dialog : mDialogs)
-            dialog.dismiss();
+            if (dialog.isShowing())
+                dialog.dismiss();
     }
 
     @UiThread
-    private void bindButtons() {
-        mDateButton.setOnClickListener(view ->
+    private void setupButtonListeners() {
+        mBinding.dateTimePickerDate.setOnClickListener(view ->
                 addDialogAndShow(new DatePickerDialog(
                         getActivity(),
                         (datePicker, year, month, day) -> {
@@ -103,7 +99,7 @@ public class DateTimePicker extends Fragment {
                 ))
         );
 
-        mTimeButton.setOnClickListener(view ->
+        mBinding.dateTimePickerTime.setOnClickListener(view ->
                 addDialogAndShow(new TimePickerDialog(
                         getActivity(),
                         (timePicker, hour, minute) -> {
@@ -115,13 +111,15 @@ public class DateTimePicker extends Fragment {
                         DateFormat.is24HourFormat(getActivity())
                 ))
         );
+    }
 
+    private void setupTimeZoneSpinnerAndAdapter() {
         // from http://stackoverflow.com/a/23740502/239003
         final String[] idArray = DateTimeZone.getAvailableIDs().toArray(new String[0]);
         mTimeZoneAdapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner_dropdown_item_aligned,
                 idArray);
-        mTimeZoneSpinner.setAdapter(mTimeZoneAdapter);
-        mTimeZoneSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mBinding.dateTimePickerTimezone.setAdapter(mTimeZoneAdapter);
+        mBinding.dateTimePickerTimezone.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(final AdapterView<?> parent, final View view, final int pos, final long id) {
                 mTime = mTime.withZoneRetainFields(DateTimeZone.forID(mTimeZoneAdapter.getItem(pos)));
@@ -163,16 +161,15 @@ public class DateTimePicker extends Fragment {
 
     @UiThread
     private void updateTimes() {
-
-        mDateButton.setText(DateTimeFormat.longDate().print(mTime));
-        mTimeButton.setText(DateTimeFormat.shortTime().print(mTime));
+        mBinding.dateTimePickerDate.setText(DateTimeFormat.longDate().print(mTime));
+        mBinding.dateTimePickerTime.setText(DateTimeFormat.shortTime().print(mTime));
 
         // from http://stackoverflow.com/a/23740502/239003
         for (int i = 0; i < mTimeZoneAdapter.getCount(); i++) {
             String timezone = mTimeZoneAdapter.getItem(i);
             assert timezone != null;
             if (timezone.equals(mTime.getZone().getID())) {
-                mTimeZoneSpinner.setSelection(i);
+                mBinding.dateTimePickerTimezone.setSelection(i);
             }
         }
     }
