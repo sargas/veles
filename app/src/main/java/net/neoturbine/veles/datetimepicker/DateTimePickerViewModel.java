@@ -7,6 +7,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.text.format.DateFormat;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
@@ -20,7 +21,8 @@ import org.joda.time.format.DateTimeFormat;
 
 @SuppressWarnings("WeakerAccess")
 public class DateTimePickerViewModel extends BaseObservable {
-    private static final String STATE_TIME = "STATE_TIME";
+    @VisibleForTesting
+    static final String STATE_TIME = "STATE_TIME";
     @NonNull
     private final DateTimePickerModel mModel = new DateTimePickerModel();
     private ArrayAdapter<String> mZoneAdapter;
@@ -113,8 +115,8 @@ public class DateTimePickerViewModel extends BaseObservable {
         mView.addDialogAndShow(new DatePickerDialog(
                 context,
                 (datePicker, year, month, day) ->
-                    setDateTime(
-                            mModel.getTime().withDate(year, month, day))
+                        setDateTime(
+                                mModel.getTime().withDate(year, month, day))
                 ,
                 mModel.getTime().getYear(),
                 mModel.getTime().getMonthOfYear(),
@@ -126,8 +128,8 @@ public class DateTimePickerViewModel extends BaseObservable {
         mView.addDialogAndShow(new TimePickerDialog(
                 context,
                 (timePicker, hour, minute) ->
-                    setDateTime(
-                            mModel.getTime().withHourOfDay(hour).withMinuteOfHour(minute))
+                        setDateTime(
+                                mModel.getTime().withHourOfDay(hour).withMinuteOfHour(minute))
                 ,
                 mModel.getTime().getHourOfDay(),
                 mModel.getTime().getMinuteOfHour(),
