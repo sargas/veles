@@ -1,4 +1,4 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.datetimepicker;
 
 import android.app.Dialog;
 import android.app.Fragment;
@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.danlew.android.joda.JodaTimeAndroid;
+import net.neoturbine.veles.R;
 import net.neoturbine.veles.databinding.FragmentDateTimePickerBinding;
 import net.neoturbine.veles.datetimepicker.DateTimePickerContract;
 import net.neoturbine.veles.datetimepicker.DateTimePickerViewModel;
@@ -87,11 +88,11 @@ public class DateTimePicker extends Fragment implements DateTimePickerContract.V
         mViewModel.onSaveInstanceState(outState);
     }
 
-    void setDateTime(final DateTime newTime) {
+    public void setDateTime(final DateTime newTime) {
         mViewModel.setDateTime(newTime);
     }
 
-    DateTime getDateTime() {
+    public DateTime getDateTime() {
         return mViewModel.getDateTime();
     }
 }

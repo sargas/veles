@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:paddingEnd="@dimen/list_text_margin"
         android:paddingStart="@dimen/list_text_margin"
-        tools:context="net.neoturbine.veles.DateTimePicker">
+        tools:context="net.neoturbine.veles.datetimepicker.DateTimePicker">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/date_time_picker_text_input_layout"
@@ -61,6 +61,7 @@
             android:layout_alignParentStart="true"
             android:layout_below="@id/date_time_picker_time"/>
 
+        <!--suppress AndroidUnknownAttribute -->
         <Spinner
             android:id="@+id/date_time_picker_timezone"
             app:adapter="@{viewmodel.adapter}"

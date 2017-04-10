@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.danlew.android.joda.JodaTimeAndroid;
+import net.neoturbine.veles.datetimepicker.DateTimePicker;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.joda.time.DateTimeZone;

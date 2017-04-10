@@ -34,7 +34,7 @@
 
     <fragment
         android:id="@+id/qso_start_time"
-        android:name="net.neoturbine.veles.DateTimePicker"
+        android:name="net.neoturbine.veles.datetimepicker.DateTimePicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:hint="@string/qso_edit_start_time"
@@ -42,7 +42,7 @@
 
     <fragment
         android:id="@+id/qso_end_time"
-        android:name="net.neoturbine.veles.DateTimePicker"
+        android:name="net.neoturbine.veles.datetimepicker.DateTimePicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:hint="@string/qso_edit_end_time"

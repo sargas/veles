@@ -18,6 +18,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 
+@SuppressWarnings("WeakerAccess")
 public class DateTimePickerViewModel extends BaseObservable {
     private static final String STATE_TIME = "STATE_TIME";
     @NonNull
@@ -25,19 +26,19 @@ public class DateTimePickerViewModel extends BaseObservable {
     private ArrayAdapter<String> mZoneAdapter;
     private DateTimePickerContract.View mView;
 
-    public void attachView(DateTimePickerContract.View view, Bundle bundle) {
+    void attachView(DateTimePickerContract.View view, Bundle bundle) {
         mView = view;
         if (bundle != null) onRestoreInstanceState(bundle);
     }
 
-    public void setDateTime(DateTime dateTime) {
+    void setDateTime(DateTime dateTime) {
         mModel.setTime(dateTime);
         notifyPropertyChanged(BR.time);
         notifyPropertyChanged(BR.date);
         notifyPropertyChanged(BR.selectedTimeZoneIndex);
     }
 
-    public DateTime getDateTime() {
+    DateTime getDateTime() {
         return mModel.getTime();
     }
 
@@ -139,7 +140,7 @@ public class DateTimePickerViewModel extends BaseObservable {
             setDateTime((DateTime) savedInstanceState.getSerializable(STATE_TIME));
     }
 
-    public void onSaveInstanceState(final Bundle outState) {
+    void onSaveInstanceState(final Bundle outState) {
         outState.putSerializable(STATE_TIME, getDateTime());
     }
 }
