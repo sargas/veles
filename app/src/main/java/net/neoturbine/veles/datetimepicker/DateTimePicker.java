@@ -42,7 +42,7 @@ public class DateTimePicker extends Fragment implements DateTimePickerContract.V
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentDateTimePickerBinding binding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_date_time_picker, container, true
+                inflater, R.layout.fragment_date_time_picker, container, false
         );
 
         binding.setViewmodel(mViewModel);
