@@ -2,7 +2,6 @@ For Release:
 TODO Make sure that maps are okay even if permissions are rescinded
 TODO In accordance with terms at http://www.hamuniverse.com/legalstuff.html , document that copyright belongs to N4UJW/Hamuniverse as well
 TODO Sync to file in xlog format
-TODO profile application startup, both on normal use and first use after install
 TODO Make sure free-form locations look okay in details fragment
 TODO add license info
 
