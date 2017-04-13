@@ -15,8 +15,6 @@ import android.view.ViewGroup;
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.neoturbine.veles.R;
 import net.neoturbine.veles.databinding.FragmentDateTimePickerBinding;
-import net.neoturbine.veles.datetimepicker.DateTimePickerContract;
-import net.neoturbine.veles.datetimepicker.DateTimePickerViewModel;
 
 import org.joda.time.DateTime;
 
@@ -26,7 +24,7 @@ import java.util.List;
 
 public class DateTimePicker extends Fragment implements DateTimePickerContract.View {
     private final List<Dialog> mDialogs = new ArrayList<>(2);
-    private final DateTimePickerViewModel mViewModel = new DateTimePickerViewModel();
+    private final DateTimePickerContract.ViewModel mViewModel = new DateTimePickerViewModel();
 
     public DateTimePicker() {
         // Required empty public constructor

@@ -3,8 +3,6 @@ package net.neoturbine.veles.datetimepicker;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
@@ -20,7 +18,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 
 @SuppressWarnings("WeakerAccess")
-public class DateTimePickerViewModel extends BaseObservable {
+public class DateTimePickerViewModel extends DateTimePickerContract.ViewModel {
     @VisibleForTesting
     static final String STATE_TIME = "STATE_TIME";
     @NonNull
@@ -28,11 +26,13 @@ public class DateTimePickerViewModel extends BaseObservable {
     private ArrayAdapter<String> mZoneAdapter;
     private DateTimePickerContract.View mView;
 
+    @Override
     void attachView(DateTimePickerContract.View view, Bundle bundle) {
         mView = view;
         if (bundle != null) onRestoreInstanceState(bundle);
     }
 
+    @Override
     void setDateTime(DateTime dateTime) {
         mModel.setTime(dateTime);
         notifyPropertyChanged(BR.time);
@@ -40,32 +40,33 @@ public class DateTimePickerViewModel extends BaseObservable {
         notifyPropertyChanged(BR.selectedTimeZoneIndex);
     }
 
+    @Override
     DateTime getDateTime() {
         return mModel.getTime();
     }
 
-    @Bindable
+    @Override
     public String getDate() {
         return DateTimeFormat.longDate().print(mModel.getTime());
     }
 
-    @Bindable
+    @Override
     public String getTime() {
         return DateTimeFormat.shortTime().print(mModel.getTime());
     }
 
-    @Bindable
+    @Override
     public CharSequence getHint() {
         return mModel.getHintText();
     }
 
+    @Override
     public void setHint(CharSequence hint) {
         mModel.setHintText(hint);
         notifyPropertyChanged(BR.hint);
     }
 
-    @SuppressWarnings("WeakerAccess")
-    @Bindable
+    @Override
     public SpinnerAdapter getAdapter() {
         fillZoneAdapterIfNull(mView.getContext());
         return mZoneAdapter;
@@ -89,7 +90,7 @@ public class DateTimePickerViewModel extends BaseObservable {
                 idArray);
     }
 
-    @Bindable
+    @Override
     public int getSelectedTimeZoneIndex() {
         // partially from http://stackoverflow.com/a/23740502/239003
         for (int i = 0; i < getAdapter().getCount(); i++) {
@@ -103,6 +104,7 @@ public class DateTimePickerViewModel extends BaseObservable {
         throw new RuntimeException("Unknown time zone");
     }
 
+    @Override
     public void setSelectedTimeZoneIndex(int index) {
         setDateTime(
                 mModel.getTime().withZoneRetainFields(
@@ -111,6 +113,7 @@ public class DateTimePickerViewModel extends BaseObservable {
         notifyPropertyChanged(BR.selectedTimeZoneIndex);
     }
 
+    @Override
     public void dateButtonOnClick(Context context) {
         mView.addDialogAndShow(new DatePickerDialog(
                 context,
@@ -124,6 +127,7 @@ public class DateTimePickerViewModel extends BaseObservable {
         ));
     }
 
+    @Override
     public void timeButtonOnClick(Context context) {
         mView.addDialogAndShow(new TimePickerDialog(
                 context,
@@ -142,6 +146,7 @@ public class DateTimePickerViewModel extends BaseObservable {
             setDateTime((DateTime) savedInstanceState.getSerializable(STATE_TIME));
     }
 
+    @Override
     void onSaveInstanceState(final Bundle outState) {
         outState.putSerializable(STATE_TIME, getDateTime());
     }

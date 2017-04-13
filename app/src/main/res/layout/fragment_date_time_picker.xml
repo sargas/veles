@@ -10,7 +10,7 @@
 
         <variable
             name="viewmodel"
-            type="net.neoturbine.veles.datetimepicker.DateTimePickerViewModel" />
+            type="net.neoturbine.veles.datetimepicker.DateTimePickerContract.ViewModel" />
     </data>
 
     <RelativeLayout
