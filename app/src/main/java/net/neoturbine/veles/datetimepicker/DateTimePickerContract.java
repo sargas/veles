@@ -1,6 +1,7 @@
 package net.neoturbine.veles.datetimepicker;
 
-import android.app.Dialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
@@ -14,7 +15,8 @@ final public class DateTimePickerContract {
     private DateTimePickerContract() {}
 
     interface View {
-        void addDialogAndShow(Dialog dialog);
+        void showDatePickerDialog(DatePickerDialog.OnDateSetListener callback, int year, int month, int day);
+        void showTimePickerDialog(TimePickerDialog.OnTimeSetListener callback, int hour, int minute);
         Context getContext();
     }
 
@@ -35,8 +37,8 @@ final public class DateTimePickerContract {
         @Bindable
         abstract public int getSelectedTimeZoneIndex();
         abstract public void setSelectedTimeZoneIndex(int index);
-        abstract public void dateButtonOnClick(Context context);
-        abstract public void timeButtonOnClick(Context context);
+        abstract public void dateButtonOnClick();
+        abstract public void timeButtonOnClick();
         abstract void onSaveInstanceState(final Bundle outState);
     }
 }

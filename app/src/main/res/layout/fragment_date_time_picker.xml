@@ -31,7 +31,7 @@
             <EditText
                 android:id="@+id/date_time_picker_date"
                 style="@android:style/Widget.DeviceDefault.Light.Spinner"
-                android:onClick="@{(v) -> viewmodel.dateButtonOnClick(context)}"
+                android:onClick="@{(v) -> viewmodel.dateButtonOnClick()}"
                 android:text="@{viewmodel.date}"
                 android:hint="@{viewmodel.hint}"
                 android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
         <Button
             android:id="@+id/date_time_picker_time"
             style="@android:style/Widget.DeviceDefault.Light.Spinner"
-            android:onClick="@{(v) -> viewmodel.timeButtonOnClick(context)}"
+            android:onClick="@{(v) -> viewmodel.timeButtonOnClick()}"
             android:text="@{viewmodel.time}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

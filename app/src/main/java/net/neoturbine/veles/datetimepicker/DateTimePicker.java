@@ -1,12 +1,15 @@
 package net.neoturbine.veles.datetimepicker;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
+import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +54,7 @@ public class DateTimePicker extends Fragment implements DateTimePickerContract.V
     }
 
     @UiThread
-    public void addDialogAndShow(final Dialog dialog) {
+    private void addDialogAndShow(final Dialog dialog) {
         mDialogs.add(dialog);
         dialog.setOnDismissListener((d) -> mDialogs.remove(dialog));
         dialog.setOnCancelListener((d) -> mDialogs.remove(dialog));
@@ -89,6 +92,29 @@ public class DateTimePicker extends Fragment implements DateTimePickerContract.V
 
     public void setDateTime(final DateTime newTime) {
         mViewModel.setDateTime(newTime);
+    }
+
+    @Override
+    public void showTimePickerDialog(TimePickerDialog.OnTimeSetListener callback, int hour, int minute) {
+        addDialogAndShow(new TimePickerDialog(
+                getContext(),
+                callback,
+                hour,
+                minute,
+                DateFormat.is24HourFormat(getContext())
+        ));
+    }
+
+    @Override
+    public void showDatePickerDialog(DatePickerDialog.OnDateSetListener callback,
+                                     int year, int month, int day) {
+        addDialogAndShow(new DatePickerDialog(
+                getContext(),
+                callback,
+                year,
+                month,
+                day
+        ));
     }
 
     public DateTime getDateTime() {

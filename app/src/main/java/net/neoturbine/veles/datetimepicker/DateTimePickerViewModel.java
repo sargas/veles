@@ -1,14 +1,12 @@
 package net.neoturbine.veles.datetimepicker;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
-import android.text.format.DateFormat;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.SpinnerAdapter;
+import android.widget.TimePicker;
 
 import net.neoturbine.veles.BR;
 import net.neoturbine.veles.R;
@@ -72,25 +70,25 @@ public class DateTimePickerViewModel extends DateTimePickerContract.ViewModel {
 
     @Override
     public SpinnerAdapter getAdapter() {
-        fillZoneAdapterIfNull(mView.getContext());
+        fillZoneAdapterIfNull();
         return mZoneAdapter;
     }
 
-    private void fillZoneAdapterIfNull(Context context) {
+    private void fillZoneAdapterIfNull() {
         if (mZoneAdapter == null) {
             synchronized (DateTimePickerViewModel.class) {
                 if (mZoneAdapter == null) {
-                    fillZoneAdapter(context);
+                    fillZoneAdapter();
                     notifyPropertyChanged(BR.selectedTimeZoneIndex);
                 }
             }
         }
     }
 
-    private void fillZoneAdapter(Context context) {
+    private void fillZoneAdapter() {
         // partially from http://stackoverflow.com/a/23740502/239003
         final String[] idArray = DateTimeZone.getAvailableIDs().toArray(new String[0]);
-        mZoneAdapter = new ArrayAdapter<>(context, R.layout.simple_spinner_dropdown_item_aligned,
+        mZoneAdapter = new ArrayAdapter<>(mView.getContext(), R.layout.simple_spinner_dropdown_item_aligned,
                 idArray);
     }
 
@@ -118,31 +116,29 @@ public class DateTimePickerViewModel extends DateTimePickerContract.ViewModel {
     }
 
     @Override
-    public void dateButtonOnClick(Context context) {
-        mView.addDialogAndShow(new DatePickerDialog(
-                context,
-                (datePicker, year, month, day) ->
-                        setDateTime(
-                                mModel.getTime().withDate(year, month, day))
-                ,
+    public void dateButtonOnClick() {
+        mView.showDatePickerDialog(
+                this::setDateFromDatePicker,
                 mModel.getTime().getYear(),
                 mModel.getTime().getMonthOfYear(),
-                mModel.getTime().getDayOfMonth()
-        ));
+                mModel.getTime().getDayOfMonth());
+    }
+
+    private void setDateFromDatePicker(@SuppressWarnings("unused") DatePicker datePicker,
+                                       int year, int month, int day) {
+        setDateTime(mModel.getTime().withDate(year, month, day));
     }
 
     @Override
-    public void timeButtonOnClick(Context context) {
-        mView.addDialogAndShow(new TimePickerDialog(
-                context,
-                (timePicker, hour, minute) ->
-                        setDateTime(
-                                mModel.getTime().withHourOfDay(hour).withMinuteOfHour(minute))
-                ,
+    public void timeButtonOnClick() {
+        mView.showTimePickerDialog(this::setTimeFromTimePicker,
                 mModel.getTime().getHourOfDay(),
-                mModel.getTime().getMinuteOfHour(),
-                DateFormat.is24HourFormat(context)
-        ));
+                mModel.getTime().getMinuteOfHour());
+    }
+
+    private void setTimeFromTimePicker(@SuppressWarnings("unused") TimePicker timePicker,
+                                       int hour, int minute) {
+        setDateTime(mModel.getTime().withHourOfDay(hour).withMinuteOfHour(minute));
     }
 
     private void onRestoreInstanceState(Bundle savedInstanceState) {
