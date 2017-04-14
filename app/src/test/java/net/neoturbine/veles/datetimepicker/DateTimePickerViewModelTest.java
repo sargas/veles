@@ -34,7 +34,7 @@ public class DateTimePickerViewModelTest {
     @Mock
     private DateTimePickerContract.View mView;
 
-    private final DateTimePickerViewModel mVM = new DateTimePickerViewModel();
+    private final DateTimePickerViewModel mVM = new DateTimePickerViewModel(new DateTimePickerModel());
 
     private final DateTime mTestDateTime = new DateTime(2004, 10, 3, 12, 30,
             DateTimeZone.forID("America/New_York"));

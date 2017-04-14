@@ -24,7 +24,8 @@ import java.util.List;
 
 public class DateTimePicker extends Fragment implements DateTimePickerContract.View {
     private final List<Dialog> mDialogs = new ArrayList<>(2);
-    private final DateTimePickerContract.ViewModel mViewModel = new DateTimePickerViewModel();
+    private final DateTimePickerContract.ViewModel mViewModel =
+            DaggerDateTimePickerComponent.create().getViewModel();
 
     public DateTimePicker() {
         // Required empty public constructor

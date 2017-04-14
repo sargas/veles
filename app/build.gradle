@@ -39,6 +39,7 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+
     // Set this dependency to use JUnit 4 rules
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
@@ -62,4 +63,12 @@ dependencies {
     androidTestCompile 'com.android.support.test:rules:0.5'
     compile 'com.android.support.test.espresso:espresso-contrib:2.2.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    compile 'com.google.dagger:dagger:2.10'
+    compile 'com.google.dagger:dagger-android:2.10'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.10'
+
+    //espresso tries to use an older version
+    androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
 }

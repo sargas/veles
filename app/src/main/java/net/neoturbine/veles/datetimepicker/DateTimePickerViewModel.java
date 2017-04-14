@@ -22,9 +22,13 @@ public class DateTimePickerViewModel extends DateTimePickerContract.ViewModel {
     @VisibleForTesting
     static final String STATE_TIME = "STATE_TIME";
     @NonNull
-    private final DateTimePickerModel mModel = new DateTimePickerModel();
+    private final DateTimePickerModel mModel;
     private ArrayAdapter<String> mZoneAdapter;
     private DateTimePickerContract.View mView;
+
+    DateTimePickerViewModel(@NonNull DateTimePickerModel model) {
+        mModel = model;
+    }
 
     @Override
     void attachView(DateTimePickerContract.View view, Bundle bundle) {
