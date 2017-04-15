@@ -27,9 +27,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import net.danlew.android.joda.DateUtils;
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.neoturbine.veles.databinding.QsoDetailBinding;
+import net.neoturbine.veles.qso.detail.DetailsContracts;
+import net.neoturbine.veles.qso.detail.ViewModelImpl;
 
 /**
  * A fragment representing a single QSO detail screen.
@@ -37,7 +38,7 @@ import net.neoturbine.veles.databinding.QsoDetailBinding;
  * in two-pane mode (on tablets) or a {@link QSODetailActivity}
  * on handsets.
  */
-public class QSODetailFragment extends Fragment implements QSOIdContainer {
+public class QSODetailFragment extends Fragment implements QSOIdContainer, DetailsContracts.DetailView {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -49,6 +50,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer {
     private static final int QSO_LOADER = 0;
 
     private onQSODetailListener mCallback;
+    private final DetailsContracts.ViewModel mVM = new ViewModelImpl();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -79,6 +81,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         JodaTimeAndroid.init(getActivity());
+        mVM.attachView(this);
     }
 
     @Override
@@ -114,21 +117,12 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer {
 
                     final QSO qso = new QSO(data);
 
-                    binding.setQso(qso);
-
-                    binding.setStartTime(DateUtils.formatDateTime(
-                            getActivity(), qso.getStartTime(),
-                            DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR) + " " +
-                            qso.getStartTime().getZone().getShortName(qso.getStartTime().getMillis()));
-
-                    binding.setEndTime(DateUtils.formatDateTime(
-                            getActivity(), qso.getEndTime(),
-                            DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR) + " " +
-                            qso.getEndTime().getZone().getShortName(qso.getEndTime().getMillis()));
+                    mVM.setQSO(qso);
+                    binding.setViewmodel(mVM);
 
                     CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity().findViewById(R.id.toolbar_layout);
                     if (appBarLayout != null) {
-                        appBarLayout.setTitle(qso.getOtherStation());
+                        appBarLayout.setTitle(mVM.getOtherStation());
                     }
 
                     setupMap(qso.getMyLocation(), R.id.qso_detail_my_location,
@@ -152,9 +146,9 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer {
     }
 
     @UiThread
-    private void setupMap(final VelesLocation location, @IdRes
-    final int fragmentId,
+    private void setupMap(final VelesLocation location, @IdRes final int fragmentId,
                           final String station, final View textBox) {
+        final int DEFAULT_ZOOM = 10;
         FragmentManager fm = getChildFragmentManager();
 
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(fragmentId);
@@ -165,7 +159,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer {
             textBox.setVisibility(View.VISIBLE);
 
             mapFragment.getMapAsync(googleMap -> {
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location.asLatLng(), 10));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location.asLatLng(), DEFAULT_ZOOM));
 
                 switch (location.getType()) {
                     case LatitudeLongitude:

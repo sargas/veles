@@ -4,18 +4,9 @@
         xmlns:map="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
-            name="qso"
-            type="net.neoturbine.veles.QSO"/>
-
-        <variable
-            name="startTime"
-            type="String"/>
-
-        <variable
-            name="endTime"
-            type="String"/>
+            name="viewmodel"
+            type="net.neoturbine.veles.qso.detail.DetailsContracts.ViewModel"/>
     </data>
 
     <LinearLayout
@@ -36,7 +27,7 @@
                 android:editable="false"
                 android:hint="@string/qso_edit_my_station"
                 android:inputType="none"
-                android:text="@{qso.getMyStation()}"
+                android:text="@{viewmodel.myStation}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
                 tools:text="My Call Sign"/>
@@ -52,7 +43,7 @@
                 android:editable="false"
                 android:hint="@string/qso_edit_start_time"
                 android:inputType="none"
-                android:text="@{startTime}"
+                android:text="@{viewmodel.startTime}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
                 tools:text="Start Time"/>
@@ -68,7 +59,7 @@
                 android:editable="false"
                 android:hint="@string/qso_edit_end_time"
                 android:inputType="none"
-                android:text="@{endTime}"
+                android:text="@{viewmodel.endTime}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
                 tools:text="End Time"/>
@@ -84,7 +75,7 @@
                 android:editable="false"
                 android:hint="@string/qso_edit_mode"
                 android:inputType="none"
-                android:text="@{qso.getMode()}"
+                android:text="@{viewmodel.mode}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
                 tools:text="Mode"/>
@@ -100,7 +91,7 @@
                 android:editable="false"
                 android:hint="@string/qso_power"
                 android:inputType="none"
-                android:text="@{qso.getPower()}"
+                android:text="@{viewmodel.power}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
                 tools:text="Power"/>
@@ -116,7 +107,7 @@
                 android:editable="false"
                 android:hint="@string/qso_edit_tx_freq"
                 android:inputType="none"
-                android:text="@{qso.getTransmissionFrequency()}"
+                android:text="@{viewmodel.transmissionFrequency}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
                 tools:text="TX Freq"/>
@@ -132,7 +123,7 @@
                 android:editable="false"
                 android:hint="@string/qso_edit_rx_freq"
                 android:inputType="none"
-                android:text="@{qso.getReceivingFrequency()}"
+                android:text="@{viewmodel.receivingFrequency}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
                 tools:text="RX Freq"/>
@@ -148,7 +139,7 @@
                 android:editable="false"
                 android:hint="@string/qso_edit_other_quality"
                 android:inputType="none"
-                android:text="@{qso.getOtherQuality()}"
+                android:text="@{viewmodel.otherQuality}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
                 tools:text="RX Quality" />
@@ -164,7 +155,7 @@
                 android:editable="false"
                 android:hint="@string/qso_edit_my_quality"
                 android:inputType="none"
-                android:text="@{qso.getMyQuality()}"
+                android:text="@{viewmodel.myQuality}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
                 tools:text="TX Quality" />
@@ -242,7 +233,7 @@
                 android:editable="false"
                 android:hint="@string/qso_edit_comment"
                 android:inputType="none"
-                android:text="@{qso.getComment()}"
+                android:text="@{viewmodel.comment}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
                 tools:text="Some Comments Here"/>
