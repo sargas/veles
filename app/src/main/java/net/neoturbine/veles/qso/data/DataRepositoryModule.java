@@ -1,7 +1,9 @@
 package net.neoturbine.veles.qso.data;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 
 @Module(includes = {ApplicationContextModule.class})
-class DataRepositoryModule {
+public class DataRepositoryModule {
 }

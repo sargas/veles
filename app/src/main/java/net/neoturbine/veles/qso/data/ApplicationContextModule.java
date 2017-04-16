@@ -3,6 +3,7 @@ package net.neoturbine.veles.qso.data;
 import android.content.Context;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -15,8 +16,9 @@ public class ApplicationContextModule {
         mAppContext = applicationContext;
     }
 
+    @Singleton
     @Provides
-    public @Named("application context") Context provideApplicationContext() {
+    @Named("application context") Context provideApplicationContext() {
         return mAppContext;
     }
 }

@@ -33,6 +33,8 @@ import net.neoturbine.veles.qso.detail.QSODetailFragment;
 
 import org.joda.time.DateTime;
 
+import dagger.android.AndroidInjection;
+
 
 /**
  * An activity representing a list of QSOs. This activity
@@ -62,6 +64,7 @@ public class QSOListActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         JodaTimeAndroid.init(this);
         setContentView(R.layout.activity_qso_list);

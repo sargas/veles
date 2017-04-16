@@ -6,6 +6,7 @@ import android.databinding.Bindable;
 
 import net.neoturbine.veles.QSO;
 
+@SuppressWarnings("WeakerAccess")
 public class DetailsContracts {
     abstract public static class ViewModel extends BaseObservable {
         abstract public void attachView(DetailView view);

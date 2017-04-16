@@ -8,12 +8,14 @@ import net.neoturbine.veles.QSOColumns;
 import net.neoturbine.veles.VelesSQLHelper;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Observable;
 
+@Singleton
 public class DataRepository {
-    private BriteDatabase mDB;
+    private final BriteDatabase mDB;
 
     @Inject
     DataRepository(VelesSQLHelper dbHelper) {

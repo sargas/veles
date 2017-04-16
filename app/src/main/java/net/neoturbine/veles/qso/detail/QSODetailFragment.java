@@ -30,11 +30,11 @@ import net.neoturbine.veles.QSOListActivity;
 import net.neoturbine.veles.R;
 import net.neoturbine.veles.qso.model.VelesLocation;
 import net.neoturbine.veles.databinding.QsoDetailBinding;
-import net.neoturbine.veles.qso.data.ApplicationContextModule;
-import net.neoturbine.veles.qso.data.DaggerDataRepositoryComponent;
 import net.neoturbine.veles.qso.data.DataRepository;
-import net.neoturbine.veles.qso.data.DataRepositoryComponent;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -57,9 +57,9 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
     private long mQSOid = -1;
 
     private onQSODetailListener mCallback;
-    private final DetailsContracts.ViewModel mVM = new ViewModelImpl();
+    @Inject DetailsContracts.ViewModel mVM;
     private QsoDetailBinding mBinding;
-    private DataRepository mDataRepository;
+    @Inject DataRepository mDataRepository;
     private Disposable mDisplayQSO;
 
     /**
@@ -77,6 +77,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
 
     @Override
     public void onAttach(Context context) {
+        AndroidInjection.inject(this);
         super.onAttach(context);
 
         try {
@@ -93,12 +94,6 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
         JodaTimeAndroid.init(getActivity());
 
         mVM.attachView(this);
-
-        DataRepositoryComponent component = DaggerDataRepositoryComponent
-                .builder()
-                .applicationContextModule(new ApplicationContextModule(getActivity().getApplicationContext()))
-                .build();
-        mDataRepository = component.getRepository();
     }
 
     @Override

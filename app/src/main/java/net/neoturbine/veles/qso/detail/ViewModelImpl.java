@@ -6,10 +6,15 @@ import net.danlew.android.joda.DateUtils;
 import net.neoturbine.veles.QSO;
 import net.neoturbine.veles.R;
 
+import javax.inject.Inject;
+
 public class ViewModelImpl extends DetailsContracts.ViewModel {
     private String mLoadingMessage;
     private DetailsContracts.DetailView mView;
     private QSO mQSO;
+
+    @Inject
+    ViewModelImpl() {}
 
     @Override
     public void attachView(DetailsContracts.DetailView view) {
