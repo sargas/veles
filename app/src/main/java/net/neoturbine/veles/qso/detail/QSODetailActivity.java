@@ -1,4 +1,4 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.qso.detail;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import net.neoturbine.veles.QSOEditActivity;
+import net.neoturbine.veles.QSOListActivity;
+import net.neoturbine.veles.R;
 import net.neoturbine.veles.qso.detail.QSODetailFragment;
 
 /**
@@ -17,7 +20,7 @@ import net.neoturbine.veles.qso.detail.QSODetailFragment;
  */
 public class QSODetailActivity extends AppCompatActivity
         implements QSODetailFragment.onQSODetailListener {
-    static final String ARG_QSO_ID = "qso_id";
+    public static final String ARG_QSO_ID = "qso_id";
     private static final int REQUEST_EDIT = 1;
 
     @Override

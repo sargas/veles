@@ -2,7 +2,6 @@ package net.neoturbine.veles.qso.detail;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.ContentUris;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -26,8 +25,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.neoturbine.veles.QSO;
-import net.neoturbine.veles.QSOColumns;
-import net.neoturbine.veles.QSODetailActivity;
 import net.neoturbine.veles.QSOIdContainer;
 import net.neoturbine.veles.QSOListActivity;
 import net.neoturbine.veles.R;
@@ -209,10 +206,9 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
                 mCallback.onEditQSO(mQSOid);
                 return true;
             case R.id.action_delete:
-                getActivity().getContentResolver().delete(
-                        ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
-                        null, null
-                );
+                mDataRepository.deleteQSO(mQSOid)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
                 Toast.makeText(getActivity(), R.string.toast_deleted, Toast.LENGTH_LONG).show();
                 mCallback.onFinishDelete();
                 return true;

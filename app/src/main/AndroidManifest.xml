@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".QSODetailActivity"
+            android:name=".qso.detail.QSODetailActivity"
             android:label="@string/title_qso_detail"
             android:parentActivityName=".QSOListActivity"
             android:theme="@style/AppTheme.NoActionBar">

@@ -10,21 +10,20 @@ import net.neoturbine.veles.VelesSQLHelper;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 
 public class DataRepository {
-    private final VelesSQLHelper mDBHelper;
+    private final VelesSQLHelper mDatabaseHelper;
 
     @Inject
     DataRepository(VelesSQLHelper dbHelper) {
-        mDBHelper = dbHelper;
+        mDatabaseHelper = dbHelper;
 
     }
 
     public Observable<QSO> getQSO(long id) {
         return Observable.just(id)
-                .subscribeOn(Schedulers.io())
                 .map(this::getQSOFromDB);
     }
 
@@ -34,7 +33,7 @@ public class DataRepository {
         queryBuilder.setTables(QSOColumns.TABLE_NAME);
         queryBuilder.appendWhere(QSOColumns._ID + " = " + id);
 
-        final SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        final SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
         final Cursor c = queryBuilder.query(db, null, null, null, null,
                 null, null);
 
@@ -43,7 +42,25 @@ public class DataRepository {
 
         QSO output = new QSO(c);
         c.close();
-        db.beginTransaction();
+        db.close();
         return output;
+    }
+
+    public Completable deleteQSO(long id) {
+        android.util.Log.d("DataRepository", "Deleting "+id);
+        return Completable
+                .fromCallable(() -> deleteQSOFromDB(id));
+    }
+
+    private Void deleteQSOFromDB(long id) {
+        final SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
+
+        db.delete(
+                QSOColumns.TABLE_NAME,
+                QSOColumns._ID + " = ?",
+                new String[]{Long.toString(id)});
+        db.close();
+
+        return null;
     }
 }

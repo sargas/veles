@@ -14,8 +14,8 @@ import android.view.MenuItem;
  */
 public class QSOEditActivity extends AppCompatActivity
         implements QSOEditFragment.OnFinishEditListener {
-    static final String ARG_QSO_ID = "qso_id";
-    static final int RESULT_DELETED = RESULT_FIRST_USER;
+    public static final String ARG_QSO_ID = "qso_id";
+    public static final int RESULT_DELETED = RESULT_FIRST_USER;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
