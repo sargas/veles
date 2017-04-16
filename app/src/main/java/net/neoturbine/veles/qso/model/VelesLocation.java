@@ -1,4 +1,4 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.qso.model;
 
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -12,7 +12,7 @@ import java.io.Serializable;
 import static net.neoturbine.veles.LocatorConverter.fromLocator;
 import static net.neoturbine.veles.LocatorConverter.toLocator;
 
-class VelesLocation implements Serializable {
+public class VelesLocation implements Serializable {
     private static final long serialVersionUID = 6587082321100439439L;
     private final double mLongitude;
     private final double mLatitude;
@@ -47,23 +47,23 @@ class VelesLocation implements Serializable {
         this.mFreeForm = freeForm;
     }
 
-    static VelesLocation fromLongitudeLatitude(double longitude, double latitude) {
+    public static VelesLocation fromLongitudeLatitude(double longitude, double latitude) {
         return new VelesLocation(longitude, latitude);
     }
 
-    static VelesLocation fromLocatorString(@NonNull CharSequence locator) {
+    public static VelesLocation fromLocatorString(@NonNull CharSequence locator) {
         return new VelesLocation(locator.toString());
     }
 
-    static VelesLocation fromFreeFormString(@NonNull CharSequence freeForm) {
+    public static VelesLocation fromFreeFormString(@NonNull CharSequence freeForm) {
         return new VelesLocation(freeForm.toString(), 0);
     }
 
-    VelesLocation(@NonNull Location location) {
+    public VelesLocation(@NonNull Location location) {
         this(location.getLongitude(), location.getLatitude());
     }
 
-    VelesLocation(@NonNull LatLng latlng) {
+    public VelesLocation(@NonNull LatLng latlng) {
         this(latlng.longitude, latlng.latitude);
     }
 
@@ -77,16 +77,16 @@ class VelesLocation implements Serializable {
                 '}';
     }
 
-    double getLongitude() {
+    public double getLongitude() {
         return mLongitude;
     }
 
-    double getLatitude() {
+    public double getLatitude() {
         return mLatitude;
     }
 
     @NonNull
-    String getLocator() {
+    public String getLocator() {
         return mLocator;
     }
 
@@ -100,12 +100,12 @@ class VelesLocation implements Serializable {
         return mFreeForm;
     }
 
-    enum Type {
+    public enum Type {
         LatitudeLongitude, Locator, FreeForm
     }
 
     @NonNull
-    LatLng asLatLng() {
+    public LatLng asLatLng() {
         return new LatLng(getLatitude(), getLongitude());
     }
 
@@ -120,7 +120,7 @@ class VelesLocation implements Serializable {
     }
 
     @NonNull
-    PolygonOptions asPolygonOptions() {
+    public PolygonOptions asPolygonOptions() {
         LatLng ne = asLatLngBounds().northeast;
         LatLng sw = asLatLngBounds().southwest;
 

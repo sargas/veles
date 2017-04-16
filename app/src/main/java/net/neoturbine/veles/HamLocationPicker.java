@@ -32,6 +32,7 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
 import net.neoturbine.veles.databinding.HamLocationPickerBinding;
+import net.neoturbine.veles.qso.model.VelesLocation;
 
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.math.NumberUtils;

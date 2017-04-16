@@ -4,6 +4,8 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import net.neoturbine.veles.qso.model.VelesLocation;
+
 import org.apache.commons.lang3.SerializationUtils;
 import org.joda.time.DateTime;
 
@@ -57,7 +59,7 @@ public final class QSO {
         this.mComment = comment;
     }
 
-    QSO(@NonNull Cursor data) {
+    public QSO(@NonNull Cursor data) {
         this(
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.MY_STATION)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)),

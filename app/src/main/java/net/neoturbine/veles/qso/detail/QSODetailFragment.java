@@ -1,19 +1,16 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.qso.detail;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.UiThread;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,9 +25,23 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import net.danlew.android.joda.JodaTimeAndroid;
+import net.neoturbine.veles.QSO;
+import net.neoturbine.veles.QSOColumns;
+import net.neoturbine.veles.QSODetailActivity;
+import net.neoturbine.veles.QSOIdContainer;
+import net.neoturbine.veles.QSOListActivity;
+import net.neoturbine.veles.R;
+import net.neoturbine.veles.qso.model.VelesLocation;
 import net.neoturbine.veles.databinding.QsoDetailBinding;
-import net.neoturbine.veles.qso.detail.DetailsContracts;
-import net.neoturbine.veles.qso.detail.ViewModelImpl;
+import net.neoturbine.veles.qso.data.ApplicationContextModule;
+import net.neoturbine.veles.qso.data.DaggerDataRepositoryComponent;
+import net.neoturbine.veles.qso.data.DataRepository;
+import net.neoturbine.veles.qso.data.DataRepositoryComponent;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * A fragment representing a single QSO detail screen.
@@ -44,13 +55,15 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
      * represents.
      */
     private static final String ARG_QSO_ID = "qso_id";
+    private static final String TAG = "QSODetailFragment";
 
     private long mQSOid = -1;
 
-    private static final int QSO_LOADER = 0;
-
     private onQSODetailListener mCallback;
     private final DetailsContracts.ViewModel mVM = new ViewModelImpl();
+    private QsoDetailBinding mBinding;
+    private DataRepository mDataRepository;
+    private Disposable mDisplayQSO;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -59,7 +72,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
     public QSODetailFragment() {
     }
 
-    interface onQSODetailListener {
+    public interface onQSODetailListener {
         void onFinishDelete();
 
         void onEditQSO(long QSOid);
@@ -81,68 +94,52 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         JodaTimeAndroid.init(getActivity());
+
         mVM.attachView(this);
+
+        DataRepositoryComponent component = DaggerDataRepositoryComponent
+                .builder()
+                .applicationContextModule(new ApplicationContextModule(getActivity().getApplicationContext()))
+                .build();
+        mDataRepository = component.getRepository();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        final QsoDetailBinding binding =
-                DataBindingUtil.inflate(inflater, R.layout.qso_detail, container, false);
-        View rootView = binding.getRoot();
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.qso_detail, container, false);
+
+        mBinding.setViewmodel(mVM);
+        View rootView = mBinding.getRoot();
 
         if (getArguments().containsKey(ARG_QSO_ID)) {
             mQSOid = getArguments().getLong(ARG_QSO_ID);
 
-            getLoaderManager().initLoader(QSO_LOADER, null, new LoaderManager.LoaderCallbacks<Cursor>() {
-                @Override
-                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    switch (id) {
-                        case QSO_LOADER:
-                            return new CursorLoader(
-                                    getActivity(),
-                                    ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
-                                    null, null, null, null);
-                        default:
-                            throw new IllegalArgumentException("Unknown type of loader: " + id);
-                    }
-                }
-
-                @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                    if (!data.moveToFirst()) {
-                        return;
-                    }
-
-                    final QSO qso = new QSO(data);
-
-                    mVM.setQSO(qso);
-                    binding.setViewmodel(mVM);
-
-                    CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity().findViewById(R.id.toolbar_layout);
-                    if (appBarLayout != null) {
-                        appBarLayout.setTitle(mVM.getOtherStation());
-                    }
-
-                    setupMap(qso.getMyLocation(), R.id.qso_detail_my_location,
-                            qso.getMyStation(), binding.qsoDetailMyLocationText);
-                    setupMap(qso.getOtherLocation(), R.id.qso_detail_other_location,
-                            qso.getOtherStation(), binding.qsoDetailOtherLocationText);
-
-                    binding.qsoDetailsMaps.setVisibility(
-                            qso.getOtherLocation() == null && qso.getMyLocation() == null ?
-                                    View.GONE : View.VISIBLE
-                    );
-                }
-
-                @Override
-                public void onLoaderReset(Loader<Cursor> loader) {
-                }
-            });
+            Observable<QSO> observableQSO = mDataRepository.getQSO(mQSOid);
+            mDisplayQSO = observableQSO
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError((e) -> Log.e(TAG, "Unable to load QSO: "+e.toString()))
+                    .subscribe(this::displayQSO);
         }
 
         return rootView;
+    }
+
+    @UiThread
+    private void displayQSO(QSO qso) {
+        mVM.setQSO(qso);
+
+        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity().findViewById(R.id.toolbar_layout);
+        if (appBarLayout != null) {
+            appBarLayout.setTitle(mVM.getOtherStation());
+        }
+
+        setupMap(qso.getMyLocation(), R.id.qso_detail_my_location,
+                qso.getMyStation(), mBinding.qsoDetailMyLocationText);
+        setupMap(qso.getOtherLocation(), R.id.qso_detail_other_location,
+                qso.getOtherStation(), mBinding.qsoDetailOtherLocationText);
     }
 
     @UiThread
@@ -192,7 +189,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
      * @param qso_id Parameter 1.
      * @return A new instance of fragment QSODetailFragment.
      */
-    static QSODetailFragment newInstance(long qso_id) {
+    public static QSODetailFragment newInstance(long qso_id) {
         QSODetailFragment fragment = new QSODetailFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_QSO_ID, qso_id);
@@ -230,5 +227,12 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
             return getArguments().getLong(ARG_QSO_ID);
         }
         return mQSOid;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mDisplayQSO != null && !mDisplayQSO.isDisposed())
+            mDisplayQSO.dispose();
     }
 }

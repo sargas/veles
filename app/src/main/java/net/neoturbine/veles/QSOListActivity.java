@@ -28,6 +28,7 @@ import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import net.danlew.android.joda.DateUtils;
 import net.danlew.android.joda.JodaTimeAndroid;
+import net.neoturbine.veles.qso.detail.QSODetailFragment;
 
 import org.joda.time.DateTime;
 

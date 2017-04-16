@@ -1,5 +1,5 @@
 package net.neoturbine.veles;
 
-interface QSOIdContainer {
+public interface QSOIdContainer {
     long getQSOId();
 }

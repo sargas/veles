@@ -4,6 +4,7 @@
     <string name="title_qso_edit">Edit QSO</string>
     <string name="title_qso_new">Add QSO</string>
 
+    <string name="qso_loading">Loading…</string>
     <string name="qso_edit_start_time">Start Time</string>
     <string name="qso_edit_end_time">End Time</string>
     <string name="qso_edit_my_station">Your Call Sign</string>

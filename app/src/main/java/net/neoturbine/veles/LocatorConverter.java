@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.commons.lang3.CharUtils;
 
-final class LocatorConverter {
+public final class LocatorConverter {
     private LocatorConverter() {
     }
 
@@ -40,7 +40,7 @@ final class LocatorConverter {
     }
 
     @NonNull
-    static String toLocator(double longitude, double latitude) {
+    public static String toLocator(double longitude, double latitude) {
         StringBuilder output = new StringBuilder("123456");
 
         latitude += 90;
@@ -57,7 +57,7 @@ final class LocatorConverter {
         return output.toString();
     }
 
-    static LatLng fromLocator(@NonNull String locator) {
+    public static LatLng fromLocator(@NonNull String locator) {
         if (locator.length() != 6)
             throw new IllegalArgumentException("length of QTH locator must be 6");
         double latitude = (toDigit(locator.charAt(1)) - 1.0) * 10.0 + toDigit(locator.charAt(3)) + (toDigit(locator.charAt(5)) - 1.0) / 24.0 + 1.0 / 48.0;

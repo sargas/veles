@@ -33,6 +33,8 @@ public class DetailsContracts {
         abstract public String getMyQuality();
         @Bindable
         abstract public String getComment();
+        @Bindable
+        abstract public int getMapsVisibility();
     }
 
     public interface DetailView {

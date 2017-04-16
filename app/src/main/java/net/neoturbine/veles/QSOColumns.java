@@ -3,7 +3,7 @@ package net.neoturbine.veles;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-interface QSOColumns extends BaseColumns {
+public interface QSOColumns extends BaseColumns {
     String TABLE_NAME = "QSO";
     String CREATE_TABLE_SQL = "CREATE  TABLE \"QSO\" (" +
             "\"_id\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , " +
