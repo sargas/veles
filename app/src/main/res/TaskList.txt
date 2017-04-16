@@ -4,7 +4,8 @@ TODO In accordance with terms at http://www.hamuniverse.com/legalstuff.html , do
 TODO Sync to file in xlog format
 TODO Make sure free-form locations look okay in details fragment
 TODO add license info
-TODO Make data repository give updates when DB changes (SQLBrite when RxJava2 support is added?)
+TODO Use DataRepository/rxjava over content provider
+TODO Switch content provider to be frontend over data repository (or eliminate altogether)
 TODO Move more of displayQSO in DetailFragment into ViewModel
 
 TODO Make clicking a QSO (or the Edit button, or the FAB) show a smooth animation to the activity

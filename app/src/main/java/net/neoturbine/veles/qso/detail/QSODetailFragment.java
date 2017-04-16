@@ -206,9 +206,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
                 mCallback.onEditQSO(mQSOid);
                 return true;
             case R.id.action_delete:
-                mDataRepository.deleteQSO(mQSOid)
-                        .subscribeOn(Schedulers.io())
-                        .subscribe();
+                mDataRepository.deleteQSO(mQSOid);
                 Toast.makeText(getActivity(), R.string.toast_deleted, Toast.LENGTH_LONG).show();
                 mCallback.onFinishDelete();
                 return true;

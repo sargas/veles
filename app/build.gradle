@@ -32,6 +32,9 @@ android {
     aaptOptions {
         ignoreAssetsPattern 'TaskList.txt'
     }
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
 }
 
 repositories {
@@ -72,6 +75,9 @@ dependencies {
 
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'io.reactivex.rxjava2:rxjava:2.0.8'
+
+    compile 'com.squareup.sqlbrite:sqlbrite:1.1.1'
+    compile "com.github.akarnokd:rxjava2-interop:0.9.5"
 
     //espresso tries to use an older version
     androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'

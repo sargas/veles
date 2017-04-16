@@ -1,8 +1,7 @@
 package net.neoturbine.veles.qso.data;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
+import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqlbrite.SqlBrite;
 
 import net.neoturbine.veles.QSO;
 import net.neoturbine.veles.QSOColumns;
@@ -10,57 +9,31 @@ import net.neoturbine.veles.VelesSQLHelper;
 
 import javax.inject.Inject;
 
-import io.reactivex.Completable;
+import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Observable;
 
 public class DataRepository {
-    private final VelesSQLHelper mDatabaseHelper;
+    private BriteDatabase mDB;
 
     @Inject
     DataRepository(VelesSQLHelper dbHelper) {
-        mDatabaseHelper = dbHelper;
-
+        SqlBrite sqlBrite = new SqlBrite.Builder().build();
+        mDB = sqlBrite.wrapDatabaseHelper(dbHelper,
+                rx.schedulers.Schedulers.io());
     }
 
     public Observable<QSO> getQSO(long id) {
-        return Observable.just(id)
-                .map(this::getQSOFromDB);
+        return RxJavaInterop.toV2Observable(mDB
+                .createQuery(QSOColumns.TABLE_NAME,
+                        "SELECT * from " + QSOColumns.TABLE_NAME +
+                                " WHERE " + QSOColumns._ID + " = ?", String.valueOf(id))
+                .mapToOne(QSO::new));
     }
 
-    private QSO getQSOFromDB(long id) {
-        final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-
-        queryBuilder.setTables(QSOColumns.TABLE_NAME);
-        queryBuilder.appendWhere(QSOColumns._ID + " = " + id);
-
-        final SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
-        final Cursor c = queryBuilder.query(db, null, null, null, null,
-                null, null);
-
-        if (!c.moveToFirst())
-            throw new RuntimeException("QSO of id "+id+" not found");
-
-        QSO output = new QSO(c);
-        c.close();
-        db.close();
-        return output;
-    }
-
-    public Completable deleteQSO(long id) {
-        android.util.Log.d("DataRepository", "Deleting "+id);
-        return Completable
-                .fromCallable(() -> deleteQSOFromDB(id));
-    }
-
-    private Void deleteQSOFromDB(long id) {
-        final SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
-
-        db.delete(
-                QSOColumns.TABLE_NAME,
+    public void deleteQSO(long id) {
+        mDB.delete(QSOColumns.TABLE_NAME,
                 QSOColumns._ID + " = ?",
-                new String[]{Long.toString(id)});
-        db.close();
-
-        return null;
+                String.valueOf(id));
     }
+
 }
