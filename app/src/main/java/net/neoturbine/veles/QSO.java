@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 
 @SuppressWarnings("unused")
 public final class QSO {
+    private final long mID;
     @NonNull
     private final String mMyStation;
     @NonNull
@@ -38,29 +39,31 @@ public final class QSO {
     @NonNull
     private final String mComment;
 
-    private QSO(@NonNull String myStation, @NonNull String otherStation,
+    private QSO(long id, @NonNull String myStation, @NonNull String otherStation,
                 @NonNull DateTime startTime, @NonNull DateTime endTime, @NonNull String mode,
                 @NonNull String power, @NonNull String myQuality, @NonNull String otherQuality,
                 @Nullable VelesLocation myLocation, @Nullable VelesLocation otherLocation,
                 @NonNull String txFrequency,
                 @NonNull String rxFrequency, @NonNull String comment) {
-        this.mMyStation = myStation;
-        this.mOtherStation = otherStation;
-        this.mStartTime = startTime;
-        this.mEndTime = endTime;
-        this.mMode = mode;
-        this.mPower = power;
-        this.mMyQuality = myQuality;
-        this.mOtherQuality = otherQuality;
-        this.mMyLocation = myLocation;
-        this.mOtherLocation = otherLocation;
-        this.mTxFrequency = txFrequency;
-        this.mRxFrequency = rxFrequency;
-        this.mComment = comment;
+        mID = id;
+        mMyStation = myStation;
+        mOtherStation = otherStation;
+        mStartTime = startTime;
+        mEndTime = endTime;
+        mMode = mode;
+        mPower = power;
+        mMyQuality = myQuality;
+        mOtherQuality = otherQuality;
+        mMyLocation = myLocation;
+        mOtherLocation = otherLocation;
+        mTxFrequency = txFrequency;
+        mRxFrequency = rxFrequency;
+        mComment = comment;
     }
 
     public QSO(@NonNull Cursor data) {
         this(
+                data.getLong(data.getColumnIndexOrThrow(QSOColumns._ID)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.MY_STATION)),
                 data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)),
                 SerializationUtils.deserialize(
@@ -144,5 +147,28 @@ public final class QSO {
     @NonNull
     public String getOtherQuality() {
         return mOtherQuality;
+    }
+
+    public long getID() {
+        return mID;
+    }
+
+    @Override
+    public String toString() {
+        return "QSO{" +
+                "mMyStation='" + mMyStation + '\'' +
+                ", mOtherStation='" + mOtherStation + '\'' +
+                ", mStartTime=" + mStartTime +
+                ", mEndTime=" + mEndTime +
+                ", mMode='" + mMode + '\'' +
+                ", mPower='" + mPower + '\'' +
+                ", mTxFrequency='" + mTxFrequency + '\'' +
+                ", mRxFrequency='" + mRxFrequency + '\'' +
+                ", mMyQuality='" + mMyQuality + '\'' +
+                ", mOtherQuality='" + mOtherQuality + '\'' +
+                ", mMyLocation=" + mMyLocation +
+                ", mOtherLocation=" + mOtherLocation +
+                ", mComment='" + mComment + '\'' +
+                '}';
     }
 }

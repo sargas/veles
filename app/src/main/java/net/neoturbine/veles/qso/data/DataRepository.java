@@ -7,6 +7,8 @@ import net.neoturbine.veles.QSO;
 import net.neoturbine.veles.QSOColumns;
 import net.neoturbine.veles.VelesSQLHelper;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -38,4 +40,10 @@ public class DataRepository {
                 String.valueOf(id));
     }
 
+    public Observable<List<QSO>> getAllQSO() {
+        return RxJavaInterop.toV2Observable(mDB
+                .createQuery(QSOColumns.TABLE_NAME,
+                        "SELECT * FROM " + QSOColumns.TABLE_NAME)
+                .mapToList(QSO::new));
+    }
 }

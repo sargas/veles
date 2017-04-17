@@ -3,12 +3,8 @@ package net.neoturbine.veles;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.LoaderManager;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
@@ -19,21 +15,21 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
-import net.danlew.android.joda.DateUtils;
 import net.danlew.android.joda.JodaTimeAndroid;
+import net.neoturbine.veles.qso.data.DataRepository;
 import net.neoturbine.veles.qso.detail.QSODetailActivity;
 import net.neoturbine.veles.qso.detail.QSODetailFragment;
+import net.neoturbine.veles.qso.list.QSOAdapter;
 
-import org.joda.time.DateTime;
+import javax.inject.Inject;
 
 import dagger.android.AndroidInjection;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 
 /**
@@ -55,9 +51,11 @@ public class QSOListActivity extends AppCompatActivity
     private boolean mTwoPane;
 
     @VisibleForTesting
-    final SimpleItemRecyclerViewAdapter mAdapter = new SimpleItemRecyclerViewAdapter();
+    final QSOAdapter mAdapter = new QSOAdapter(this);
 
-    private static final int QSO_LOADER = 0;
+    @Inject
+    DataRepository mDataRepository;
+
     private RecyclerView mRecyclerView;
     private TextView mEmptyListLink;
     private TextView mEmptyListMessage;
@@ -78,7 +76,9 @@ public class QSOListActivity extends AppCompatActivity
 
         setupList();
         setupAdapter();
-        getLoaderManager().initLoader(QSO_LOADER, null, new QSOCursorLoader());
+        mDataRepository.getAllQSO()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mAdapter::changeList);
         displayOrHideEmptyView();
     }
 
@@ -167,113 +167,6 @@ public class QSOListActivity extends AppCompatActivity
         mEmptyListLink.setVisibility(View.GONE);
     }
 
-    class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-
-        private Cursor mCursor = null;
-        private boolean mValidData = false;
-
-        SimpleItemRecyclerViewAdapter() {
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.qso_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            if (hasRowAtPosition(position)) {
-                QSO qso = new QSO(mCursor);
-                holder.mStationView.setText(qso.getOtherStation());
-
-                DateTime startTime = qso.getStartTime();
-                holder.mDateView.setText(DateUtils.getRelativeTimeSpanString(
-                        QSOListActivity.this, startTime));
-                holder.mModeView.setText(qso.getMode());
-                holder.mFrequencyView.setText(qso.getTransmissionFrequency());
-            }
-
-            holder.mView.setOnClickListener(v -> {
-                if (mTwoPane) {
-                    QSODetailFragment fragment = QSODetailFragment.newInstance(getItemId(holder.getAdapterPosition()));
-                    switchFragment(fragment);
-                } else {
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, QSODetailActivity.class);
-                    intent.putExtra(QSODetailActivity.ARG_QSO_ID, getItemId(holder.getAdapterPosition()));
-
-                    context.startActivity(intent);
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            if (mValidData) {
-                return mCursor.getCount();
-            }
-            return 0;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            if (hasRowAtPosition(position)) {
-                return mCursor.getLong(mCursor.getColumnIndexOrThrow(QSOColumns._ID));
-            }
-            return -1;
-        }
-
-        private boolean hasRowAtPosition(int position) {
-            return mValidData && mCursor.moveToPosition(position);
-        }
-
-        void changeCursor(Cursor newCursor) {
-            if (newCursor == mCursor) {
-                return;
-            }
-
-            final Cursor oldCursor = mCursor;
-            mCursor = newCursor;
-
-            if (mCursor != null) {
-                mValidData = true;
-                notifyDataSetChanged();
-            } else {
-                mValidData = false;
-                notifyItemRangeRemoved(0, getItemCount());
-            }
-
-            if (oldCursor != null) {
-                oldCursor.close();
-            }
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView mStationView;
-            final TextView mDateView;
-            final TextView mFrequencyView;
-            final TextView mModeView;
-            final View mView;
-
-            ViewHolder(View view) {
-                super(view);
-                mView = view;
-                mStationView = (TextView) view.findViewById(R.id.station_name);
-                mDateView = (TextView) view.findViewById(R.id.date);
-                mModeView = (TextView) view.findViewById(R.id.mode);
-                mFrequencyView = (TextView) view.findViewById(R.id.frequency);
-            }
-
-            @Override
-            public String toString() {
-                return super.toString() + " '" + mDateView.getText() + "'";
-            }
-        }
-    }
-
     @Override
     public void onFinishDelete() {
         switchFragment(null);
@@ -289,6 +182,17 @@ public class QSOListActivity extends AppCompatActivity
         getFragmentManager().popBackStack();
     }
 
+    public void openID(long id) {
+        if (mTwoPane) {
+            QSODetailFragment fragment = QSODetailFragment.newInstance(id);
+            switchFragment(fragment);
+        } else {
+            Intent intent = new Intent(this, QSODetailActivity.class);
+            intent.putExtra(QSODetailActivity.ARG_QSO_ID, id);
+
+            startActivity(intent);
+        }
+    }
     @UiThread
     private void switchFragment(Fragment fragment) {
         Fragment currentFragment = getFragmentManager().findFragmentByTag(QSO_LIST_DETAIL_TAG);
@@ -310,26 +214,5 @@ public class QSOListActivity extends AppCompatActivity
                 && fragmentA.getClass().equals(fragmentB.getClass())
                 && fragmentA instanceof QSOIdContainer && fragmentB instanceof QSOIdContainer
                 && ((QSOIdContainer) fragmentA).getQSOId() == ((QSOIdContainer) fragmentB).getQSOId();
-    }
-
-    private class QSOCursorLoader implements LoaderManager.LoaderCallbacks<Cursor> {
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            if (id != QSO_LOADER)
-                throw new IllegalArgumentException("Unknown type of loader: " + id);
-
-            return new CursorLoader(getApplicationContext(), QSOColumns.CONTENT_URI, null,
-                    null, null, QSOColumns.UTC_START_TIME + " DESC");
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            mAdapter.changeCursor(data);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            mAdapter.changeCursor(null);
-        }
     }
 }

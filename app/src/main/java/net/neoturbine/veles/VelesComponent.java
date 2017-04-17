@@ -13,7 +13,5 @@ import dagger.android.AndroidInjectionModule;
 @Singleton
 @Component(modules = {DataRepositoryModule.class, QSOListActivityModule.class, QSODetailFragmentModule.class, AndroidInjectionModule.class})
 public interface VelesComponent {
-    DataRepository getDataRepository();
-
     void inject(VelesApplication application);
 }
