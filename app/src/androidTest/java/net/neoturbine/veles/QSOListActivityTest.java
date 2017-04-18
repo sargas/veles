@@ -22,6 +22,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -133,7 +136,12 @@ public class QSOListActivityTest {
 
         @Override
         public void perform(UiController uiController, View view) {
-            mActivity.mAdapter.changeCursor(mCursor);
+            if(mCursor.moveToFirst()) {
+                List<QSO> temp = new ArrayList<>(1);
+                temp.add(new QSO(mCursor));
+                mActivity.mAdapter.changeList(temp);
+            } else
+                mActivity.mAdapter.changeList(new ArrayList<>(1));
         }
 
         @Override

@@ -5,10 +5,10 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
-import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -50,8 +50,8 @@ public class QSOListActivity extends AppCompatActivity
      */
     private boolean mTwoPane;
 
-    @VisibleForTesting
-    final QSOAdapter mAdapter = new QSOAdapter(this);
+    @Inject
+    QSOAdapter mAdapter;
 
     @Inject
     DataRepository mDataRepository;
@@ -65,7 +65,7 @@ public class QSOListActivity extends AppCompatActivity
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         JodaTimeAndroid.init(this);
-        setContentView(R.layout.activity_qso_list);
+        DataBindingUtil.setContentView(this, R.layout.activity_qso_list);
 
         setupToolbar();
         setupTwoPane();
@@ -90,6 +90,7 @@ public class QSOListActivity extends AppCompatActivity
                 displayOrHideEmptyView();
             }
         });
+        mAdapter.setCallback(this::openID);
     }
 
     @NonNull

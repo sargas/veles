@@ -1,46 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:id="@+id/station_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="@dimen/list_text_margin"
-        android:layout_toStartOf="@+id/date"
-        android:textAppearance="?attr/textAppearanceListItem" />
+    <data>
 
-    <TextView
-        android:id="@+id/date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="@dimen/list_text_margin"
-        android:textAppearance="?attr/textAppearanceListItemSmall" />
+        <variable
+            name="viewmodel"
+            type="net.neoturbine.veles.qso.list.QSOItemViewModel" />
+    </data>
 
-    <TextView
-        android:id="@+id/frequency"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/station_name"
-        android:layout_marginStart="@dimen/list_text_margin"
-        android:layout_toStartOf="@+id/mode"
-        android:textAppearance="?attr/textAppearanceListItem" />
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
 
-    <TextView
-        android:id="@+id/mode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/date"
-        android:layout_marginEnd="@dimen/list_text_margin"
-        android:textAppearance="?attr/textAppearanceListItemSmall" />
-</RelativeLayout>
+        <TextView
+            android:id="@+id/station_name"
+            android:text="@{viewmodel.otherStation}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="@dimen/list_text_margin"
+            android:layout_toStartOf="@+id/date"
+            android:textAppearance="?attr/textAppearanceListItem" />
+
+        <TextView
+            android:id="@+id/date"
+            android:text="@{viewmodel.startTime}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="@dimen/list_text_margin"
+            android:textAppearance="?attr/textAppearanceListItemSmall" />
+
+        <TextView
+            android:id="@+id/frequency"
+            android:text="@{viewmodel.transmissionFrequency}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/station_name"
+            android:layout_marginStart="@dimen/list_text_margin"
+            android:layout_toStartOf="@+id/mode"
+            android:textAppearance="?attr/textAppearanceListItem" />
+
+        <TextView
+            android:id="@+id/mode"
+            android:text="@{viewmodel.mode}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/date"
+            android:layout_marginEnd="@dimen/list_text_margin"
+            android:textAppearance="?attr/textAppearanceListItemSmall" />
+    </RelativeLayout>
+</layout>

@@ -1,6 +1,5 @@
 package net.neoturbine.veles;
 
-import net.neoturbine.veles.qso.data.DataRepository;
 import net.neoturbine.veles.qso.data.DataRepositoryModule;
 import net.neoturbine.veles.qso.detail.QSODetailFragmentModule;
 import net.neoturbine.veles.qso.list.QSOListActivityModule;
