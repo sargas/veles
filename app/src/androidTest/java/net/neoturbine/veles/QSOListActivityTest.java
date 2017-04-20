@@ -139,9 +139,9 @@ public class QSOListActivityTest {
             if(mCursor.moveToFirst()) {
                 List<QSO> temp = new ArrayList<>(1);
                 temp.add(new QSO(mCursor));
-                mActivity.mAdapter.changeList(temp);
-            } else
-                mActivity.mAdapter.changeList(new ArrayList<>(1));
+                //mActivity.mAdapter.changeList(temp);
+            } else {}
+                //mActivity.mAdapter.changeList(new ArrayList<>(1));
         }
 
         @Override

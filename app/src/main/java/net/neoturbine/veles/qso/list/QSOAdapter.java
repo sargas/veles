@@ -1,9 +1,11 @@
 package net.neoturbine.veles.qso.list;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import com.jakewharton.rxbinding2.view.RxView;
 
 import net.neoturbine.veles.QSO;
 import net.neoturbine.veles.databinding.QsoListContentBinding;
@@ -12,12 +14,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.ReplaySubject;
+
 public class QSOAdapter
         extends RecyclerView.Adapter<QSOItemViewHolder> {
 
     private List<QSO> mQSOs = null;
-    @Nullable
-    private Callback mCallback;
+    @NonNull
+    private final ReplaySubject<Long> mClicks = ReplaySubject.create();
 
     @Inject
     QSOAdapter() {
@@ -36,10 +41,8 @@ public class QSOAdapter
         QSO qso = mQSOs.get(position);
         holder.bind(qso);
 
-        if (mCallback != null)
-            holder.itemView.setOnClickListener((e) ->
-                    mCallback.openID(getItemId(holder.getAdapterPosition()))
-            );
+        RxView.clicks(holder.itemView)
+                .subscribe((i) -> mClicks.onNext(getItemId(position)));
     }
 
     @Override
@@ -62,16 +65,12 @@ public class QSOAdapter
         return mQSOs != null && position < mQSOs.size();
     }
 
-    public void changeList(List<QSO> objects) {
+    void changeList(List<QSO> objects) {
         mQSOs = objects;
         notifyDataSetChanged();
     }
 
-    public void setCallback(Callback callback) {
-        mCallback = callback;
-    }
-
-    public interface Callback {
-        void openID(long id);
+    Observable<Long> onClick() {
+        return mClicks;
     }
 }

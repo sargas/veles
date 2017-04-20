@@ -10,6 +10,7 @@ import dagger.multibindings.IntoMap;
 
 @Module(subcomponents = QSODetailFragmentSubcomponent.class)
 public abstract class QSODetailFragmentModule {
+    @SuppressWarnings("unused")
     @Binds
     @IntoMap
     @FragmentKey(QSODetailFragment.class)

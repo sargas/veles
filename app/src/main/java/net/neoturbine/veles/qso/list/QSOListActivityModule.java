@@ -12,6 +12,7 @@ import dagger.multibindings.IntoMap;
 
 @Module(subcomponents = QSOListActivitySubcomponent.class)
 public abstract class QSOListActivityModule {
+    @SuppressWarnings("unused")
     @Binds
     @IntoMap
     @ActivityKey(QSOListActivity.class)

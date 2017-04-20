@@ -1,55 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
-                                             android:name="net.neoturbine.veles.QSOListFragment"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="match_parent"
-                                             android:orientation="vertical"
-                                             tools:context="net.neoturbine.veles.QSOListActivity"
-                                             android:id="@+id/constraintLayout">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/qso_list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/qso_list_content"
-        app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
-        android:layout_marginStart="@dimen/list_text_margin"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
-        android:layout_marginTop="@dimen/list_text_margin"
-        tools:layout_constraintTop_creator="1"
-        app:layout_constraintRight_toRightOf="@+id/constraintLayout"
-        android:layout_marginEnd="@dimen/list_text_margin"
-        tools:layout_constraintRight_creator="1"
-        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
-        android:layout_marginBottom="@dimen/list_text_margin"
-        tools:layout_constraintBottom_creator="1"/>
+    <data>
+        <variable
+            name="viewmodel"
+            type="net.neoturbine.veles.qso.list.QSOListViewModel"/>
+        <import type="android.text.method.LinkMovementMethod"/>
+        <import type="android.support.v7.widget.LinearLayoutManager"/>
+    </data>
 
-    <TextView
-        android:id="@+id/empty_list_message"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/qso_empty_list_message"
-        app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
-        app:layout_constraintRight_toRightOf="@+id/constraintLayout"
-        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"/>
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:name="net.neoturbine.veles.QSOListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="net.neoturbine.veles.QSOListActivity">
 
-    <Button
-        android:id="@+id/empty_list_link"
-        android:background="?android:selectableItemBackground"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/qso_empty_list_link"
-        android:textColor="@color/colorAccent"
-        app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
-        app:layout_constraintTop_toBottomOf="@+id/empty_list_message"
-        android:layout_marginTop="@dimen/text_margin"
-        app:layout_constraintRight_toRightOf="@+id/constraintLayout"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/qso_list"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/list_text_margin"
+            android:layout_marginEnd="@dimen/list_text_margin"
+            android:layout_marginStart="@dimen/list_text_margin"
+            android:layout_marginTop="@dimen/list_text_margin"
+            android:visibility="@{viewmodel.listVisibility}"
+            app:adapter="@{viewmodel.adapter}"
+            app:layoutManager="LinearLayoutManager"
+            app:itemDividerDecoration="@{LinearLayoutManager.VERTICAL}"
+            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+            app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
+            app:layout_constraintRight_toRightOf="@+id/constraintLayout"
+            app:layout_constraintTop_toTopOf="@+id/constraintLayout"
+            tools:layout_constraintBottom_creator="1"
+            tools:layout_constraintLeft_creator="1"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintTop_creator="1"
+            tools:listitem="@layout/qso_list_content" />
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/empty_list_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/qso_empty_list_message"
+            android:visibility="@{viewmodel.missingQSOVisibility}"
+            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+            app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
+            app:layout_constraintRight_toRightOf="@+id/constraintLayout"
+            app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+
+        <Button
+            android:id="@+id/empty_list_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:background="?android:selectableItemBackground"
+            android:text="@string/qso_empty_list_link"
+            android:textColor="@color/colorAccent"
+            android:visibility="@{viewmodel.missingQSOVisibility}"
+            app:movementMethod="@{LinkMovementMethod.getInstance()}"
+            android:onClick="@{viewmodel::launchAddQSO}"
+            app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
+            app:layout_constraintRight_toRightOf="@+id/constraintLayout"
+            app:layout_constraintTop_toBottomOf="@+id/empty_list_message" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>
