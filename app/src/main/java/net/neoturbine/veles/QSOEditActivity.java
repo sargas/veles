@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import net.neoturbine.veles.qso.list.QSOListActivity;
+
 /**
  * An activity representing a single QSO detail screen. This
  * activity is only used narrow width devices. On tablet-size devices,

@@ -26,7 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.neoturbine.veles.QSO;
 import net.neoturbine.veles.QSOIdContainer;
-import net.neoturbine.veles.QSOListActivity;
+import net.neoturbine.veles.qso.list.QSOListActivity;
 import net.neoturbine.veles.R;
 import net.neoturbine.veles.qso.model.VelesLocation;
 import net.neoturbine.veles.databinding.QsoDetailBinding;

@@ -11,7 +11,7 @@
         android:divider="?android:attr/dividerHorizontal"
         android:orientation="horizontal"
         android:showDividers="middle"
-        tools:context="net.neoturbine.veles.QSOListActivity">
+        tools:context="net.neoturbine.veles.qso.list.QSOListActivity">
 
         <!--
         This layout is a two-pane layout for the QSOs

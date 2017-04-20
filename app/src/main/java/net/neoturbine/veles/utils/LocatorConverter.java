@@ -1,4 +1,4 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.utils;
 
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -11,7 +11,7 @@ public final class LocatorConverter {
     private LocatorConverter() {
     }
 
-    static char nThLetter(final int number, final boolean upperCase) {
+    public static char nThLetter(final int number, final boolean upperCase) {
         return (char) ((int) (number + (upperCase ? 'A' : 'a') - 1));
     }
 
@@ -23,7 +23,7 @@ public final class LocatorConverter {
         return (char) ((int) (number % 10 + '0'));
     }
 
-    static int toDigit(final char digit) {
+    public static int toDigit(final char digit) {
         if (CharUtils.isAsciiNumeric(digit)) {
             return CharUtils.toIntValue(digit);
         } else if (CharUtils.isAsciiAlphaLower(digit)) {
@@ -34,7 +34,7 @@ public final class LocatorConverter {
         throw new IllegalArgumentException("digit " + digit + " not recognized.");
     }
 
-    static String LatLngToLocator(@NonNull
+    public static String LatLngToLocator(@NonNull
                                   final LatLng latlng) {
         return toLocator(latlng.longitude, latlng.latitude);
     }
@@ -68,7 +68,7 @@ public final class LocatorConverter {
         return new LatLng(latitude, longitude);
     }
 
-    static String LocationToLocator(@NonNull
+    public static String LocationToLocator(@NonNull
                                     final Location location) {
         return toLocator(location.getLongitude(), location.getLatitude());
     }

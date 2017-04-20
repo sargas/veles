@@ -1,4 +1,4 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.utils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,8 +9,8 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static net.neoturbine.veles.LocatorConverter.nThLetter;
-import static net.neoturbine.veles.LocatorConverter.toDigit;
+import static net.neoturbine.veles.utils.LocatorConverter.nThLetter;
+import static net.neoturbine.veles.utils.LocatorConverter.toDigit;
 import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("unused")

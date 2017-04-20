@@ -2,8 +2,6 @@ package net.neoturbine.veles.qso.list;
 
 import android.app.Activity;
 
-import net.neoturbine.veles.QSOListActivity;
-
 import dagger.Binds;
 import dagger.Module;
 import dagger.android.ActivityKey;

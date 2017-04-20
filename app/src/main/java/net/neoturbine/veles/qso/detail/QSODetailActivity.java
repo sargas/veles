@@ -8,9 +8,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import net.neoturbine.veles.QSOEditActivity;
-import net.neoturbine.veles.QSOListActivity;
+import net.neoturbine.veles.qso.list.QSOListActivity;
 import net.neoturbine.veles.R;
-import net.neoturbine.veles.qso.detail.QSODetailFragment;
 
 /**
  * An activity representing a single QSO detail screen. This

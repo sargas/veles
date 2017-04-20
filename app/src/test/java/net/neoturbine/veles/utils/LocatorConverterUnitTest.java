@@ -1,4 +1,4 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.utils;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -12,8 +12,8 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static net.neoturbine.veles.LocatorConverter.LatLngToLocator;
-import static net.neoturbine.veles.LocatorConverter.fromLocator;
+import static net.neoturbine.veles.utils.LocatorConverter.LatLngToLocator;
+import static net.neoturbine.veles.utils.LocatorConverter.fromLocator;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Enclosed.class)

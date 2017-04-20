@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
 
-public class QSOAdapter
+class QSOAdapter
         extends RecyclerView.Adapter<QSOItemViewHolder> {
 
     private List<QSO> mQSOs = null;

@@ -1,4 +1,4 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.qso.list;
 
 
 import android.app.Activity;
@@ -13,11 +13,13 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 
 import net.danlew.android.joda.JodaTimeAndroid;
+import net.neoturbine.veles.QSOEditActivity;
+import net.neoturbine.veles.QSOEditFragment;
+import net.neoturbine.veles.QSOIdContainer;
+import net.neoturbine.veles.R;
 import net.neoturbine.veles.databinding.ActivityQsoListBinding;
 import net.neoturbine.veles.qso.detail.QSODetailActivity;
 import net.neoturbine.veles.qso.detail.QSODetailFragment;
-import net.neoturbine.veles.qso.list.ListContracts;
-import net.neoturbine.veles.qso.list.QSOListViewModel;
 
 import javax.inject.Inject;
 

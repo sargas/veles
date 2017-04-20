@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context="net.neoturbine.veles.QSOListActivity">
+        tools:context="net.neoturbine.veles.qso.list.QSOListActivity">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/qso_list"

@@ -1,7 +1,5 @@
 package net.neoturbine.veles.qso.list;
 
-import net.neoturbine.veles.QSOListActivity;
-
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
 

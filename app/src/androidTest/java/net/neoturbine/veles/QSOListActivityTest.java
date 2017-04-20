@@ -14,6 +14,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
 import net.neoturbine.veles.qso.detail.QSODetailActivity;
+import net.neoturbine.veles.qso.list.QSOListActivity;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.hamcrest.Matcher;
