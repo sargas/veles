@@ -40,10 +40,4 @@ public interface QSOColumns extends BaseColumns {
     String MY_LOCATION = "my_location";
     String OTHER_LOCATION = "other_location";
     String COMMENT = "comment";
-
-    String[] ALL_COLUMNS = new String[] {
-            _ID, START_TIME, UTC_START_TIME, END_TIME, MY_STATION, OTHER_STATION, MODE, POWER,
-            TRANSMISSION_FREQUENCY, RECEIVE_FREQUENCY, MY_QUALITY, OTHER_QUALITY, MY_LOCATION,
-            OTHER_LOCATION, COMMENT
-    };
 }

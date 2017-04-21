@@ -39,7 +39,7 @@ public final class QSO {
     @NonNull
     private final String mComment;
 
-    private QSO(long id, @NonNull String myStation, @NonNull String otherStation,
+    public QSO(long id, @NonNull String myStation, @NonNull String otherStation,
                 @NonNull DateTime startTime, @NonNull DateTime endTime, @NonNull String mode,
                 @NonNull String power, @NonNull String myQuality, @NonNull String otherQuality,
                 @Nullable VelesLocation myLocation, @Nullable VelesLocation otherLocation,
