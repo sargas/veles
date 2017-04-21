@@ -5,6 +5,8 @@ import android.app.Application;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
 
+import com.squareup.leakcanary.LeakCanary;
+
 import net.neoturbine.veles.qso.data.ApplicationContextModule;
 
 import javax.inject.Inject;
@@ -23,6 +25,11 @@ public class VelesApplication extends Application implements HasDispatchingActiv
     @Override
     public void onCreate() {
         super.onCreate();
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        LeakCanary.install(this);
+
         getComponent().inject(this);
     }
 

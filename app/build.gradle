@@ -82,6 +82,10 @@ dependencies {
 
     compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
 
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
     //espresso tries to use an older version
     androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
 }
