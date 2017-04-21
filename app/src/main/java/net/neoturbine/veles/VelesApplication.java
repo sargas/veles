@@ -3,6 +3,7 @@ package net.neoturbine.veles;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Fragment;
+import android.support.annotation.NonNull;
 
 import net.neoturbine.veles.qso.data.ApplicationContextModule;
 
@@ -21,9 +22,14 @@ public class VelesApplication extends Application implements HasDispatchingActiv
     @Override
     public void onCreate() {
         super.onCreate();
-        DaggerVelesComponent.builder()
+        getComponent().inject(this);
+    }
+
+    @NonNull
+    protected VelesComponent getComponent() {
+        return DaggerVelesComponent.builder()
                 .applicationContextModule(new ApplicationContextModule(getApplicationContext()))
-                .build().inject(this);
+                .build();
     }
 
     @Override

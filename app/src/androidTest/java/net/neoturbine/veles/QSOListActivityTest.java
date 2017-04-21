@@ -13,6 +13,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
+import net.neoturbine.veles.qso.data.FakeDataRepository;
 import net.neoturbine.veles.qso.detail.QSODetailActivity;
 import net.neoturbine.veles.qso.list.QSOListActivity;
 
@@ -54,7 +55,7 @@ public class QSOListActivityTest {
 
     @Test
     public void QSOListActivity_empty_messages() {
-        onView(isRoot()).perform(ChangeAdapterAction.emptyCursor(mActivityRule.getActivity()));
+        onView(isRoot()).perform(ChangeDataAction.emptyCursor());
         onView(withId(R.id.qso_list))
                 .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         onView(withId(R.id.qso_list))
@@ -65,7 +66,7 @@ public class QSOListActivityTest {
 
     @Test
     public void QSOListActivity_hide_empty_messages() {
-        onView(isRoot()).perform(ChangeAdapterAction.cursorWithItems(mActivityRule.getActivity()));
+        onView(isRoot()).perform(ChangeDataAction.cursorWithItems());
         onView(withId(R.id.qso_list))
                 .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
         onView(withId(R.id.qso_list))
@@ -93,7 +94,7 @@ public class QSOListActivityTest {
     @Test
     public void QSOListActivity_new_qso_link() {
         onView(isRoot())
-                .perform(ChangeAdapterAction.emptyCursor(mActivityRule.getActivity()));
+                .perform(ChangeDataAction.emptyCursor());
         onView(withId(R.id.empty_list_link))
                 .perform(click());
 
@@ -113,7 +114,7 @@ public class QSOListActivityTest {
         if (mActivityRule.getActivity().findViewById(R.id.qso_detail_container) != null)
             return; // skip on big screens
 
-        onView(isRoot()).perform(ChangeAdapterAction.cursorWithItems(mActivityRule.getActivity()));
+        onView(isRoot()).perform(ChangeDataAction.cursorWithItems());
         onView(withId(R.id.qso_list)).perform(
                 RecyclerViewActions.actionOnItemAtPosition(0, click()));
         intended(allOf(
@@ -121,28 +122,28 @@ public class QSOListActivityTest {
                         allOf(hasClassName(QSODetailActivity.class.getName()),
                                 hasPackageName(mActivityRule.getActivity().getPackageName()))
                 ),
-                hasExtra(QSODetailActivity.ARG_QSO_ID, ChangeAdapterAction.ID_OF_ITEM)
+                hasExtra(QSODetailActivity.ARG_QSO_ID, ChangeDataAction.ID_OF_ITEM)
         ));
     }
 
-    private static class ChangeAdapterAction implements ViewAction {
+    private static class ChangeDataAction implements ViewAction {
         final Cursor mCursor;
-        final QSOListActivity mActivity;
+        final FakeDataRepository dataRepository = new FakeDataRepository();
         static final long ID_OF_ITEM = 1234L;
 
-        ChangeAdapterAction(Cursor c, QSOListActivity activity) {
+        ChangeDataAction(Cursor c) {
             mCursor = c;
-            mActivity = activity;
         }
 
         @Override
         public void perform(UiController uiController, View view) {
-            if(mCursor.moveToFirst()) {
+            if (mCursor.moveToFirst()) {
                 List<QSO> temp = new ArrayList<>(1);
                 temp.add(new QSO(mCursor));
-                //mActivity.mAdapter.changeList(temp);
-            } else {}
-                //mActivity.mAdapter.changeList(new ArrayList<>(1));
+                dataRepository.setQSOs(temp);
+            } else {
+                dataRepository.setQSOs(new ArrayList<>(0));
+            }
         }
 
         @Override
@@ -155,11 +156,11 @@ public class QSOListActivityTest {
             return isA(View.class);
         }
 
-        static ChangeAdapterAction emptyCursor(QSOListActivity activity) {
-            return new ChangeAdapterAction(new MatrixCursor(new String[]{"_ID"}), activity);
+        static ChangeDataAction emptyCursor() {
+            return new ChangeDataAction(new MatrixCursor(new String[]{"_ID"}));
         }
 
-        static ChangeAdapterAction cursorWithItems(QSOListActivity activity) {
+        static ChangeDataAction cursorWithItems() {
             MatrixCursor c = new MatrixCursor(QSOColumns.ALL_COLUMNS);
             c.newRow()
                     .add(QSOColumns._ID, ID_OF_ITEM)
@@ -169,10 +170,10 @@ public class QSOListActivityTest {
                     .add(QSOColumns.TRANSMISSION_FREQUENCY, "101.1 MHz")
                     .add(QSOColumns.OTHER_STATION, "WWW")
                     //Below needed as SerializationUtils can't handle null columns
-                    .add(QSOColumns.END_TIME, SerializationUtils.serialize(null))
+                    .add(QSOColumns.END_TIME, SerializationUtils.serialize(DateTime.now()))
                     .add(QSOColumns.MY_LOCATION, SerializationUtils.serialize(null))
                     .add(QSOColumns.OTHER_LOCATION, SerializationUtils.serialize(null));
-            return new ChangeAdapterAction(c, activity);
+            return new ChangeDataAction(c);
         }
     }
 }
