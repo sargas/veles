@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.UiThread;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +38,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * A fragment representing a single QSO detail screen.
@@ -114,7 +114,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
             mDisplayQSO = observableQSO
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .doOnError((e) -> Log.e(TAG, "Unable to load QSO: "+e.toString()))
+                    .doOnError((e) -> Timber.e(e, "Unable to load QSO"))
                     .subscribe(this::displayQSO);
         }
 

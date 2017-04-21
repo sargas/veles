@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasDispatchingActivityInjector;
 import dagger.android.HasDispatchingFragmentInjector;
+import timber.log.Timber;
 
 @SuppressWarnings("WeakerAccess")
 public class VelesApplication extends Application implements HasDispatchingActivityInjector, HasDispatchingFragmentInjector {
@@ -30,7 +31,13 @@ public class VelesApplication extends Application implements HasDispatchingActiv
         }
         LeakCanary.install(this);
 
+        setupTimber();
+
         getComponent().inject(this);
+    }
+
+    private void setupTimber() {
+        Timber.plant(new Timber.DebugTree());
     }
 
     @NonNull
