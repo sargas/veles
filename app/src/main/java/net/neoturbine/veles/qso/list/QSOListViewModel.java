@@ -28,16 +28,20 @@ public class QSOListViewModel extends BaseObservable {
         mDataRepository = dataRepository;
     }
 
-    public void showUI() {
+    void showUI() {
         mDisposables.add(
                 mDataRepository
                         .getAllQSO()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this::setQSOs));
-        mAdapter.onClick().subscribe(mView::openID);
+        mDisposables.add(
+            mAdapter
+                    .onClick()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(mView::openID));
     }
 
-    public void stopUI() {
+    void stopUI() {
         for (Disposable subscription : mDisposables)
             if (subscription.isDisposed())
                 subscription.dispose();
@@ -48,7 +52,7 @@ public class QSOListViewModel extends BaseObservable {
         return mAdapter.getItemCount() == 0;
     }
 
-    public void bindView(ListContracts.View view) {
+    void bindView(ListContracts.View view) {
         mView = view;
     }
 
