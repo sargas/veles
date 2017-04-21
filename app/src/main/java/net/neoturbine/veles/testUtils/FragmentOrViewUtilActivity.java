@@ -27,6 +27,7 @@ public class FragmentOrViewUtilActivity extends Activity {
                 .commit();
     }
 
+    @SuppressWarnings("unused")
     public void addView(View view) {
         mFrame.addView(view);
     }

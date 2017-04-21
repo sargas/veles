@@ -57,8 +57,10 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
     private long mQSOid = -1;
 
     private onQSODetailListener mCallback;
+    @SuppressWarnings("WeakerAccess")
     @Inject DetailsContracts.ViewModel mVM;
     private QsoDetailBinding mBinding;
+    @SuppressWarnings("WeakerAccess")
     @Inject DataRepository mDataRepository;
     private Disposable mDisplayQSO;
 

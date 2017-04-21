@@ -21,7 +21,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -148,18 +148,16 @@ public class QSOListActivityTest {
         }
 
         static ChangeDataAction emptyData() {
-            return new ChangeDataAction(new ArrayList<>(0));
+            return new ChangeDataAction(Collections.emptyList());
         }
 
         static ChangeDataAction dataWithOneItem() {
-            List<QSO> QSOs = new ArrayList<>(1);
-            QSOs.add(new QSOBuilder()
+            return new ChangeDataAction(Collections.singletonList(new QSOBuilder()
                     .setId(ID_OF_ITEM)
                     .setMode("FM")
                     .setTxFrequency("101.1 MHz")
                     .setOtherStation("WWW")
-                    .createQSO());
-            return new ChangeDataAction(QSOs);
+                    .createQSO()));
         }
     }
 }

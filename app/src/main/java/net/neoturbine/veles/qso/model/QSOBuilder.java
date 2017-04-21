@@ -4,6 +4,7 @@ import net.neoturbine.veles.QSO;
 
 import org.joda.time.DateTime;
 
+@SuppressWarnings("unused")
 public class QSOBuilder {
     private long id = -1;
     private String myStation = "";

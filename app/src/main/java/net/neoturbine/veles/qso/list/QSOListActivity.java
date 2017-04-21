@@ -44,6 +44,7 @@ public class QSOListActivity extends Activity
      */
     private boolean mTwoPane;
 
+    @SuppressWarnings("WeakerAccess")
     @Inject
     QSOListViewModel mViewModel;
 

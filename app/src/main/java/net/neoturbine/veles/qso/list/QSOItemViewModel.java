@@ -11,6 +11,7 @@ import net.neoturbine.veles.R;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+@SuppressWarnings("WeakerAccess")
 public class QSOItemViewModel extends BaseObservable {
     private QSO mQSO;
     private final Context mContext;

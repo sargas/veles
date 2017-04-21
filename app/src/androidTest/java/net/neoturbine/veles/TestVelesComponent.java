@@ -11,6 +11,5 @@ import dagger.android.AndroidInjectionModule;
 
 @Singleton
 @Component(modules = {FakeDataRepositoryModule.class, QSOListActivityModule.class, QSODetailFragmentModule.class, AndroidInjectionModule.class})
-public interface TestVelesComponent extends VelesComponent {
-    void inject(TestVelesApplication application);
+interface TestVelesComponent extends VelesComponent {
 }

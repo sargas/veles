@@ -4,12 +4,13 @@ TODO In accordance with terms at http://www.hamuniverse.com/legalstuff.html , do
 TODO Sync to file in xlog format
 TODO Make sure free-form locations look okay in details fragment
 TODO add license info
-TODO Use DataRepository/rxjava over content provider
+TODO Use DataRepository over content provider
 TODO Switch content provider to be frontend over data repository (or eliminate altogether)
 TODO Move more of displayQSO in DetailFragment into ViewModel
 TODO Fix wide-screen view of the list activity
 TODO Back button from detail screen
 TODO Check back button works right when deleting
+TODO Make DateTimePicker keyboard accessible
 
 TODO Make clicking a QSO (or the Edit button, or the FAB) show a smooth animation to the activity
 TODO Make receiving frequency (when adding new QSO) default to transmitting one, maybe with a checkbox

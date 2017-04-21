@@ -4,6 +4,9 @@
     <entry_points version="2.0">
       <entry_point TYPE="method" FQNAME="net.neoturbine.veles.EditTextWithUnitsView void setSelectSuffixListener(android.widget.Spinner view, android.databinding.InverseBindingListener suffixChange)" />
     </entry_points>
+    <writeAnnotations>
+      <writeAnnotation name="javax.inject.Inject" />
+    </writeAnnotations>
   </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="android.support.annotation.Nullable" />

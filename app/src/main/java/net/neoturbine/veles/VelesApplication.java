@@ -13,6 +13,7 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasDispatchingActivityInjector;
 import dagger.android.HasDispatchingFragmentInjector;
 
+@SuppressWarnings("WeakerAccess")
 public class VelesApplication extends Application implements HasDispatchingActivityInjector, HasDispatchingFragmentInjector {
     @Inject
     DispatchingAndroidInjector<Activity> mDispatchingActivityInjector;
