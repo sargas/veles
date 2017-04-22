@@ -20,7 +20,8 @@ public class QSOListViewModel extends BaseObservable {
     private ListContracts.View mView;
     private final QSOAdapter mAdapter;
     private final DataRepository mDataRepository;
-    private final List<Disposable> mDisposables = new ArrayList<>();
+    private Disposable mClickSubscriber;
+    private Disposable mDatabaseSubscriber;
 
     @Inject
     QSOListViewModel(QSOAdapter adapter, DataRepository dataRepository) {
@@ -29,23 +30,29 @@ public class QSOListViewModel extends BaseObservable {
     }
 
     void showUI() {
-        mDisposables.add(
-                mDataRepository
-                        .getAllQSO()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::setQSOs));
-        mDisposables.add(
-            mAdapter
+        if (isNullOrDisposed(mDatabaseSubscriber))
+            mDatabaseSubscriber = mDataRepository
+                    .getAllQSO()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::setQSOs);
+
+        if (isNullOrDisposed(mClickSubscriber))
+            mClickSubscriber = mAdapter
                     .onClick()
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mView::openID));
+                    .subscribe(mView::openID);
     }
 
     void stopUI() {
-        for (Disposable subscription : mDisposables)
-            if (subscription.isDisposed())
-                subscription.dispose();
-        mDisposables.clear();
+        if (!isNullOrDisposed(mDatabaseSubscriber))
+            mDatabaseSubscriber.dispose();
+
+        if (!isNullOrDisposed(mClickSubscriber))
+            mClickSubscriber.dispose();
+    }
+
+    private boolean isNullOrDisposed(Disposable disposable) {
+        return disposable == null || disposable.isDisposed();
     }
 
     private boolean isEmptyList() {

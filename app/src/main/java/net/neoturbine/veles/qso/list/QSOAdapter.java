@@ -15,14 +15,14 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.subjects.ReplaySubject;
+import io.reactivex.subjects.PublishSubject;
 
 class QSOAdapter
         extends RecyclerView.Adapter<QSOItemViewHolder> {
 
     private List<QSO> mQSOs = null;
     @NonNull
-    private final ReplaySubject<Long> mClicks = ReplaySubject.create();
+    private final PublishSubject<Long> mClicks = PublishSubject.create();
 
     @Inject
     QSOAdapter() {
@@ -37,12 +37,13 @@ class QSOAdapter
     }
 
     @Override
-    public void onBindViewHolder(final QSOItemViewHolder holder, int position) {
+    public void onBindViewHolder(final QSOItemViewHolder holder, final int position) {
         QSO qso = mQSOs.get(position);
         holder.bind(qso);
 
         RxView.clicks(holder.itemView)
-                .subscribe((i) -> mClicks.onNext(getItemId(position)));
+                .map((i) -> getItemId(position))
+                .subscribe(mClicks);
     }
 
     @Override

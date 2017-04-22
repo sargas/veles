@@ -52,7 +52,6 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
      * represents.
      */
     private static final String ARG_QSO_ID = "qso_id";
-    private static final String TAG = "QSODetailFragment";
 
     private long mQSOid = -1;
 

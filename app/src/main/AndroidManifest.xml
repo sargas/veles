@@ -33,18 +33,12 @@
             android:label="@string/title_qso_detail"
             android:parentActivityName=".qso.list.QSOListActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.neoturbine.veles.qso.list.QSOListActivity" />
         </activity>
         <activity
             android:name=".QSOEditActivity"
             android:label="@string/title_qso_edit"
             android:parentActivityName=".qso.list.QSOListActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.neoturbine.veles.qso.list.QSOListActivity" />
         </activity>
         <activity android:name=".testUtils.FragmentOrViewUtilActivity" />
 
