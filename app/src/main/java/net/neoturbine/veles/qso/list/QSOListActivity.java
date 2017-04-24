@@ -1,6 +1,7 @@
 package net.neoturbine.veles.qso.list;
 
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -35,7 +36,7 @@ import dagger.android.AndroidInjection;
  * item details side-by-side using two vertical panes.
  */
 public class QSOListActivity extends Activity
-        implements QSODetailFragment.onQSODetailListener, QSOEditFragment.OnFinishEditListener, ListContracts.View {
+        implements QSODetailFragment.QSODetailFragmentParentListener, QSOEditFragment.OnFinishEditListener, ListContracts.View {
 
     private static final String QSO_LIST_DETAIL_TAG = "QSO_LIST_DETAIL_TAG";
     /**
@@ -54,8 +55,7 @@ public class QSOListActivity extends Activity
         super.onCreate(savedInstanceState);
         JodaTimeAndroid.init(this);
 
-        ActivityQsoListBinding binding =
-                DataBindingUtil.setContentView(this, R.layout.activity_qso_list);
+        ActivityQsoListBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_qso_list);
 
         mViewModel.bindView(this);
         binding.setViewmodel(mViewModel);
@@ -114,6 +114,14 @@ public class QSOListActivity extends Activity
         getFragmentManager().popBackStack();
     }
 
+    @Override
+    public void setQSOTitle(CharSequence title) {
+        ActionBar actionBar = getActionBar();
+        assert actionBar != null;
+        actionBar.setTitle(
+                getString(R.string.app_name) + " - " + title);
+    }
+
     public void openID(long id) {
         if (mTwoPane) {
             switchFragment(QSODetailFragment.newInstance(id));
@@ -131,7 +139,7 @@ public class QSOListActivity extends Activity
         if (isEqualQSO(fragment, currentFragment)) {
             return;
         }
-        FragmentTransaction ft = getFragmentManager().beginTransaction().addToBackStack(null);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
 
         if (fragment != null)
             ft.replace(R.id.qso_detail_container, fragment, QSO_LIST_DETAIL_TAG);

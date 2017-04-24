@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.UiThread;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,7 +54,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
 
     private long mQSOid = -1;
 
-    private onQSODetailListener mCallback;
+    private QSODetailFragmentParentListener mParentListener;
     @SuppressWarnings("WeakerAccess")
     @Inject DetailsContracts.ViewModel mVM;
     private QsoDetailBinding mBinding;
@@ -70,10 +69,12 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
     public QSODetailFragment() {
     }
 
-    public interface onQSODetailListener {
+    public interface QSODetailFragmentParentListener {
         void onFinishDelete();
 
         void onEditQSO(long QSOid);
+
+        void setQSOTitle(CharSequence title);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
         super.onAttach(context);
 
         try {
-            mCallback = (onQSODetailListener) context;
+            mParentListener = (QSODetailFragmentParentListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() +
                     " must implement OnFinishEditListener");
@@ -101,7 +102,8 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.qso_detail, container, false);
+        mBinding = DataBindingUtil.inflate(inflater,
+                R.layout.qso_detail, container, false);
 
         mBinding.setViewmodel(mVM);
         View rootView = mBinding.getRoot();
@@ -123,11 +125,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
     @UiThread
     private void displayQSO(QSO qso) {
         mVM.setQSO(qso);
-
-        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity().findViewById(R.id.toolbar_layout);
-        if (appBarLayout != null) {
-            appBarLayout.setTitle(mVM.getOtherStation());
-        }
+        mParentListener.setQSOTitle(mVM.getOtherStation());
 
         setupMap(qso.getMyLocation(), R.id.qso_detail_my_location,
                 qso.getMyStation(), mBinding.qsoDetailMyLocationText);
@@ -199,12 +197,12 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit:
-                mCallback.onEditQSO(mQSOid);
+                mParentListener.onEditQSO(mQSOid);
                 return true;
             case R.id.action_delete:
                 mDataRepository.deleteQSO(mQSOid);
                 Toast.makeText(getActivity(), R.string.toast_deleted, Toast.LENGTH_LONG).show();
-                mCallback.onFinishDelete();
+                mParentListener.onFinishDelete();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

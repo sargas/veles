@@ -1,15 +1,17 @@
 package net.neoturbine.veles.qso.detail;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import net.neoturbine.veles.QSOEditActivity;
+import net.neoturbine.veles.databinding.ActivityQsoDetailBinding;
 import net.neoturbine.veles.qso.list.QSOListActivity;
 import net.neoturbine.veles.R;
+
 
 /**
  * An activity representing a single QSO detail screen. This
@@ -18,22 +20,23 @@ import net.neoturbine.veles.R;
  * in a {@link QSOListActivity}.
  */
 public class QSODetailActivity extends AppCompatActivity
-        implements QSODetailFragment.onQSODetailListener {
+        implements QSODetailFragment.QSODetailFragmentParentListener {
     public static final String ARG_QSO_ID = "qso_id";
     private static final int REQUEST_EDIT = 1;
+    private ActivityQsoDetailBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qso_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_qso_detail);
+        setSupportActionBar(mBinding.detailToolbar);
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -83,6 +86,11 @@ public class QSODetailActivity extends AppCompatActivity
         intent.putExtra(QSOEditActivity.ARG_QSO_ID, QSOid);
 
         startActivityForResult(intent, REQUEST_EDIT);
+    }
+
+    @Override
+    public void setQSOTitle(CharSequence title) {
+        mBinding.toolbarLayout.setTitle(title);
     }
 
     @Override

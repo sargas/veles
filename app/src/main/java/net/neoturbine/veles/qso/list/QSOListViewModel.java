@@ -8,7 +8,6 @@ import android.view.View;
 import net.neoturbine.veles.QSO;
 import net.neoturbine.veles.qso.data.DataRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;

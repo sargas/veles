@@ -7,11 +7,11 @@ TODO add license info
 TODO Use DataRepository over content provider
 TODO Switch content provider to be frontend over data repository (or eliminate altogether)
 TODO Move more of displayQSO in DetailFragment into ViewModel
-TODO Fix wide-screen view of the list activity
 TODO Check back button works right when deleting
 TODO Make DateTimePicker keyboard accessible
 TODO Setup production modes for Leak Canary and Timber
 
+TODO Make QSO list in wide mode "highlight" opened QSO
 TODO Make clicking a QSO (or the Edit button, or the FAB) show a smooth animation to the activity
 TODO Make receiving frequency (when adding new QSO) default to transmitting one, maybe with a checkbox
 TODO Make QSO list have bigger items, more stylized
