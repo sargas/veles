@@ -2,6 +2,7 @@ package net.neoturbine.veles;
 
 
 import android.content.ComponentName;
+import android.content.Intent;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.contrib.RecyclerViewActions;
@@ -17,6 +18,7 @@ import net.neoturbine.veles.qso.list.QSOListActivity;
 import net.neoturbine.veles.qso.model.QSOBuilder;
 
 import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,8 +31,6 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.BundleMatchers.hasEntry;
-import static android.support.test.espresso.intent.matcher.ComponentNameMatchers.hasClassName;
-import static android.support.test.espresso.intent.matcher.ComponentNameMatchers.hasPackageName;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtras;
@@ -38,6 +38,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
@@ -49,16 +50,27 @@ public class QSOListActivityTest {
     @Rule
     public final ActivityTestRule<QSOListActivity> mActivityRule =
             new IntentsTestRule<>(QSOListActivity.class);
+    private ComponentName mQSOEditActivityComponentName;
+    private ComponentName mQSODetailActivityComponentName;
+
+    @Before
+    public void setConstants() {
+        String packageName = mActivityRule.getActivity().getPackageName();
+        mQSOEditActivityComponentName = new ComponentName(packageName,
+                QSOEditActivity.class.getName());
+        mQSODetailActivityComponentName = new ComponentName(packageName,
+                QSODetailActivity.class.getName());
+    }
 
     @Test
     public void QSOListActivity_empty_messages() {
         onView(isRoot()).perform(ChangeDataAction.emptyData());
         onView(withId(R.id.qso_list))
                 .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
-        onView(withId(R.id.qso_list))
-                .check(matches(not(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))));
-        onView(withId(R.id.qso_list))
-                .check(matches(not(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))));
+        onView(withId(R.id.empty_list_message))
+                .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+        onView(withId(R.id.empty_list_link))
+                .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
     }
 
     @Test
@@ -66,10 +78,10 @@ public class QSOListActivityTest {
         onView(isRoot()).perform(ChangeDataAction.dataWithOneItem());
         onView(withId(R.id.qso_list))
                 .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-        onView(withId(R.id.qso_list))
-                .check(matches(not(withEffectiveVisibility(ViewMatchers.Visibility.GONE))));
-        onView(withId(R.id.qso_list))
-                .check(matches(not(withEffectiveVisibility(ViewMatchers.Visibility.GONE))));
+        onView(withId(R.id.empty_list_message))
+                .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+        onView(withId(R.id.empty_list_link))
+                .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
     }
 
     @Test
@@ -77,15 +89,18 @@ public class QSOListActivityTest {
         onView(withId(R.id.fab))
                 .perform(click());
 
-        if (mActivityRule.getActivity().findViewById(R.id.qso_detail_container) != null) {
+        if (isWideActivity()) {
             onView(withId(R.id.qso_station)).check(matches(isDisplayed()));
         } else {
-            intended(allOf(hasComponent(
-                    new ComponentName(mActivityRule.getActivity().getPackageName(),
-                            QSOEditActivity.class.getName())),
-                    not(hasExtras(hasEntry(equalTo(QSOEditActivity.ARG_QSO_ID), anything())))
+            intended(allOf(
+                    hasComponent(mQSOEditActivityComponentName),
+                    not(hasQSOEditID(anything()))
             ));
         }
+    }
+
+    private Matcher<Intent> hasQSOEditID(Matcher<Object> id) {
+        return hasExtras(hasEntry(equalTo(QSOEditActivity.ARG_QSO_ID), id));
     }
 
     @Test
@@ -95,38 +110,41 @@ public class QSOListActivityTest {
         onView(withId(R.id.empty_list_link))
                 .perform(click());
 
-        if (mActivityRule.getActivity().findViewById(R.id.qso_detail_container) != null) {
+        if (isWideActivity()) {
             onView(withId(R.id.qso_station)).check(matches(isDisplayed()));
         } else {
-            intended(allOf(hasComponent(
-                    new ComponentName(mActivityRule.getActivity().getPackageName(),
-                            QSOEditActivity.class.getName())),
-                    not(hasExtras(hasEntry(equalTo(QSOEditActivity.ARG_QSO_ID), anything())))
+            intended(allOf(
+                    hasComponent(mQSOEditActivityComponentName),
+                    not(hasQSOEditID(anything()))
             ));
         }
     }
 
+    private boolean isWideActivity() {
+        return mActivityRule.getActivity().findViewById(R.id.qso_detail_container) != null;
+    }
+
     @Test
     public void QSOListActivity_open_qso_activity() {
-        if (mActivityRule.getActivity().findViewById(R.id.qso_detail_container) != null)
-            return; // skip on big screens
-
         onView(isRoot()).perform(ChangeDataAction.dataWithOneItem());
         onView(withId(R.id.qso_list)).perform(
                 RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        intended(allOf(
-                hasComponent(
-                        allOf(hasClassName(QSODetailActivity.class.getName()),
-                                hasPackageName(mActivityRule.getActivity().getPackageName()))
-                ),
-                hasExtra(QSODetailActivity.ARG_QSO_ID, ChangeDataAction.ID_OF_ITEM)
-        ));
+
+        if (isWideActivity()) {
+            onView(withText(ChangeDataAction.MY_STATION_OF_ITEM)).check(matches(isDisplayed()));
+        } else {
+            intended(allOf(
+                    hasComponent(mQSODetailActivityComponentName),
+                    hasExtra(QSODetailActivity.ARG_QSO_ID, ChangeDataAction.ID_OF_ITEM)
+            ));
+        }
     }
 
     private static class ChangeDataAction implements ViewAction {
         private final List<QSO> mList;
         final FakeDataRepository dataRepository = new FakeDataRepository();
         static final long ID_OF_ITEM = 1234L;
+        static final String MY_STATION_OF_ITEM = "COM";
 
         ChangeDataAction(List<QSO> list) {
             mList = list;
@@ -154,6 +172,7 @@ public class QSOListActivityTest {
         static ChangeDataAction dataWithOneItem() {
             return new ChangeDataAction(Collections.singletonList(new QSOBuilder()
                     .setId(ID_OF_ITEM)
+                    .setMyStation(MY_STATION_OF_ITEM)
                     .setMode("FM")
                     .setTxFrequency("101.1 MHz")
                     .setOtherStation("WWW")
