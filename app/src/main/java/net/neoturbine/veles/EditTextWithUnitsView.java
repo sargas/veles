@@ -23,6 +23,10 @@ import net.neoturbine.veles.databinding.EditTextWithUnitsViewBinding;
         @InverseBindingMethod(type = Spinner.class,
                 attribute = "selection",
                 method = "getSelectedItemPosition"
+        ),
+        @InverseBindingMethod(
+                type = EditTextWithUnitsView.class,
+                attribute = "valueAsText"
         )
 })
 public class EditTextWithUnitsView extends LinearLayout {
@@ -30,6 +34,7 @@ public class EditTextWithUnitsView extends LinearLayout {
     private final String STATE_VALUE = "STATE_VALUE";
 
     private final ValueWithUnit mValue;
+    private InverseBindingListener mCallback;
 
     public EditTextWithUnitsView(Context context) {
         this(context, null);
@@ -110,11 +115,25 @@ public class EditTextWithUnitsView extends LinearLayout {
         super.onRestoreInstanceState(state);
     }
 
-    void setValue(String value) {
-        mValue.fromString(value);
+    public void setValueAsText(String value) {
+        if (!getValueAsText().equals(value)) {
+            mValue.fromString(value);
+            if (mCallback != null)
+                mCallback.onChange();
+        }
     }
 
-    String getValueAsString() {
+    public String getValueAsText() {
         return mValue.toString();
+    }
+
+    private void setListener(InverseBindingListener listener) {
+        mCallback = listener;
+    }
+
+    @BindingAdapter(value = "valueAsTextAttrChanged")
+    public static void setListeners(EditTextWithUnitsView view,
+                                    final InverseBindingListener inverseBindingListener) {
+        view.setListener(inverseBindingListener);
     }
 }
