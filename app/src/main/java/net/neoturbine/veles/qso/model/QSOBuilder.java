@@ -91,7 +91,81 @@ public class QSOBuilder {
         return this;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public String getMyStation() {
+        return myStation;
+    }
+
+    public String getOtherStation() {
+        return otherStation;
+    }
+
+    public DateTime getStartTime() {
+        return startTime;
+    }
+
+    public DateTime getEndTime() {
+        return endTime;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public String getPower() {
+        return power;
+    }
+
+    public String getMyQuality() {
+        return myQuality;
+    }
+
+    public String getOtherQuality() {
+        return otherQuality;
+    }
+
+    public VelesLocation getMyLocation() {
+        return myLocation;
+    }
+
+    public VelesLocation getOtherLocation() {
+        return otherLocation;
+    }
+
+    public String getTxFrequency() {
+        return txFrequency;
+    }
+
+    public String getRxFrequency() {
+        return rxFrequency;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
     public QSO createQSO() {
         return new QSO(id, myStation, otherStation, startTime, endTime, mode, power, myQuality, otherQuality, myLocation, otherLocation, txFrequency, rxFrequency, comment);
+    }
+
+    public static QSOBuilder fromQSO(QSO qso) {
+        return new QSOBuilder()
+                .setId(qso.getID())
+                .setMyStation(qso.getMyStation())
+                .setOtherStation(qso.getOtherStation())
+                .setStartTime(qso.getStartTime())
+                .setEndTime(qso.getEndTime())
+                .setMode(qso.getMode())
+                .setPower(qso.getPower())
+                .setMyQuality(qso.getMyQuality())
+                .setOtherQuality(qso.getOtherQuality())
+                .setMyLocation(qso.getMyLocation())
+                .setOtherLocation(qso.getOtherLocation())
+                .setTxFrequency(qso.getTransmissionFrequency())
+                .setRxFrequency(qso.getReceivingFrequency())
+                .setComment(qso.getComment());
     }
 }

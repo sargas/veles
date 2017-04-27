@@ -1,15 +1,12 @@
 package net.neoturbine.veles;
 
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import net.neoturbine.veles.qso.model.VelesLocation;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.joda.time.DateTime;
 
-@SuppressWarnings("unused")
 public final class QSO {
     private final long mID;
     @NonNull
@@ -59,29 +56,6 @@ public final class QSO {
         mTxFrequency = txFrequency;
         mRxFrequency = rxFrequency;
         mComment = comment;
-    }
-
-    public QSO(@NonNull Cursor data) {
-        this(
-                data.getLong(data.getColumnIndexOrThrow(QSOColumns._ID)),
-                data.getString(data.getColumnIndexOrThrow(QSOColumns.MY_STATION)),
-                data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_STATION)),
-                SerializationUtils.deserialize(
-                        data.getBlob(data.getColumnIndexOrThrow(QSOColumns.START_TIME))),
-                SerializationUtils.deserialize(
-                        data.getBlob(data.getColumnIndexOrThrow(QSOColumns.END_TIME))),
-                data.getString(data.getColumnIndexOrThrow(QSOColumns.MODE)),
-                data.getString(data.getColumnIndexOrThrow(QSOColumns.POWER)),
-                data.getString(data.getColumnIndexOrThrow(QSOColumns.MY_QUALITY)),
-                data.getString(data.getColumnIndexOrThrow(QSOColumns.OTHER_QUALITY)),
-                SerializationUtils.deserialize(
-                        data.getBlob(data.getColumnIndexOrThrow(QSOColumns.MY_LOCATION))),
-                SerializationUtils.deserialize(
-                        data.getBlob(data.getColumnIndexOrThrow(QSOColumns.OTHER_LOCATION))),
-                data.getString(data.getColumnIndexOrThrow(QSOColumns.TRANSMISSION_FREQUENCY)),
-                data.getString(data.getColumnIndexOrThrow(QSOColumns.RECEIVE_FREQUENCY)),
-                data.getString(data.getColumnIndexOrThrow(QSOColumns.COMMENT))
-        );
     }
 
     @Nullable

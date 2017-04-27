@@ -12,4 +12,8 @@ public interface DataRepository {
     void deleteQSO(long id);
 
     Observable<List<QSO>> getAllQSO();
+
+    void addQSO(QSO qso);
+
+    void updateQSO(QSO qso);
 }

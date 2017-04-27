@@ -11,6 +11,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
@@ -39,7 +40,11 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.regex.Pattern;
+
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
 import static net.neoturbine.veles.utils.LocatorConverter.LatLngToLocator;
 import static net.neoturbine.veles.utils.LocatorConverter.LocationToLocator;
@@ -70,6 +75,9 @@ public final class HamLocationPicker extends Fragment
     private HamLocationPickerBinding mBinding;
     private CharSequence mTitleText;
 
+    @NonNull
+    private final PublishSubject<Optional<VelesLocation>> mChanges = PublishSubject.create();
+
     public HamLocationPicker() {
     }
 
@@ -86,6 +94,8 @@ public final class HamLocationPicker extends Fragment
             mCurrentTabHolder.currentTab.set(
                     ((CurrentTabHolder) savedInstanceState.getSerializable(STATE_TAB_HOLDER))
                             .currentTab.get());
+
+            triggerChanges();
         }
 
         // Create an instance of GoogleAPIClient.
@@ -119,7 +129,10 @@ public final class HamLocationPicker extends Fragment
 
         mBinding.locationText.setText(mTitleText);
 
-        final View.OnClickListener setTab = v -> mCurrentTabHolder.currentTab.set(mIdsToTabs.get(v.getId()));
+        final View.OnClickListener setTab = v -> {
+            mCurrentTabHolder.currentTab.set(mIdsToTabs.get(v.getId()));
+            triggerChanges();
+        };
         mBinding.locationCurrentRadio.setOnClickListener(v -> {
             setTab.onClick(v);
             fillFusedLocation(true);
@@ -140,6 +153,7 @@ public final class HamLocationPicker extends Fragment
                         getString(
                                 R.string.format_locator, LatLngToLocator(place.getLatLng())));
                 mLastLocations.put(CurrentTab.SEARCH, new VelesLocation(place.getLatLng()));
+                triggerChanges();
             }
 
             @Override
@@ -172,6 +186,7 @@ public final class HamLocationPicker extends Fragment
                             getString(R.string.location_locator_error));
                     mLastLocations.remove(CurrentTab.LOCATOR);
                 }
+                triggerChanges();
             }
         });
         mBinding.locationFreeForm.addTextChangedListener(new TextWatcher() {
@@ -190,6 +205,7 @@ public final class HamLocationPicker extends Fragment
                 } else {
                     mLastLocations.put(CurrentTab.FREE_FORM, VelesLocation.fromFreeFormString(s));
                 }
+                triggerChanges();
             }
         });
         TextWatcher coordinateWatcher = new TextWatcher() {
@@ -243,6 +259,7 @@ public final class HamLocationPicker extends Fragment
                     mBinding.locationCoordinateLocator.setText("");
                     mLastLocations.remove(CurrentTab.COORDINATE);
                 }
+                triggerChanges();
             }
         };
         mBinding.locationCoordinateLat.addTextChangedListener(coordinateWatcher);
@@ -294,6 +311,7 @@ public final class HamLocationPicker extends Fragment
         mBinding.locationCurrentLocator.setText(
                 getString(R.string.format_locator, LocationToLocator(lastLocation)));
         mLastLocations.put(CurrentTab.FIND, new VelesLocation(lastLocation));
+        triggerChanges();
     }
 
     @Override
@@ -316,6 +334,7 @@ public final class HamLocationPicker extends Fragment
                 || mCurrentTabHolder.currentTab.get() == CurrentTab.SEARCH)) {
             mCurrentTabHolder.currentTab.set(null);
             mBinding.locationRadioGroup.clearCheck();
+            triggerChanges();
         }
     }
 
@@ -338,7 +357,9 @@ public final class HamLocationPicker extends Fragment
         state.putCharSequence(STATE_SEARCH_LOCATOR, mBinding.locationSearchLocator.getText());
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Nullable
+    @VisibleForTesting
     VelesLocation getLocation() {
         return mLastLocations.get(mCurrentTabHolder.currentTab.get());
     }
@@ -370,6 +391,7 @@ public final class HamLocationPicker extends Fragment
                 mBinding.locationFreeForm.setText(location.getFreeForm());
                 break;
         }
+        triggerChanges();
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -394,5 +416,13 @@ public final class HamLocationPicker extends Fragment
     public static final class CurrentTabHolder implements Serializable {
         private static final long serialVersionUID = 8370389244855208970L;
         public final ObservableField<CurrentTab> currentTab = new ObservableField<>();
+    }
+
+    private void triggerChanges() {
+        mChanges.onNext(Optional.ofNullable(getLocation()));
+    }
+
+    public Observable<Optional<VelesLocation>> onLocationChange() {
+        return mChanges;
     }
 }

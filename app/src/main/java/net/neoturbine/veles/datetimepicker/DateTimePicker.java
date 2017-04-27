@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.neoturbine.veles.R;
 import net.neoturbine.veles.databinding.FragmentDateTimePickerBinding;
@@ -24,6 +25,7 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
 
 public class DateTimePicker extends Fragment implements DateTimePickerContract.View {
     private final List<Dialog> mDialogs = new ArrayList<>(2);
@@ -119,5 +121,16 @@ public class DateTimePicker extends Fragment implements DateTimePickerContract.V
 
     public DateTime getDateTime() {
         return mViewModel.getDateTime();
+    }
+
+    public Observable<DateTime> onDateTimePickerChangeListener() {
+        return Observable.create((emitter) -> mViewModel.addOnPropertyChangedCallback(
+                new android.databinding.Observable.OnPropertyChangedCallback() {
+                    @Override
+                    public void onPropertyChanged(android.databinding.Observable observable, int i) {
+                        emitter.onNext(mViewModel.getDateTime());
+                    }
+                })
+        );
     }
 }

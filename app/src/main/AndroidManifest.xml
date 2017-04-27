@@ -42,12 +42,6 @@
         </activity>
         <activity android:name=".testUtils.FragmentOrViewUtilActivity" />
 
-        <provider
-            android:name=".VelesProvider"
-            android:authorities="net.neoturbine.veles.provider"
-            android:enabled="true"
-            android:exported="false" />
-
 
     </application>
 

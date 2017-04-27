@@ -2,14 +2,11 @@ For Release:
 TODO Make sure that maps are okay even if permissions are rescinded
 TODO In accordance with terms at http://www.hamuniverse.com/legalstuff.html , document that copyright belongs to N4UJW/Hamuniverse as well
 TODO Sync to file in xlog format
-TODO Make sure free-form locations look okay in details fragment
 TODO add license info
-TODO Use DataRepository over content provider
-TODO Switch content provider to be frontend over data repository (or eliminate altogether)
 TODO Move more of displayQSO in DetailFragment into ViewModel
-TODO Check back button works right when deleting
 TODO Make DateTimePicker keyboard accessible
 TODO Setup production modes for Leak Canary and Timber
+TODO Make all observables follow fragment lifecycle with rxlifecycle
 
 TODO Make QSO list in wide mode "highlight" opened QSO
 TODO Make clicking a QSO (or the Edit button, or the FAB) show a smooth animation to the activity

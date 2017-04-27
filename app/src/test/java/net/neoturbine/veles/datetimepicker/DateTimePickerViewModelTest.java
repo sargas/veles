@@ -62,9 +62,7 @@ public class DateTimePickerViewModelTest {
         mVM.setDateTime(mTestDateTime);
         assertEquals(mTestDateTime, mVM.getDateTime());
 
-        verify(callback).onPropertyChanged(mVM, BR.date);
-        verify(callback).onPropertyChanged(mVM, BR.selectedTimeZoneIndex);
-        verify(callback).onPropertyChanged(mVM, BR.time);
+        verify(callback).onPropertyChanged(mVM, BR._all);
         verifyNoMoreInteractions(callback);
     }
 
@@ -80,9 +78,7 @@ public class DateTimePickerViewModelTest {
         setupMocksAndAttachView(bundle);
         assertEquals(mTestDateTime, mVM.getDateTime());
 
-        verify(callback).onPropertyChanged(mVM, BR.date);
-        verify(callback).onPropertyChanged(mVM, BR.selectedTimeZoneIndex);
-        verify(callback).onPropertyChanged(mVM, BR.time);
+        verify(callback).onPropertyChanged(mVM, BR._all);
         verifyNoMoreInteractions(callback);
     }
 

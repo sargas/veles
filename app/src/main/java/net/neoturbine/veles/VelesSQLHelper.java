@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import net.neoturbine.veles.qso.data.QSOColumns;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 

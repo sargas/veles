@@ -41,4 +41,12 @@ public class FakeDataRepository implements DataRepository {
         mList = newList;
         mSubject.onNext(newList);
     }
+
+    @Override
+    public void addQSO(QSO qso) {
+    }
+
+    @Override
+    public void updateQSO(QSO qso) {
+    }
 }

@@ -168,7 +168,7 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
                 }
             });
         } else {
-            fm.beginTransaction().hide(mapFragment).commit();
+            fm.beginTransaction().hide(mapFragment).commitAllowingStateLoss();
             textBox.setVisibility(View.INVISIBLE);
         }
     }

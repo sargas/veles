@@ -1,135 +1,151 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_margin="@dimen/text_margin"
-              android:orientation="vertical"
-              tools:context="net.neoturbine.veles.QSOEditFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.design.widget.TextInputLayout
+    <data>
+        <variable
+            name="viewmodel"
+            type="net.neoturbine.veles.qso.edit.EditContracts.ViewModel"/>
+    </data>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/text_margin"
+        android:orientation="vertical"
+        tools:context="net.neoturbine.veles.QSOEditFragment">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/qso_station"
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/qso_station"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/qso_edit_station"
+                android:text="@={viewmodel.otherStation}"
+                android:inputType="textNoSuggestions|textCapCharacters" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/qso_my_station"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/qso_edit_my_station"
+                android:text="@={viewmodel.myStation}"
+                android:inputType="textNoSuggestions|textCapCharacters" />
+        </android.support.design.widget.TextInputLayout>
+
+        <fragment
+            android:id="@+id/qso_start_time"
+            android:name="net.neoturbine.veles.datetimepicker.DateTimePicker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/qso_edit_station"
-            android:inputType="textNoSuggestions|textCapCharacters"/>
+            app:hint="@string/qso_edit_start_time"
+            tools:layout="@layout/fragment_date_time_picker" />
 
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/qso_my_station"
+        <fragment
+            android:id="@+id/qso_end_time"
+            android:name="net.neoturbine.veles.datetimepicker.DateTimePicker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/qso_edit_my_station"
-            android:inputType="textNoSuggestions|textCapCharacters"/>
-    </android.support.design.widget.TextInputLayout>
+            app:hint="@string/qso_edit_end_time"
+            tools:layout="@layout/fragment_date_time_picker" />
 
-    <fragment
-        android:id="@+id/qso_start_time"
-        android:name="net.neoturbine.veles.datetimepicker.DateTimePicker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:hint="@string/qso_edit_start_time"
-        tools:layout="@layout/fragment_date_time_picker"/>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <fragment
-        android:id="@+id/qso_end_time"
-        android:name="net.neoturbine.veles.datetimepicker.DateTimePicker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:hint="@string/qso_edit_end_time"
-        tools:layout="@layout/fragment_date_time_picker"/>
+            <AutoCompleteTextView
+                android:id="@+id/qso_mode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/qso_edit_mode"
+                android:text="@={viewmodel.mode}"
+                android:inputType="text" />
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        </android.support.design.widget.TextInputLayout>
 
-        <AutoCompleteTextView
-            android:id="@+id/qso_mode"
+        <net.neoturbine.veles.EditTextWithUnitsView
+            android:id="@+id/qso_power"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/qso_edit_mode"
-            android:inputType="text"/>
-
-    </android.support.design.widget.TextInputLayout>
-
-    <net.neoturbine.veles.EditTextWithUnitsView
-        android:id="@+id/qso_power"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:default_position="2"
-        app:hint="@string/qso_power"
-        app:units="@array/power_units"/>
+            app:valueAsText="@={viewmodel.power}"
+            app:default_position="2"
+            app:hint="@string/qso_power"
+            app:units="@array/power_units" />
 
 
-    <net.neoturbine.veles.EditTextWithUnitsView
-        android:id="@+id/qso_tx_freq"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:default_position="2"
-        app:hint="@string/qso_edit_tx_freq"
-        app:units="@array/frequency_units"/>
-
-    <net.neoturbine.veles.EditTextWithUnitsView
-        android:id="@+id/qso_rx_freq"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:default_position="2"
-        app:hint="@string/qso_edit_rx_freq"
-        app:units="@array/frequency_units"/>
-
-    <fragment
-        android:id="@+id/qso_other_quality"
-        android:name="net.neoturbine.veles.SignalQualityPicker"
-        tools:layout="@layout/signal_quality_picker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:hint="@string/qso_edit_other_quality" />
-
-    <fragment
-        android:id="@+id/qso_my_quality"
-        android:name="net.neoturbine.veles.SignalQualityPicker"
-        tools:layout="@layout/signal_quality_picker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:hint="@string/qso_edit_my_quality" />
-
-    <fragment
-        android:id="@+id/qso_other_location"
-        android:name="net.neoturbine.veles.HamLocationPicker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:text="@string/qso_edit_other_location"
-        tools:layout="@layout/ham_location_picker"/>
-
-    <fragment
-        android:id="@+id/qso_my_location"
-        android:name="net.neoturbine.veles.HamLocationPicker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:text="@string/qso_edit_my_location"
-        tools:layout="@layout/ham_location_picker"/>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/qso_comment"
+        <net.neoturbine.veles.EditTextWithUnitsView
+            android:id="@+id/qso_tx_freq"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/qso_edit_comment"
-            android:inputType="textMultiLine"
-            android:minLines="3"/>
+            app:valueAsText="@={viewmodel.transmissionFrequency}"
+            app:default_position="2"
+            app:hint="@string/qso_edit_tx_freq"
+            app:units="@array/frequency_units" />
 
-    </android.support.design.widget.TextInputLayout>
+        <net.neoturbine.veles.EditTextWithUnitsView
+            android:id="@+id/qso_rx_freq"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:valueAsText="@={viewmodel.receivingFrequency}"
+            app:default_position="2"
+            app:hint="@string/qso_edit_rx_freq"
+            app:units="@array/frequency_units" />
 
-</LinearLayout>
+        <fragment
+            android:id="@+id/qso_other_quality"
+            android:name="net.neoturbine.veles.SignalQualityPicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hint="@string/qso_edit_other_quality"
+            tools:layout="@layout/signal_quality_picker" />
+
+        <fragment
+            android:id="@+id/qso_my_quality"
+            android:name="net.neoturbine.veles.SignalQualityPicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hint="@string/qso_edit_my_quality"
+            tools:layout="@layout/signal_quality_picker" />
+
+        <fragment
+            android:id="@+id/qso_other_location"
+            android:name="net.neoturbine.veles.HamLocationPicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:text="@string/qso_edit_other_location"
+            tools:layout="@layout/ham_location_picker" />
+
+        <fragment
+            android:id="@+id/qso_my_location"
+            android:name="net.neoturbine.veles.HamLocationPicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:text="@string/qso_edit_my_location"
+            tools:layout="@layout/ham_location_picker" />
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/qso_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@={viewmodel.comment}"
+                android:hint="@string/qso_edit_comment"
+                android:inputType="textMultiLine"
+                android:minLines="3" />
+
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+</layout>

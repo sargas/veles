@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import static net.neoturbine.veles.utils.LocatorConverter.fromLocator;
 import static net.neoturbine.veles.utils.LocatorConverter.toLocator;
@@ -129,5 +130,22 @@ public class VelesLocation implements Serializable {
                 .add(new LatLng(sw.latitude, ne.longitude))
                 .add(sw)
                 .add(new LatLng(ne.latitude, sw.longitude));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VelesLocation that = (VelesLocation) o;
+        return Double.compare(that.mLongitude, mLongitude) == 0 &&
+                Double.compare(that.mLatitude, mLatitude) == 0 &&
+                Objects.equals(mLocator, that.mLocator) &&
+                mType == that.mType &&
+                Objects.equals(mFreeForm, that.mFreeForm);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mLongitude, mLatitude, mLocator, mType, mFreeForm);
     }
 }

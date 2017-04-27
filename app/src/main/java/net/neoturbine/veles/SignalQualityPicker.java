@@ -24,6 +24,8 @@ import net.neoturbine.veles.databinding.SignalQualityPickerBinding;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+
 public class SignalQualityPicker extends Fragment {
     private static final String TAG_READABILITY = "readability";
     private static final String TAG_SIGNAL = "signal";
@@ -207,5 +209,16 @@ public class SignalQualityPicker extends Fragment {
             return Character.getNumericValue(data.quality.get().charAt(2));
         else
             return DEFAULT_TONE_INDEX;
+    }
+
+    public Observable<String> onSignalQualityChange() {
+        return Observable.create((emitter) -> data.quality.addOnPropertyChangedCallback(
+                new android.databinding.Observable.OnPropertyChangedCallback() {
+                    @Override
+                    public void onPropertyChanged(android.databinding.Observable observable, int id) {
+                        emitter.onNext(data.quality.get());
+                    }
+                })
+        );
     }
 }

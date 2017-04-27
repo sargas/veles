@@ -9,6 +9,7 @@ import android.databinding.InverseBindingMethod;
 import android.databinding.InverseBindingMethods;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -123,6 +124,8 @@ public class EditTextWithUnitsView extends LinearLayout {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
+    @VisibleForTesting
     public String getValueAsText() {
         return mValue.toString();
     }

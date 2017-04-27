@@ -2,15 +2,11 @@ package net.neoturbine.veles;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.LoaderManager;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.database.Cursor;
+import android.databinding.Observable;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,19 +15,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import net.danlew.android.joda.JodaTimeAndroid;
+import net.neoturbine.veles.databinding.QsoEditBinding;
 import net.neoturbine.veles.datetimepicker.DateTimePicker;
+import net.neoturbine.veles.qso.data.DataRepository;
+import net.neoturbine.veles.qso.edit.EditContracts;
+import net.neoturbine.veles.qso.model.VelesLocation;
 
-import org.apache.commons.lang3.SerializationUtils;
-import org.joda.time.DateTimeZone;
+import org.joda.time.DateTime;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Supplier;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,15 +49,13 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
 
     private OnFinishEditListener mCallback;
 
-    private static final int QSO_LOADER = 0;
-
-    private final Map<TextView, String> mTextBoxes = new HashMap<>(4);
-    private final Map<EditTextWithUnitsView, String> mTextBoxWithUnits = new HashMap<>(3);
-    private final Map<HamLocationPicker, String> mLocationPickers = new HashMap<>(2);
-    private final Map<DateTimePicker, String> mDatetimePickers = new HashMap<>(2);
-    private final Map<SignalQualityPicker, String> mSignalQualityPickers = new HashMap<>(2);
-    private TextView mMyStation;
     private SharedPreferences mPrefs;
+    @SuppressWarnings("WeakerAccess")
+    @Inject
+    EditContracts.ViewModel mVM;
+    @SuppressWarnings("WeakerAccess")
+    @Inject
+    DataRepository mDataRepository;
 
     @SuppressWarnings("WeakerAccess")
     public QSOEditFragment() {
@@ -93,11 +94,12 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
         if (getArguments() != null) {
             mQSOid = getArguments().getLong(ARG_QSO_ID);
         }
-        this.setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public void onAttach(Context context) {
+        AndroidInjection.inject(this);
         super.onAttach(context);
 
         try {
@@ -111,106 +113,32 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.qso_edit, container, false);
+        QsoEditBinding binding = QsoEditBinding.inflate(inflater, container, false);
+        binding.setViewmodel(mVM);
 
-        AutoCompleteTextView modeView = (AutoCompleteTextView) rootView.findViewById(R.id.qso_mode);
-        modeView.setAdapter(new ArrayAdapter<>(
+        binding.qsoMode.setAdapter(new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.simple_list_item_1,
                 getResources().getStringArray(R.array.qso_modes)));
 
-        mMyStation = (TextView) rootView.findViewById(R.id.qso_my_station);
+        bindHamLocationPicker(R.id.qso_my_location, BR.myLocation, mVM::setMyLocation, mVM::getMyLocation);
+        bindHamLocationPicker(R.id.qso_other_location, BR.otherLocation, mVM::setOtherLocation, mVM::getOtherLocation);
 
-        FragmentManager fm = getChildFragmentManager();
+        bindDateTimeFragment(R.id.qso_start_time, BR.startTime, mVM::setStartTime, mVM::getStartTime);
+        bindDateTimeFragment(R.id.qso_end_time, BR.endTime, mVM::setEndTime, mVM::getEndTime);
 
-        mLocationPickers.put(
-                (HamLocationPicker) fm.findFragmentById(R.id.qso_my_location),
-                QSOColumns.MY_LOCATION);
-        mLocationPickers.put(
-                (HamLocationPicker) fm.findFragmentById(R.id.qso_other_location),
-                QSOColumns.OTHER_LOCATION);
-
-        mTextBoxWithUnits.put((EditTextWithUnitsView) rootView.findViewById(R.id.qso_tx_freq),
-                QSOColumns.TRANSMISSION_FREQUENCY);
-        mTextBoxWithUnits.put((EditTextWithUnitsView) rootView.findViewById(R.id.qso_rx_freq),
-                QSOColumns.RECEIVE_FREQUENCY);
-        mTextBoxWithUnits.put((EditTextWithUnitsView) rootView.findViewById(R.id.qso_power),
-                QSOColumns.POWER);
-
-        mTextBoxes.put((TextView) rootView.findViewById(R.id.qso_station), QSOColumns.OTHER_STATION);
-        mTextBoxes.put(mMyStation, QSOColumns.MY_STATION);
-        mTextBoxes.put((TextView) rootView.findViewById(R.id.qso_mode), QSOColumns.MODE);
-        mTextBoxes.put((TextView) rootView.findViewById(R.id.qso_comment), QSOColumns.COMMENT);
-
-        mDatetimePickers.put(
-                (DateTimePicker) fm.findFragmentById(R.id.qso_start_time),
-                QSOColumns.START_TIME);
-        mDatetimePickers.put(
-                (DateTimePicker) fm.findFragmentById(R.id.qso_end_time),
-                QSOColumns.END_TIME);
-
-        mSignalQualityPickers.put(
-                (SignalQualityPicker) fm.findFragmentById(R.id.qso_my_quality),
-                QSOColumns.MY_QUALITY);
-        mSignalQualityPickers.put(
-                (SignalQualityPicker) fm.findFragmentById(R.id.qso_other_quality),
-                QSOColumns.OTHER_QUALITY);
+        bindSignalQualityPicker(R.id.qso_other_quality, BR.otherQuality, mVM::setOtherQuality, mVM::getOtherQuality);
+        bindSignalQualityPicker(R.id.qso_my_quality, BR.myQuality, mVM::setMyQuality, mVM::getMyQuality);
 
         mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         if (isEditingQSO()) {
-            getLoaderManager().initLoader(QSO_LOADER, null, new LoaderManager.LoaderCallbacks<Cursor>() {
-                @Override
-                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    switch (id) {
-                        case QSO_LOADER:
-                            return new CursorLoader(
-                                    getActivity(),
-                                    ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
-                                    null, null, null, null);
-                        default:
-                            throw new IllegalArgumentException("Unknown type of loader: " + id);
-                    }
-                }
-
-                @SuppressWarnings("ConstantConditions")
-                @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                    if (!data.moveToFirst()) {
-                        return;
-                    }
-
-                    for (Map.Entry<TextView, String> entry : mTextBoxes.entrySet()) {
-                        entry.getKey().setText(data.getString(
-                                data.getColumnIndexOrThrow(entry.getValue())));
-                    }
-
-                    for (Map.Entry<EditTextWithUnitsView, String> entry : mTextBoxWithUnits.entrySet()) {
-                        entry.getKey().setValue(
-                                data.getString(data.getColumnIndexOrThrow(entry.getValue())));
-                    }
-
-                    for (Map.Entry<DateTimePicker, String> entry : mDatetimePickers.entrySet()) {
-                        entry.getKey().setDateTime(SerializationUtils.deserialize(
-                                data.getBlob(data.getColumnIndexOrThrow(entry.getValue()))));
-                    }
-
-                    for (Map.Entry<HamLocationPicker, String> entry : mLocationPickers.entrySet()) {
-                        entry.getKey().setLocation(SerializationUtils.deserialize(
-                                data.getBlob(data.getColumnIndexOrThrow(entry.getValue()))));
-                    }
-
-                    for (Map.Entry<SignalQualityPicker, String> entry : mSignalQualityPickers.entrySet()) {
-                        entry.getKey().setQuality(
-                                data.getString(data.getColumnIndexOrThrow(entry.getValue())));
-                    }
-                }
-
-                @Override
-                public void onLoaderReset(Loader<Cursor> loader) {
-                }
-            });
+            mDataRepository
+                    .getQSO(mQSOid)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError((e) -> Timber.e(e, "Unable to load QSO id %d", mQSOid))
+                    .subscribe(mVM::setQSO);
         } else {
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity()
                     .findViewById(R.id.toolbar_layout);
@@ -218,11 +146,72 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
                 appBarLayout.setTitle(getResources().getString(R.string.title_qso_new));
             }
 
-            mMyStation.setText(mPrefs.getString(PREF_LAST_USED_STATION, ""));
-
+            mVM.setMyStation(mPrefs.getString(PREF_LAST_USED_STATION, ""));
         }
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    private void bindDateTimeFragment(@IdRes int fragmentId, int brID,
+                                      Consumer<DateTime> setter,
+                                      Supplier<DateTime> getter) {
+        FragmentManager fm = getChildFragmentManager();
+        DateTimePicker dateTimePicker = (DateTimePicker)
+                fm.findFragmentById(fragmentId);
+
+        dateTimePicker
+                .onDateTimePickerChangeListener()
+                .subscribe(setter);
+
+        mVM.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable observable, int id) {
+                if (brID == id || BR._all == id) {
+                    dateTimePicker.setDateTime(getter.get());
+                }
+            }
+        });
+    }
+
+    private void bindSignalQualityPicker(@IdRes int fragmentId, int brId,
+                                         Consumer<String> setter,
+                                         Supplier<String> getter) {
+        FragmentManager fm = getChildFragmentManager();
+
+        SignalQualityPicker signalQualityPicker = (SignalQualityPicker) fm.findFragmentById(fragmentId);
+
+        signalQualityPicker.onSignalQualityChange()
+                .subscribe(setter);
+
+        mVM.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable observable, int id) {
+                if (id == brId || id == BR._all) {
+                    signalQualityPicker.setQuality(getter.get());
+                }
+            }
+        });
+    }
+
+    private void bindHamLocationPicker(@IdRes int fragmentId, int brID,
+                                       Consumer<VelesLocation> setter,
+                                       Supplier<VelesLocation> getter) {
+        FragmentManager fm = getChildFragmentManager();
+
+        HamLocationPicker hamLocationPicker =
+                (HamLocationPicker) fm.findFragmentById(fragmentId);
+
+        hamLocationPicker.onLocationChange()
+                .subscribe((optionalLocation) -> setter.accept(optionalLocation.orElse(null)));
+
+        mVM.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable observable, int id) {
+                if (id == brID || id == BR._all) {
+                    hamLocationPicker.setLocation(getter.get());
+                }
+            }
+        });
     }
 
     @Override
@@ -231,61 +220,23 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
         menu.findItem(R.id.action_delete).setVisible(isEditingQSO());
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
-                final ContentValues mNewValues = new ContentValues();
-
-                for (Map.Entry<TextView, String> entry : mTextBoxes.entrySet()) {
-                    mNewValues.put(entry.getValue(), entry.getKey().getText().toString());
-                }
-
-                for (Map.Entry<EditTextWithUnitsView, String> entry : mTextBoxWithUnits.entrySet()) {
-                    mNewValues.put(entry.getValue(), entry.getKey().getValueAsString());
-                }
-
-                for (Map.Entry<DateTimePicker, String> entry : mDatetimePickers.entrySet()) {
-                    mNewValues.put(entry.getValue(),
-                            SerializationUtils.serialize(entry.getKey().getDateTime()));
-
-                    if (entry.getValue().equals(QSOColumns.START_TIME))
-                        mNewValues.put(QSOColumns.UTC_START_TIME,
-                                entry.getKey().getDateTime().withZone(DateTimeZone.UTC).getMillis());
-                }
-
-                for (Map.Entry<HamLocationPicker, String> entry : mLocationPickers.entrySet()) {
-                    mNewValues.put(entry.getValue(),
-                            SerializationUtils.serialize(entry.getKey().getLocation()));
-                }
-
-                for (Map.Entry<SignalQualityPicker, String> entry : mSignalQualityPickers.entrySet()) {
-                    mNewValues.put(entry.getValue(), entry.getKey().getQuality());
-                }
-
                 if (isEditingQSO()) {
-                    getActivity().getContentResolver().update(
-                            ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
-                            mNewValues, null, null
-                    );
+                    mDataRepository.updateQSO(mVM.getQSO());
                 } else {
-                    getActivity().getContentResolver().insert(
-                            QSOColumns.CONTENT_URI,
-                            mNewValues
-                    );
+                    mDataRepository.addQSO(mVM.getQSO());
 
                     mPrefs.edit()
-                            .putString(PREF_LAST_USED_STATION, mMyStation.getText().toString())
+                            .putString(PREF_LAST_USED_STATION, mVM.getMyStation())
                             .apply();
                 }
                 mCallback.onFinishEdit();
                 return true;
             case R.id.action_delete:
-                getActivity().getContentResolver().delete(
-                        ContentUris.withAppendedId(QSOColumns.CONTENT_URI, mQSOid),
-                        null, null
-                );
+                mDataRepository.deleteQSO(mQSOid);
                 Toast.makeText(getActivity(), R.string.toast_deleted, Toast.LENGTH_LONG).show();
                 mCallback.onFinishDelete();
                 return true;

@@ -36,10 +36,10 @@ public class DateTimePickerViewModel extends DateTimePickerContract.ViewModel {
 
     @Override
     void setDateTime(DateTime dateTime) {
-        mModel.setTime(dateTime);
-        notifyPropertyChanged(BR.time);
-        notifyPropertyChanged(BR.date);
-        notifyPropertyChanged(BR.selectedTimeZoneIndex);
+        if(!mModel.getTime().equals(dateTime)) {
+            mModel.setTime(dateTime);
+            notifyChange();
+        }
     }
 
     @Override

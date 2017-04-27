@@ -1,6 +1,5 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.qso.data;
 
-import android.net.Uri;
 import android.provider.BaseColumns;
 
 public interface QSOColumns extends BaseColumns {
@@ -8,7 +7,6 @@ public interface QSOColumns extends BaseColumns {
     String CREATE_TABLE_SQL = "CREATE  TABLE \"QSO\" (" +
             "\"_id\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , " +
             "\"start_time\" BLOB, \"end_time\" BLOB, " +
-            "\"utc_start_time\" BLOB, " + // Used for sorting
             "\"my_station\" TEXT, " +
             "\"other_station\" TEXT, " +
             "\"mode\" TEXT, " +
@@ -21,13 +19,7 @@ public interface QSOColumns extends BaseColumns {
             "\"other_location\" BLOB, " +
             "\"comment\" TEXT )";
 
-    String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.neoturbine.veles.qso";
-    String SINGLE_CONTENT_TYPE = "vnd.android.cursor.item/vnd.neoturbine.veles.qso";
-    Uri CONTENT_URI = Uri.parse("content://"
-            + VelesProvider.AUTHORITY + "/" + TABLE_NAME);
-
     String START_TIME = "start_time";
-    String UTC_START_TIME = "utc_start_time";
     String END_TIME = "end_time";
     String MY_STATION = "my_station";
     String OTHER_STATION = "other_station";
