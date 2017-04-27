@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 @SuppressWarnings("WeakerAccess")
-public class ValueWithUnit extends BaseObservable implements Serializable {
+public class ValueWithUnit implements Serializable {
     private static final long serialVersionUID = -5491155345942093530L;
     public final ObservableField<String> valueNumber = new ObservableField<>("");
     public final ObservableField<String> valueNumberHint;

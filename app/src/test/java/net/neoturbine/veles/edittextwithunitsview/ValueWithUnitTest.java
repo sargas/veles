@@ -1,7 +1,5 @@
 package net.neoturbine.veles.edittextwithunitsview;
 
-import net.neoturbine.veles.edittextwithunitsview.ValueWithUnit;
-
 import org.junit.Before;
 import org.junit.Test;
 
