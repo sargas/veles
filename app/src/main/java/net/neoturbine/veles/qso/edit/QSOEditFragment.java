@@ -1,4 +1,4 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.qso.edit;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -17,11 +17,17 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.trello.rxlifecycle2.components.RxFragment;
+
 import net.danlew.android.joda.JodaTimeAndroid;
+import net.neoturbine.veles.BR;
+import net.neoturbine.veles.HamLocationPicker;
+import net.neoturbine.veles.QSOIdContainer;
+import net.neoturbine.veles.R;
+import net.neoturbine.veles.SignalQualityPicker;
 import net.neoturbine.veles.databinding.QsoEditBinding;
 import net.neoturbine.veles.datetimepicker.DateTimePicker;
 import net.neoturbine.veles.qso.data.DataRepository;
-import net.neoturbine.veles.qso.edit.EditContracts;
 import net.neoturbine.veles.qso.model.VelesLocation;
 
 import org.joda.time.DateTime;
@@ -41,7 +47,7 @@ import timber.log.Timber;
  * Use the {@link QSOEditFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class QSOEditFragment extends Fragment implements QSOIdContainer {
+public class QSOEditFragment extends RxFragment implements QSOIdContainer {
     private static final String ARG_QSO_ID = "qso_id";
     private static final String PREF_LAST_USED_STATION = "PREF_LAST_USED_STATION";
 
@@ -135,6 +141,7 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
         if (isEditingQSO()) {
             mDataRepository
                     .getQSO(mQSOid)
+                    .compose(bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnError((e) -> Timber.e(e, "Unable to load QSO id %d", mQSOid))
@@ -159,8 +166,8 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
         DateTimePicker dateTimePicker = (DateTimePicker)
                 fm.findFragmentById(fragmentId);
 
-        dateTimePicker
-                .onDateTimePickerChangeListener()
+        dateTimePicker.onDateTimePickerChangeListener()
+                .compose(bindToLifecycle())
                 .subscribe(setter);
 
         mVM.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
@@ -181,6 +188,7 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
         SignalQualityPicker signalQualityPicker = (SignalQualityPicker) fm.findFragmentById(fragmentId);
 
         signalQualityPicker.onSignalQualityChange()
+                .compose(bindToLifecycle())
                 .subscribe(setter);
 
         mVM.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
@@ -202,6 +210,7 @@ public class QSOEditFragment extends Fragment implements QSOIdContainer {
                 (HamLocationPicker) fm.findFragmentById(fragmentId);
 
         hamLocationPicker.onLocationChange()
+                .compose(bindToLifecycle())
                 .subscribe((optionalLocation) -> setter.accept(optionalLocation.orElse(null)));
 
         mVM.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {

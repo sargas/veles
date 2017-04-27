@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 
-class QSOAdapter
+public class QSOAdapter
         extends RecyclerView.Adapter<QSOItemViewHolder> {
 
     private List<QSO> mQSOs = null;
@@ -71,7 +71,7 @@ class QSOAdapter
         notifyDataSetChanged();
     }
 
-    Observable<Long> onClick() {
+    public Observable<Long> onClick() {
         return mClicks;
     }
 }

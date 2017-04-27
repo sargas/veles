@@ -2,8 +2,6 @@ package net.neoturbine.veles.qso.edit;
 
 import android.app.Fragment;
 
-import net.neoturbine.veles.QSOEditFragment;
-
 import dagger.Binds;
 import dagger.Module;
 import dagger.android.AndroidInjector;

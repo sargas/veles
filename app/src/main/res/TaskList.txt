@@ -6,7 +6,6 @@ TODO add license info
 TODO Move more of displayQSO in DetailFragment into ViewModel
 TODO Make DateTimePicker keyboard accessible
 TODO Setup production modes for Leak Canary and Timber
-TODO Make all observables follow fragment lifecycle with rxlifecycle
 
 TODO Make QSO list in wide mode "highlight" opened QSO
 TODO Make clicking a QSO (or the Edit button, or the FAB) show a smooth animation to the activity

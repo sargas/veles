@@ -2,7 +2,6 @@ package net.neoturbine.veles.qso.list;
 
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -13,9 +12,12 @@ import android.support.annotation.UiThread;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 
+import com.trello.rxlifecycle2.components.RxActivity;
+
 import net.danlew.android.joda.JodaTimeAndroid;
-import net.neoturbine.veles.QSOEditActivity;
-import net.neoturbine.veles.QSOEditFragment;
+import net.neoturbine.veles.qso.data.DataRepository;
+import net.neoturbine.veles.qso.edit.QSOEditActivity;
+import net.neoturbine.veles.qso.edit.QSOEditFragment;
 import net.neoturbine.veles.QSOIdContainer;
 import net.neoturbine.veles.R;
 import net.neoturbine.veles.databinding.ActivityQsoListBinding;
@@ -25,6 +27,7 @@ import net.neoturbine.veles.qso.detail.QSODetailFragment;
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjection;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 
 /**
@@ -35,7 +38,7 @@ import dagger.android.AndroidInjection;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class QSOListActivity extends Activity
+public class QSOListActivity extends RxActivity
         implements QSODetailFragment.QSODetailFragmentParentListener, QSOEditFragment.OnFinishEditListener, ListContracts.View {
 
     private static final String QSO_LIST_DETAIL_TAG = "QSO_LIST_DETAIL_TAG";
@@ -48,6 +51,10 @@ public class QSOListActivity extends Activity
     @SuppressWarnings("WeakerAccess")
     @Inject
     QSOListViewModel mViewModel;
+    @SuppressWarnings("WeakerAccess")
+    @Inject
+    DataRepository mDataRepository;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,23 +64,22 @@ public class QSOListActivity extends Activity
 
         ActivityQsoListBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_qso_list);
 
+        mDataRepository
+                .getAllQSO()
+                .compose(bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mViewModel::setQSOs);
+
+        mViewModel.onClickQSO()
+                .compose(bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::openID);
+
         mViewModel.bindView(this);
         binding.setViewmodel(mViewModel);
         setActionBar(binding.toolbar);
 
         setupTwoPane();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mViewModel.showUI();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mViewModel.stopUI();
     }
 
     public void launchAddQSO() {
@@ -122,7 +128,7 @@ public class QSOListActivity extends Activity
                 getString(R.string.app_name) + " - " + title);
     }
 
-    public void openID(long id) {
+    private void openID(long id) {
         if (mTwoPane) {
             switchFragment(QSODetailFragment.newInstance(id));
         } else {

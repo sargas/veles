@@ -2,56 +2,23 @@ package net.neoturbine.veles.qso.list;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import net.neoturbine.veles.QSO;
-import net.neoturbine.veles.qso.data.DataRepository;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.Observable;
 
 public class QSOListViewModel extends BaseObservable {
     private ListContracts.View mView;
     private final QSOAdapter mAdapter;
-    private final DataRepository mDataRepository;
-    private Disposable mClickSubscriber;
-    private Disposable mDatabaseSubscriber;
 
     @Inject
-    QSOListViewModel(QSOAdapter adapter, DataRepository dataRepository) {
+    QSOListViewModel(QSOAdapter adapter) {
         mAdapter = adapter;
-        mDataRepository = dataRepository;
-    }
-
-    void showUI() {
-        if (isNullOrDisposed(mDatabaseSubscriber))
-            mDatabaseSubscriber = mDataRepository
-                    .getAllQSO()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::setQSOs);
-
-        if (isNullOrDisposed(mClickSubscriber))
-            mClickSubscriber = mAdapter
-                    .onClick()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mView::openID);
-    }
-
-    void stopUI() {
-        if (!isNullOrDisposed(mDatabaseSubscriber))
-            mDatabaseSubscriber.dispose();
-
-        if (!isNullOrDisposed(mClickSubscriber))
-            mClickSubscriber.dispose();
-    }
-
-    private boolean isNullOrDisposed(Disposable disposable) {
-        return disposable == null || disposable.isDisposed();
     }
 
     private boolean isEmptyList() {
@@ -73,16 +40,20 @@ public class QSOListViewModel extends BaseObservable {
     }
 
     @Bindable
-    public RecyclerView.Adapter getAdapter() {
+    public QSOAdapter getAdapter() {
         return mAdapter;
     }
 
-    private void setQSOs(List<QSO> newList) {
+    void setQSOs(List<QSO> newList) {
         mAdapter.changeList(newList);
         notifyChange();
     }
 
     public void launchAddQSO(@SuppressWarnings("unused") View ignored) {
         mView.launchAddQSO();
+    }
+
+    Observable<Long> onClickQSO() {
+        return mAdapter.onClick();
     }
 }

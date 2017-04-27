@@ -1,6 +1,5 @@
 package net.neoturbine.veles.qso.detail;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -20,6 +19,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.trello.rxlifecycle2.components.RxFragment;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.neoturbine.veles.QSO;
@@ -33,9 +33,7 @@ import net.neoturbine.veles.qso.data.DataRepository;
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjection;
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
@@ -45,7 +43,7 @@ import timber.log.Timber;
  * in two-pane mode (on tablets) or a {@link QSODetailActivity}
  * on handsets.
  */
-public class QSODetailFragment extends Fragment implements QSOIdContainer, DetailsContracts.DetailView {
+public class QSODetailFragment extends RxFragment implements QSOIdContainer, DetailsContracts.DetailView {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -56,11 +54,12 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
 
     private QSODetailFragmentParentListener mParentListener;
     @SuppressWarnings("WeakerAccess")
-    @Inject DetailsContracts.ViewModel mVM;
+    @Inject
+    DetailsContracts.ViewModel mVM;
     private QsoDetailBinding mBinding;
     @SuppressWarnings("WeakerAccess")
-    @Inject DataRepository mDataRepository;
-    private Disposable mDisplayQSO;
+    @Inject
+    DataRepository mDataRepository;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -111,8 +110,8 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
         if (getArguments().containsKey(ARG_QSO_ID)) {
             mQSOid = getArguments().getLong(ARG_QSO_ID);
 
-            Observable<QSO> observableQSO = mDataRepository.getQSO(mQSOid);
-            mDisplayQSO = observableQSO
+            mDataRepository.getQSO(mQSOid)
+                    .compose(bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnError((e) -> Timber.e(e, "Unable to load QSO"))
@@ -215,12 +214,5 @@ public class QSODetailFragment extends Fragment implements QSOIdContainer, Detai
             return getArguments().getLong(ARG_QSO_ID);
         }
         return mQSOid;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mDisplayQSO != null && !mDisplayQSO.isDisposed())
-            mDisplayQSO.dispose();
     }
 }

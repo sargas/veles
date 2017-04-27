@@ -89,7 +89,7 @@ public class SignalQualityPicker extends Fragment {
         return data.quality.get();
     }
 
-    void setQuality(String quality) {
+    public void setQuality(String quality) {
         data.quality.set(quality);
     }
 

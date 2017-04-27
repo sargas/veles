@@ -7,7 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import net.neoturbine.veles.QSOEditActivity;
+import net.neoturbine.veles.qso.edit.QSOEditActivity;
 import net.neoturbine.veles.databinding.ActivityQsoDetailBinding;
 import net.neoturbine.veles.qso.list.QSOListActivity;
 import net.neoturbine.veles.R;

@@ -14,6 +14,7 @@ import android.view.View;
 
 import net.neoturbine.veles.qso.data.FakeDataRepository;
 import net.neoturbine.veles.qso.detail.QSODetailActivity;
+import net.neoturbine.veles.qso.edit.QSOEditActivity;
 import net.neoturbine.veles.qso.list.QSOListActivity;
 import net.neoturbine.veles.qso.model.QSOBuilder;
 

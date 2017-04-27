@@ -1,4 +1,4 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.qso.edit;
 
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import net.neoturbine.veles.R;
 import net.neoturbine.veles.qso.list.QSOListActivity;
 
 /**

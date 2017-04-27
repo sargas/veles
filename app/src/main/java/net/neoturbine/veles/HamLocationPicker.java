@@ -360,11 +360,11 @@ public final class HamLocationPicker extends Fragment
     @SuppressWarnings("WeakerAccess")
     @Nullable
     @VisibleForTesting
-    VelesLocation getLocation() {
+    public VelesLocation getLocation() {
         return mLastLocations.get(mCurrentTabHolder.currentTab.get());
     }
 
-    void setLocation(@Nullable VelesLocation location) {
+    public void setLocation(@Nullable VelesLocation location) {
         if (location == null)
             return;
         switch (location.getType()) {

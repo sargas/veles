@@ -8,6 +8,7 @@ import net.neoturbine.veles.qso.model.VelesLocation;
 
 import org.joda.time.DateTime;
 
+@SuppressWarnings("WeakerAccess")
 public interface EditContracts {
     abstract class ViewModel extends BaseObservable {
         abstract public void setQSO(QSO qso);
