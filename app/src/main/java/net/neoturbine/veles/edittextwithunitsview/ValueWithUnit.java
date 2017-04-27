@@ -1,4 +1,4 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.edittextwithunitsview;
 
 import android.databinding.BaseObservable;
 import android.databinding.ObservableField;

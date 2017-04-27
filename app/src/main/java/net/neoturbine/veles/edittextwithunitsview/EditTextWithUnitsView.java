@@ -1,4 +1,4 @@
-package net.neoturbine.veles;
+package net.neoturbine.veles.edittextwithunitsview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
+import net.neoturbine.veles.R;
 import net.neoturbine.veles.databinding.EditTextWithUnitsViewBinding;
 
 @InverseBindingMethods({

@@ -8,7 +8,7 @@
 
         <variable
             name="value"
-            type="net.neoturbine.veles.ValueWithUnit"/>
+            type="net.neoturbine.veles.edittextwithunitsview.ValueWithUnit"/>
     </data>
 
     <LinearLayout
