@@ -3,7 +3,6 @@ TODO Make sure that maps are okay even if permissions are rescinded
 TODO In accordance with terms at http://www.hamuniverse.com/legalstuff.html , document that copyright belongs to N4UJW/Hamuniverse as well
 TODO Sync to file in xlog format
 TODO add license info
-TODO Move more of displayQSO in DetailFragment into ViewModel
 TODO Make DateTimePicker keyboard accessible
 TODO Setup production modes for Leak Canary and Timber
 

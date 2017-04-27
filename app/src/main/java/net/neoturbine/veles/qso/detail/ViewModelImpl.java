@@ -5,6 +5,7 @@ import android.view.View;
 import net.danlew.android.joda.DateUtils;
 import net.neoturbine.veles.QSO;
 import net.neoturbine.veles.R;
+import net.neoturbine.veles.qso.model.VelesLocation;
 
 import javax.inject.Inject;
 
@@ -92,9 +93,36 @@ public class ViewModelImpl extends DetailsContracts.ViewModel {
     }
 
     @Override
+    public VelesLocation getMyLocation() {
+        return mQSO.getMyLocation();
+    }
+
+    @Override
+    public VelesLocation getOtherLocation() {
+        return mQSO.getOtherLocation();
+    }
+
+    @Override
     public int getMapsVisibility() {
         if (mQSO == null || (mQSO.getMyLocation() == null && mQSO.getOtherLocation() == null))
             return View.GONE;
+        else
+            return View.VISIBLE;
+    }
+
+    @Override
+    public int getMyLocationVisibility() {
+        if (mQSO == null || mQSO.getMyLocation() == null) {
+            return View.INVISIBLE;
+        } else {
+            return View.VISIBLE;
+        }
+    }
+
+    @Override
+    public int getOtherLocationVisibility() {
+        if (mQSO == null || mQSO.getOtherLocation() == null)
+            return View.INVISIBLE;
         else
             return View.VISIBLE;
     }

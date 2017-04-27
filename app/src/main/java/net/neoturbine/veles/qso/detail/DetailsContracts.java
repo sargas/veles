@@ -5,6 +5,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
 import net.neoturbine.veles.QSO;
+import net.neoturbine.veles.qso.model.VelesLocation;
 
 @SuppressWarnings("WeakerAccess")
 public class DetailsContracts {
@@ -36,6 +37,14 @@ public class DetailsContracts {
         abstract public String getComment();
         @Bindable
         abstract public int getMapsVisibility();
+        @Bindable
+        abstract public VelesLocation getMyLocation();
+        @Bindable
+        abstract public int getMyLocationVisibility();
+        @Bindable
+        abstract public VelesLocation getOtherLocation();
+        @Bindable
+        abstract public int getOtherLocationVisibility();
     }
 
     public interface DetailView {

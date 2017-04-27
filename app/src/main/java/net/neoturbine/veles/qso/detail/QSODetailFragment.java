@@ -3,6 +3,7 @@ package net.neoturbine.veles.qso.detail;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.databinding.Observable;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -22,13 +23,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.trello.rxlifecycle2.components.RxFragment;
 
 import net.danlew.android.joda.JodaTimeAndroid;
-import net.neoturbine.veles.QSO;
+import net.neoturbine.veles.BR;
 import net.neoturbine.veles.QSOIdContainer;
 import net.neoturbine.veles.qso.list.QSOListActivity;
 import net.neoturbine.veles.R;
 import net.neoturbine.veles.qso.model.VelesLocation;
 import net.neoturbine.veles.databinding.QsoDetailBinding;
 import net.neoturbine.veles.qso.data.DataRepository;
+
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 
@@ -56,7 +59,6 @@ public class QSODetailFragment extends RxFragment implements QSOIdContainer, Det
     @SuppressWarnings("WeakerAccess")
     @Inject
     DetailsContracts.ViewModel mVM;
-    private QsoDetailBinding mBinding;
     @SuppressWarnings("WeakerAccess")
     @Inject
     DataRepository mDataRepository;
@@ -101,40 +103,57 @@ public class QSODetailFragment extends RxFragment implements QSOIdContainer, Det
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        mBinding = DataBindingUtil.inflate(inflater,
+        QsoDetailBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.qso_detail, container, false);
 
-        mBinding.setViewmodel(mVM);
-        View rootView = mBinding.getRoot();
+        binding.setViewmodel(mVM);
 
         if (getArguments().containsKey(ARG_QSO_ID)) {
             mQSOid = getArguments().getLong(ARG_QSO_ID);
+
+            bindTitle();
+            bindMap(BR.myLocation, mVM::getMyLocation,
+                    R.id.qso_detail_my_location, mVM::getMyStation);
+            bindMap(BR.otherLocation, mVM::getOtherLocation,
+                    R.id.qso_detail_other_location, mVM::getOtherStation);
 
             mDataRepository.getQSO(mQSOid)
                     .compose(bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnError((e) -> Timber.e(e, "Unable to load QSO"))
-                    .subscribe(this::displayQSO);
+                    .subscribe(mVM::setQSO);
         }
 
-        return rootView;
+        return binding.getRoot();
     }
 
-    @UiThread
-    private void displayQSO(QSO qso) {
-        mVM.setQSO(qso);
-        mParentListener.setQSOTitle(mVM.getOtherStation());
+    private void bindTitle() {
+        mVM.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable observable, int id) {
+                if (id == BR.otherStation || id == BR._all) {
+                    mParentListener.setQSOTitle(mVM.getOtherStation());
+                }
+            }
+        });
+    }
 
-        setupMap(qso.getMyLocation(), R.id.qso_detail_my_location,
-                qso.getMyStation(), mBinding.qsoDetailMyLocationText);
-        setupMap(qso.getOtherLocation(), R.id.qso_detail_other_location,
-                qso.getOtherStation(), mBinding.qsoDetailOtherLocationText);
+    private void bindMap(int brID, Supplier<VelesLocation> location,
+                         @IdRes int fragmentId, Supplier<String> stationName) {
+        mVM.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable observable, int id) {
+                if (id == brID || id == BR._all) {
+                    setupMap(location.get(), fragmentId, stationName.get());
+                }
+            }
+        });
     }
 
     @UiThread
     private void setupMap(final VelesLocation location, @IdRes final int fragmentId,
-                          final String station, final View textBox) {
+                          final String station) {
         final int DEFAULT_ZOOM = 10;
         FragmentManager fm = getChildFragmentManager();
 
@@ -143,7 +162,6 @@ public class QSODetailFragment extends RxFragment implements QSOIdContainer, Det
 
         if (location != null) {
             fm.beginTransaction().show(mapFragment).commit();
-            textBox.setVisibility(View.VISIBLE);
 
             mapFragment.getMapAsync(googleMap -> {
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location.asLatLng(), DEFAULT_ZOOM));
@@ -168,7 +186,6 @@ public class QSODetailFragment extends RxFragment implements QSOIdContainer, Det
             });
         } else {
             fm.beginTransaction().hide(mapFragment).commitAllowingStateLoss();
-            textBox.setVisibility(View.INVISIBLE);
         }
     }
 
