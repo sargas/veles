@@ -1,12 +1,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:map="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewmodel"
-            type="net.neoturbine.veles.qso.detail.DetailsContracts.ViewModel"/>
+            type="net.neoturbine.veles.qso.detail.DetailsContracts.ViewModel" />
     </data>
 
     <LinearLayout
@@ -30,7 +31,7 @@
                 android:text="@{viewmodel.myStation}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
-                tools:text="My Call Sign"/>
+                tools:text="My Call Sign" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -46,7 +47,7 @@
                 android:text="@{viewmodel.startTime}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
-                tools:text="Start Time"/>
+                tools:text="Start Time" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -62,7 +63,7 @@
                 android:text="@{viewmodel.endTime}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
-                tools:text="End Time"/>
+                tools:text="End Time" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -78,7 +79,7 @@
                 android:text="@{viewmodel.mode}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
-                tools:text="Mode"/>
+                tools:text="Mode" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -94,7 +95,7 @@
                 android:text="@{viewmodel.power}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
-                tools:text="Power"/>
+                tools:text="Power" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -110,7 +111,7 @@
                 android:text="@{viewmodel.transmissionFrequency}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
-                tools:text="TX Freq"/>
+                tools:text="TX Freq" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -126,7 +127,7 @@
                 android:text="@{viewmodel.receivingFrequency}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
-                tools:text="RX Freq"/>
+                tools:text="RX Freq" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -162,67 +163,67 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/qso_details_maps"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:id="@+id/qso_details_maps"
             android:visibility="@{viewmodel.mapsVisibility}">
 
             <android.support.constraint.Guideline
+                android:id="@+id/qso_details_maps_guideline"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:id="@+id/qso_details_maps_guideline"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.51"/>
+                app:layout_constraintGuide_percent="0.51" />
 
             <TextView
-                android:text="@string/qso_edit_other_location"
+                android:id="@+id/qso_detail_other_location_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/qso_detail_other_location_text"
+                android:layout_marginEnd="@dimen/half_list_text_margin"
+                android:layout_marginStart="@dimen/list_text_margin"
+                android:layout_marginTop="@dimen/list_text_margin"
+                android:text="@string/qso_edit_other_location"
                 android:visibility="@{viewmodel.otherLocationVisibility}"
                 app:layout_constraintLeft_toLeftOf="@+id/qso_details_maps"
-                android:layout_marginStart="@dimen/list_text_margin"
-                app:layout_constraintTop_toTopOf="@+id/qso_details_maps"
-                android:layout_marginTop="@dimen/list_text_margin"
                 app:layout_constraintRight_toLeftOf="@+id/qso_details_maps_guideline"
-                android:layout_marginEnd="@dimen/half_list_text_margin"/>
+                app:layout_constraintTop_toTopOf="@+id/qso_details_maps" />
 
             <TextView
-                android:text="@string/qso_edit_my_location"
+                android:id="@+id/qso_detail_my_location_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/qso_detail_my_location_text"
+                android:layout_marginEnd="@dimen/list_text_margin"
+                android:layout_marginStart="@dimen/half_list_text_margin"
+                android:layout_marginTop="@dimen/list_text_margin"
+                android:text="@string/qso_edit_my_location"
                 android:visibility="@{viewmodel.myLocationVisibility}"
                 app:layout_constraintLeft_toLeftOf="@+id/qso_details_maps_guideline"
-                android:layout_marginStart="@dimen/half_list_text_margin"
-                app:layout_constraintTop_toTopOf="@+id/qso_details_maps"
-                android:layout_marginTop="@dimen/list_text_margin"
                 app:layout_constraintRight_toRightOf="@+id/qso_details_maps"
-                android:layout_marginEnd="@dimen/list_text_margin"/>
+                app:layout_constraintTop_toTopOf="@+id/qso_details_maps" />
 
-            <fragment android:id="@+id/qso_detail_other_location"
-                      android:name="com.google.android.gms.maps.MapFragment"
-                      android:layout_width="0dp"
-                      android:layout_height="0dp"
-                      app:layout_constraintLeft_toLeftOf="@+id/qso_details_maps"
-                      app:layout_constraintTop_toBottomOf="@+id/qso_detail_my_location_text"
-                      android:layout_marginTop="@dimen/half_list_text_margin"
-                      app:layout_constraintRight_toLeftOf="@+id/qso_details_maps_guideline"
-                      android:layout_marginEnd="@dimen/half_list_text_margin"
-                      app:layout_constraintBottom_toBottomOf="@+id/qso_details_maps"
-                      map:liteMode="true"/>
+            <fragment
+                android:id="@+id/qso_detail_other_location"
+                android:name="net.neoturbine.veles.qso.detail.VelesLocationMap"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="@dimen/half_list_text_margin"
+                android:layout_marginTop="@dimen/half_list_text_margin"
+                app:layout_constraintBottom_toBottomOf="@+id/qso_details_maps"
+                app:layout_constraintLeft_toLeftOf="@+id/qso_details_maps"
+                app:layout_constraintRight_toLeftOf="@+id/qso_details_maps_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/qso_detail_my_location_text" />
 
-            <fragment android:id="@+id/qso_detail_my_location"
-                      android:name="com.google.android.gms.maps.MapFragment"
-                      android:layout_width="0dp"
-                      android:layout_height="0dp"
-                      app:layout_constraintLeft_toLeftOf="@+id/qso_details_maps_guideline"
-                      android:layout_marginStart="@dimen/half_list_text_margin"
-                      app:layout_constraintTop_toBottomOf="@+id/qso_detail_other_location_text"
-                      android:layout_marginTop="@dimen/half_list_text_margin"
-                      app:layout_constraintRight_toRightOf="@+id/qso_details_maps"
-                      app:layout_constraintBottom_toBottomOf="@+id/qso_details_maps"
-                      map:liteMode="true"/>
+            <fragment
+                android:id="@+id/qso_detail_my_location"
+                android:name="net.neoturbine.veles.qso.detail.VelesLocationMap"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/half_list_text_margin"
+                android:layout_marginTop="@dimen/half_list_text_margin"
+                app:layout_constraintBottom_toBottomOf="@+id/qso_details_maps"
+                app:layout_constraintLeft_toLeftOf="@+id/qso_details_maps_guideline"
+                app:layout_constraintRight_toRightOf="@+id/qso_details_maps"
+                app:layout_constraintTop_toBottomOf="@+id/qso_detail_other_location_text" />
         </android.support.constraint.ConstraintLayout>
 
 
@@ -239,7 +240,7 @@
                 android:text="@{viewmodel.comment}"
                 android:textIsSelectable="true"
                 tools:ignore="Deprecated"
-                tools:text="Some Comments Here"/>
+                tools:text="Some Comments Here" />
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 </layout>

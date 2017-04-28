@@ -4,10 +4,8 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.support.annotation.UiThread;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,10 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.trello.rxlifecycle2.components.RxFragment;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -112,10 +106,10 @@ public class QSODetailFragment extends RxFragment implements QSOIdContainer, Det
             mQSOid = getArguments().getLong(ARG_QSO_ID);
 
             bindTitle();
-            bindMap(BR.myLocation, mVM::getMyLocation,
-                    R.id.qso_detail_my_location, mVM::getMyStation);
-            bindMap(BR.otherLocation, mVM::getOtherLocation,
-                    R.id.qso_detail_other_location, mVM::getOtherStation);
+            bindMap(BR.otherLocation, R.id.qso_detail_other_location,
+                    mVM::getOtherLocation, mVM::getOtherStation);
+            bindMap(BR.myLocation, R.id.qso_detail_my_location,
+                    mVM::getMyLocation, mVM::getMyStation);
 
             mDataRepository.getQSO(mQSOid)
                     .compose(bindToLifecycle())
@@ -139,54 +133,18 @@ public class QSODetailFragment extends RxFragment implements QSOIdContainer, Det
         });
     }
 
-    private void bindMap(int brID, Supplier<VelesLocation> location,
-                         @IdRes int fragmentId, Supplier<String> stationName) {
+    private void bindMap(int brID, @IdRes int fragmentId, Supplier<VelesLocation> location,
+                         Supplier<String> stationName) {
+        FragmentManager fm = getChildFragmentManager();
+        final VelesLocationMap fragment = (VelesLocationMap) fm.findFragmentById(fragmentId);
         mVM.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable observable, int id) {
                 if (id == brID || id == BR._all) {
-                    setupMap(location.get(), fragmentId, stationName.get());
+                    fragment.setLocation(location.get(), stationName.get());
                 }
             }
         });
-    }
-
-    @UiThread
-    private void setupMap(final VelesLocation location, @IdRes final int fragmentId,
-                          final String station) {
-        final int DEFAULT_ZOOM = 10;
-        FragmentManager fm = getChildFragmentManager();
-
-        MapFragment mapFragment = (MapFragment) fm.findFragmentById(fragmentId);
-        assert mapFragment != null;
-
-        if (location != null) {
-            fm.beginTransaction().show(mapFragment).commit();
-
-            mapFragment.getMapAsync(googleMap -> {
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location.asLatLng(), DEFAULT_ZOOM));
-
-                switch (location.getType()) {
-                    case LatitudeLongitude:
-                        googleMap.addMarker(new MarkerOptions()
-                                .title(station)
-                                .position(location.asLatLng()));
-                        break;
-                    case Locator:
-                        googleMap.addPolygon(location.asPolygonOptions()
-                                .strokeColor(Color.BLACK));
-                        break;
-                    case FreeForm:
-                        googleMap.addMarker(new MarkerOptions()
-                                .title(location.getFreeForm())
-                                .position(location.asLatLng())).showInfoWindow();
-                        googleMap.getUiSettings().setMapToolbarEnabled(false);
-                        googleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-                }
-            });
-        } else {
-            fm.beginTransaction().hide(mapFragment).commitAllowingStateLoss();
-        }
     }
 
     /**
