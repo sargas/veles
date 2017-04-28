@@ -106,6 +106,9 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
         transitive = true
     }
+    compile('com.mikepenz:aboutlibraries:5.9.5@aar') {
+        transitive = true
+    }
 
     //espresso tries to use an older version
     androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'

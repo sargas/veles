@@ -4,6 +4,7 @@ TODO In accordance with terms at http://www.hamuniverse.com/legalstuff.html , do
 TODO Sync to file in xlog format
 TODO add license info
 TODO Make DateTimePicker keyboard accessible
+TODO Make icon
 
 TODO Make QSO list in wide mode "highlight" opened QSO
 TODO Make clicking a QSO (or the Edit button, or the FAB) show a smooth animation to the activity

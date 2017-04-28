@@ -11,7 +11,12 @@ import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.trello.rxlifecycle2.components.RxActivity;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -160,5 +165,28 @@ public class QSOListActivity extends RxActivity
                 && fragmentA.getClass().equals(fragmentB.getClass())
                 && fragmentA instanceof QSOIdContainer && fragmentB instanceof QSOIdContainer
                 && ((QSOIdContainer) fragmentA).getQSOId() == ((QSOIdContainer) fragmentB).getQSOId();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.qso_app_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_about:
+                new LibsBuilder()
+                        .withAboutAppName(getString(R.string.app_name))
+                        .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                        .withAboutIconShown(true)
+                        .withAboutVersionShown(true)
+                        .start(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
