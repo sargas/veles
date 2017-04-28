@@ -1,11 +1,8 @@
 package net.neoturbine.veles.qso.data;
 
 import com.squareup.sqlbrite.BriteDatabase;
-import com.squareup.sqlbrite.SqlBrite;
 
-import net.neoturbine.veles.BuildConfig;
 import net.neoturbine.veles.QSO;
-import net.neoturbine.veles.VelesSQLHelper;
 
 import java.util.List;
 
@@ -22,13 +19,8 @@ public class DatabaseDataRepository implements DataRepository {
     private final BriteDatabase mDB;
 
     @Inject
-    DatabaseDataRepository(VelesSQLHelper dbHelper) {
-        SqlBrite sqlBrite = new SqlBrite.Builder().build();
-        mDB = sqlBrite.wrapDatabaseHelper(dbHelper,
-                rx.schedulers.Schedulers.io());
-
-        if (BuildConfig.DEBUG)
-            mDB.setLoggingEnabled(true);
+    DatabaseDataRepository(BriteDatabase db) {
+        mDB = db;
     }
 
     @Override

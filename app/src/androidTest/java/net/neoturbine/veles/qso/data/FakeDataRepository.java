@@ -4,6 +4,7 @@ import net.neoturbine.veles.QSO;
 import net.neoturbine.veles.qso.model.QSOBuilder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -21,6 +22,7 @@ public class FakeDataRepository implements DataRepository {
     private final BehaviorSubject<List<QSO>> mSubject = BehaviorSubject.create();
 
     private FakeDataRepository() {
+        mSubject.onNext(Collections.emptyList());
     }
 
     static FakeDataRepository getInstance() {

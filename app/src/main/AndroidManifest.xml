@@ -4,6 +4,7 @@
     package="net.neoturbine.veles">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".VelesApplication"
@@ -43,6 +44,8 @@
         <activity android:name=".testUtils.FragmentOrViewUtilActivity" />
 
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="b8613f844af9eb99f518dc2579dd4cb0e1057272" />
     </application>
-
 </manifest>

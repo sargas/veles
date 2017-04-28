@@ -6,3 +6,6 @@
 .DS_Store
 /build
 /captures
+
+# protect secret fabric api key
+app/fabric.properties
