@@ -1,6 +1,5 @@
 package net.neoturbine.veles.edittextwithunitsview;
 
-import android.databinding.BaseObservable;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 

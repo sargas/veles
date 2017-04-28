@@ -3,16 +3,16 @@ package net.neoturbine.veles;
 
 import android.content.ComponentName;
 import android.content.Intent;
-import android.support.test.espresso.UiController;
-import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.view.View;
 
-import net.neoturbine.veles.qso.data.FakeDataRepository;
+import net.neoturbine.veles.qso.data.AddDataAction;
+import net.neoturbine.veles.qso.data.DeleteDataAction;
+import net.neoturbine.veles.qso.data.ReplaceDataAction;
+import net.neoturbine.veles.qso.data.UpdateDataAction;
 import net.neoturbine.veles.qso.detail.QSODetailActivity;
 import net.neoturbine.veles.qso.edit.QSOEditActivity;
 import net.neoturbine.veles.qso.list.QSOListActivity;
@@ -24,11 +24,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Collections;
-import java.util.List;
-
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.BundleMatchers.hasEntry;
@@ -43,7 +41,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
@@ -64,8 +61,8 @@ public class QSOListActivityTest {
     }
 
     @Test
-    public void QSOListActivity_empty_messages() {
-        onView(isRoot()).perform(ChangeDataAction.emptyData());
+    public void show_empty_messages() {
+        onView(isRoot()).perform(ReplaceDataAction.emptyData());
         onView(withId(R.id.qso_list))
                 .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         onView(withId(R.id.empty_list_message))
@@ -75,8 +72,8 @@ public class QSOListActivityTest {
     }
 
     @Test
-    public void QSOListActivity_hide_empty_messages() {
-        onView(isRoot()).perform(ChangeDataAction.dataWithOneItem());
+    public void hide_empty_messages() {
+        onView(isRoot()).perform(ReplaceDataAction.dataWithOneItem());
         onView(withId(R.id.qso_list))
                 .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
         onView(withId(R.id.empty_list_message))
@@ -86,7 +83,7 @@ public class QSOListActivityTest {
     }
 
     @Test
-    public void QSOListActivity_fab_new_qso() {
+    public void fab_new_qso() {
         onView(withId(R.id.fab))
                 .perform(click());
 
@@ -105,9 +102,9 @@ public class QSOListActivityTest {
     }
 
     @Test
-    public void QSOListActivity_new_qso_link() {
+    public void new_qso_link() {
         onView(isRoot())
-                .perform(ChangeDataAction.emptyData());
+                .perform(ReplaceDataAction.emptyData());
         onView(withId(R.id.empty_list_link))
                 .perform(click());
 
@@ -126,58 +123,72 @@ public class QSOListActivityTest {
     }
 
     @Test
-    public void QSOListActivity_open_qso_activity() {
-        onView(isRoot()).perform(ChangeDataAction.dataWithOneItem());
+    public void open_qso_activity() {
+        onView(isRoot()).perform(ReplaceDataAction.dataWithOneItem());
         onView(withId(R.id.qso_list)).perform(
                 RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         if (isWideActivity()) {
-            onView(withText(ChangeDataAction.MY_STATION_OF_ITEM)).check(matches(isDisplayed()));
+            onView(withText(ReplaceDataAction.firstQSO().getOtherStation())).check(matches(isDisplayed()));
         } else {
             intended(allOf(
                     hasComponent(mQSODetailActivityComponentName),
-                    hasExtra(QSODetailActivity.ARG_QSO_ID, ChangeDataAction.ID_OF_ITEM)
+                    hasExtra(QSODetailActivity.ARG_QSO_ID, ReplaceDataAction.firstQSO().getID())
             ));
         }
     }
 
-    private static class ChangeDataAction implements ViewAction {
-        private final List<QSO> mList;
-        final FakeDataRepository dataRepository = new FakeDataRepository();
-        static final long ID_OF_ITEM = 1234L;
-        static final String MY_STATION_OF_ITEM = "COM";
+    @Test
+    public void deleting_qso_updates_list() {
+        final QSO firstQSO = ReplaceDataAction.firstQSO();
+        final QSO secondQSO = ReplaceDataAction.secondQSO();
 
-        ChangeDataAction(List<QSO> list) {
-            mList = list;
-        }
+        onView(isRoot())
+                .perform(ReplaceDataAction.dataWithTwoItems());
 
-        @Override
-        public void perform(UiController uiController, View view) {
-            dataRepository.setQSOs(mList);
-        }
+        onView(withText(firstQSO.getOtherStation())).check(matches(isDisplayed()));
+        onView(withText(secondQSO.getOtherStation())).check(matches(isDisplayed()));
 
-        @Override
-        public String getDescription() {
-            return "Change data repository to use given list of QSOs";
-        }
+        onView(isRoot())
+                .perform(DeleteDataAction.deleteID(firstQSO.getID()));
 
-        @Override
-        public Matcher<View> getConstraints() {
-            return isA(View.class);
-        }
+        onView(withText(secondQSO.getOtherStation())).check(matches(isDisplayed()));
+        onView(withText(firstQSO.getOtherStation())).check(doesNotExist());
+    }
 
-        static ChangeDataAction emptyData() {
-            return new ChangeDataAction(Collections.emptyList());
-        }
+    @Test
+    public void adding_qso_updates_list() {
+        final QSO firstQSO = ReplaceDataAction.firstQSO();
+        final QSO secondQSO = ReplaceDataAction.secondQSO();
 
-        static ChangeDataAction dataWithOneItem() {
-            return new ChangeDataAction(Collections.singletonList(new QSOBuilder()
-                    .setId(ID_OF_ITEM)
-                    .setMyStation(MY_STATION_OF_ITEM)
-                    .setMode("FM")
-                    .setTxFrequency("101.1 MHz")
-                    .setOtherStation("WWW")
-                    .createQSO()));
-        }
+        onView(isRoot())
+                .perform(ReplaceDataAction.dataWithOneItem());
+
+        onView(withText(firstQSO.getOtherStation())).check(matches(isDisplayed()));
+        onView(withText(secondQSO.getOtherStation())).check(doesNotExist());
+
+        onView(isRoot())
+                .perform(AddDataAction.addQSO(secondQSO));
+
+        onView(withText(firstQSO.getOtherStation())).check(matches(isDisplayed()));
+        onView(withText(secondQSO.getOtherStation())).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void editing_qso_updates_list() {
+        QSO qso = ReplaceDataAction.firstQSO();
+        String newStation = "ABC";
+        QSO newQSO = QSOBuilder.fromQSO(qso).setOtherStation(newStation).createQSO();
+
+        onView(isRoot())
+                .perform(ReplaceDataAction.dataWithOneItem());
+
+        onView(withText(qso.getOtherStation())).check(matches(isDisplayed()));
+
+        onView(isRoot())
+                .perform(UpdateDataAction.updateQSO(newQSO));
+
+        onView(withText(newQSO.getOtherStation())).check(matches(isDisplayed()));
+        onView(withText(qso.getOtherStation())).check(doesNotExist());
     }
 }

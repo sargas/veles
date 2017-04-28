@@ -6,7 +6,7 @@ import dagger.Provides;
 @Module
 public class FakeDataRepositoryModule {
     @Provides
-    static DataRepository provideDataRepository(FakeDataRepository repository) {
-        return repository;
+    static DataRepository provideDataRepository() {
+        return FakeDataRepository.getInstance();
     }
 }
