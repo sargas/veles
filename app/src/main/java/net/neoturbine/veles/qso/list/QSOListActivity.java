@@ -89,7 +89,7 @@ public class QSOListActivity extends RxActivity
 
     public void launchAddQSO() {
         if (mTwoPane) {
-            switchFragment(QSOEditFragment.newInstance());
+            switchFragment(new QSOEditFragment());
         } else {
             Intent intent = new Intent(this, QSOEditActivity.class);
             startActivity(intent);

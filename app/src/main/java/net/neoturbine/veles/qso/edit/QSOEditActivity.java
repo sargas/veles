@@ -52,7 +52,7 @@ public class QSOEditActivity extends AppCompatActivity
                         getIntent().getLongExtra(ARG_QSO_ID, -1)
                 );
             } else {
-                fragment = QSOEditFragment.newInstance();
+                fragment = new QSOEditFragment();
             }
             getFragmentManager().beginTransaction()
                     .add(R.id.qso_edit_container, fragment)

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -89,10 +90,6 @@ public class QSOEditFragment extends RxFragment implements QSOIdContainer {
         return fragment;
     }
 
-    public static QSOEditFragment newInstance() {
-        return new QSOEditFragment();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +116,8 @@ public class QSOEditFragment extends RxFragment implements QSOIdContainer {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        QsoEditBinding binding = QsoEditBinding.inflate(inflater, container, false);
+        QsoEditBinding binding =
+                DataBindingUtil.inflate(inflater, R.layout.qso_edit, container, false);
         binding.setViewmodel(mVM);
 
         binding.qsoMode.setAdapter(new ArrayAdapter<>(
